@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>👑 لوحة التحكم | 3D SaaS Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0d0c0b;
+            color: #f3efe6;
+            min-height: 100vh;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0c0b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 10px;
+        }
+        .royal-card {
+            background: linear-gradient(145deg, rgba(30, 27, 24, 0.9), rgba(18, 16, 14, 0.95));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.18);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #fff2a8 0%, #d4af37 50%, #aa7c11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #f5d061 0%, #d4af37 50%, #b8942e 100%);
+            color: #0d0c0b;
+            font-weight: 800;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
+        }
+        .btn-gold-outline {
+            background: transparent;
+            color: #d4af37;
+            font-weight: 700;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            border: 2px solid #d4af37;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-gold-outline:hover {
+            background: #d4af37;
+            color: #0d0c0b;
+        }
+        .glass-input {
+            background: rgba(13, 12, 11, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 14px;
+            padding: 0.75rem 1.2rem;
+            width: 100%;
+            outline: none;
+            transition: all 0.3s ease;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+        .glass-input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        .glass-input option {
+            background: #1a1715;
+            color: #f3efe6;
+            padding: 8px;
+        }
+        .sidebar {
+            background: rgba(18, 16, 14, 0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .nav-tab {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-radius: 14px;
+            padding: 0.8rem 1.2rem;
+            font-weight: 700;
+            color: #a19a8a;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+        }
+        .nav-tab:hover {
+            color: #f3efe6;
+            background: rgba(212, 175, 55, 0.08);
+        }
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(245, 208, 97, 0.2));
+            color: #f5d061;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(13, 12, 11, 0.96);
+            backdrop-filter: blur(24px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            pointer-events: none;
+        }
+        .toast {
+            background: #171513;
+            color: #f3efe6;
+            padding: 12px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid #d4af37;
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px -10px rgba(212, 175, 55, 0.15);
+        }
+        .expense-category-badge {
+            font-size: 10px;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-weight: 700;
+        }
+        .transaction-row {
+            transition: background 0.2s ease;
+        }
+        .transaction-row:hover {
+            background: rgba(212, 175, 55, 0.06);
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <!-- LOGIN OVERLAY -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="royal-card p-8 rounded-3xl max-w-md w-full border border-gold-500/30 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-gold-500/20 text-gold-300 flex items-center justify-center text-2xl mx-auto mb-3 border border-gold-500/40">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <h2 class="font-serif text-3xl font-black text-gold-gradient">تسجيل دخول الأدمن</h2>
+                <p class="text-xs text-gray-400 mt-1">لوحة التحكم الفاخرة وإدارة الطلبات</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gold-400 block mb-1">البريد الإلكتروني</label>
+                    <input type="email" id="login-email" class="glass-input" placeholder="admin@example.com" required />
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gold-400 block mb-1">كلمة المرور</label>
+                    <input type="password" id="login-password" class="glass-input" placeholder="••••••••" required />
+                </div>
+                <button type="submit" class="btn-gold w-full py-3 rounded-xl mt-2 text-sm">دخول لوحة التحكم</button>
+                <p id="login-error" class="text-xs text-center text-red-400 font-bold hidden mt-2"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="flex flex-col md:flex-row min-h-screen hidden">
+
+        <!-- Mobile Top Nav -->
+        <div class="md:hidden flex items-center justify-between p-4 bg-dark-800 border-b border-gold-500/20 sticky top-0 z-40">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gold-500 text-dark-900 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-cube text-xs"></i>
+                </div>
+                <span class="font-serif font-bold text-gold-gradient">3D Dining SaaS</span>
+            </div>
+            <button onclick="window.toggleMobileSidebar()" class="text-gold-400 text-xl p-2 focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar-menu" class="sidebar w-full md:w-72 p-6 flex flex-col justify-between fixed md:sticky inset-y-0 right-0 z-30 transform translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto">
+            <div>
+                <div class="flex items-center justify-between pb-6 border-b border-gold-500/20">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-gold-600 to-gold-300 flex items-center justify-center text-dark-900 text-lg font-black shadow-lg">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-serif font-bold text-lg text-gold-gradient">3D Dining</h2>
+                            <span class="text-[10px] font-bold text-gold-400 uppercase tracking-widest block">Dashboard SaaS</span>
+                        </div>
+                    </div>
+                    <button onclick="window.toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white text-lg">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <nav class="mt-8 space-y-2">
+                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-tab active">
+                        <i class="fa-solid fa-bell text-gold-400"></i><span>طلبات الطاولات</span>
+                        <span id="badge-orders-count" class="mr-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black hidden">0</span>
+                    </button>
+                    <button onclick="switchTab('stats')" id="tab-btn-stats" class="nav-tab">
+                        <i class="fa-solid fa-chart-line"></i> التحليلات والإحصائيات
+                    </button>
+                    <button onclick="switchTab('finance')" id="tab-btn-finance" class="nav-tab">
+                        <i class="fa-solid fa-coins"></i> المالية والأرباح
+                    </button>
+                    <button onclick="switchTab('branding')" id="tab-btn-branding" class="nav-tab">
+                        <i class="fa-solid fa-store"></i> الهوية والإعدادات
+                    </button>
+                    <button onclick="switchTab('add-dish')" id="tab-btn-add-dish" class="nav-tab">
+                        <i class="fa-solid fa-circle-plus"></i> إضافة طبق 3D
+                    </button>
+                    <button onclick="switchTab('dishes-list')" id="tab-btn-dishes-list" class="nav-tab">
+                        <i class="fa-solid fa-utensils"></i> إدارة الأطباق
+                    </button>
+                </nav>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-gold-500/10">
+                <button id="logout-btn" class="btn-gold-outline w-full text-center text-xs py-2.5 rounded-xl">
+                    <i class="fa-solid fa-right-from-bracket ml-2"></i> تسجيل الخروج
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-10 overflow-y-auto">
+            <header class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-gold-500/20">
+                <h1 class="font-serif text-xl md:text-3xl font-black text-white" id="header-title">طلبات الطاولات المباشرة</h1>
+                <div class="flex items-center gap-3">
+                    <span id="header-currency-badge" class="text-xs bg-gold-500/10 text-gold-400 px-3 py-1.5 rounded-full border border-gold-500/20 font-bold">
+                        <i class="fa-solid fa-money-bill-wave ml-1"></i> ج.م
+                    </span>
+                    <a id="preview-menu-link" href="index.html" target="_blank" class="btn-gold-outline text-xs py-1.5 px-3 rounded-full">
+                        <i class="fa-solid fa-eye"></i> معاينة المنيو ↗
+                    </a>
+                </div>
+            </header>
+
+            <!-- ORDERS -->
+            <section id="section-orders" class="tab-content space-y-6">
+                <div class="flex items-center justify-between bg-dark-800/80 p-4 rounded-2xl border border-gold-500/20">
+                    <div class="flex items-center gap-2 text-xs md:text-sm text-gray-300">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        مراقبة الطلبات الحية مباشرة من الطاولات
+                    </div>
+                    <span id="live-status-text" class="text-[11px] font-bold text-gold-400">متصل بالسيرفر...</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-container">
+                    <div class="col-span-full text-center py-16 text-gray-500">
+                        <i class="fa-solid fa-receipt text-3xl text-gold-500 mb-2 block"></i>
+                        لا توجد طلبات جديدة حالياً
+                    </div>
+                </div>
+            </section>
+
+            <!-- STATS -->
+            <section id="section-stats" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 stats-grid">
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-gold-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي الإيرادات</span>
+                        <h3 class="text-2xl font-black text-gold-gradient mt-1" id="stat-total-revenue">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-emerald-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">طلبات اليوم</span>
+                        <h3 class="text-2xl font-black text-emerald-400 mt-1" id="stat-orders-today">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-rose-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي المصروفات</span>
+                        <h3 class="text-2xl font-black text-rose-400 mt-1" id="stat-total-expenses">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-cyan-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">صافي الربح</span>
+                        <h3 class="text-2xl font-black text-cyan-400 mt-1" id="stat-net-profit">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-purple-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">متوسط قيمة الطلب</span>
+                        <h3 class="text-2xl font-black text-purple-400 mt-1" id="stat-avg-order">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-orange-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">الأطباق بالمنيو</span>
+                        <h3 class="text-2xl font-black text-orange-400 mt-1" id="stat-total-dishes">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-indigo-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">نماذج 3D مفعلة</span>
+                        <h3 class="text-2xl font-black text-indigo-400 mt-1" id="stat-3d-models">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-teal-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">الطبق الأكثر طلباً</span>
+                        <h3 class="text-2xl font-black text-teal-400 mt-1" id="stat-top-dish">—</h3>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
+                        <h3 class="font-serif font-bold text-base text-gold-gradient mb-3"><i class="fa-solid fa-chart-pie ml-2"></i>توزيع المصروفات حسب الفئة</h3>
+                        <div id="expense-breakdown" class="space-y-2 text-sm"><p class="text-gray-400 text-xs">لا توجد مصروفات مسجلة</p></div>
+                    </div>
+                    <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
+                        <h3 class="font-serif font-bold text-base text-gold-gradient mb-3"><i class="fa-solid fa-clock ml-2"></i>آخر 5 معاملات</h3>
+                        <div id="recent-transactions" class="space-y-2 text-sm"><p class="text-gray-400 text-xs">لا توجد معاملات</p></div>
+                    </div>
+                </div>
+                <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
+                    <h3 class="font-serif font-bold text-base text-gold-gradient mb-2"><i class="fa-solid fa-info-circle ml-2"></i>شرح المؤشرات</h3>
+                    <ul class="text-xs text-gray-400 space-y-1 leading-relaxed">
+                        <li><span class="text-gold-400 font-bold">إجمالي الإيرادات:</span> مجموع قيمة الطلبات المكتملة (حالة "تم التقديم ✅").</li>
+                        <li><span class="text-rose-400 font-bold">إجمالي المصروفات:</span> مجموع المصروفات المسجلة يدوياً.</li>
+                        <li><span class="text-cyan-400 font-bold">صافي الربح:</span> الإيرادات - المصروفات.</li>
+                        <li><span class="text-purple-400 font-bold">متوسط قيمة الطلب:</span> متوسط قيمة كل طلب مكتمل.</li>
+                        <li><span class="text-teal-400 font-bold">الطبق الأكثر طلباً:</span> يتم حسابه تلقائياً من الطلبات.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FINANCE -->
+            <section id="section-finance" class="tab-content hidden space-y-6">
+                <div class="royal-card p-5 md:p-8 rounded-3xl border border-gold-500/20">
+                    <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient mb-4"><i class="fa-solid fa-pen-to-square ml-2"></i>تسجيل معاملة جديدة</h3>
+                    <form id="form-transaction" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold text-gold-400 block mb-1">النوع</label>
+                                <select id="txn-type" class="glass-input" required>
+                                    <option value="expense">مصروف 🧾</option>
+                                    <option value="income">إيراد 💰</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label>
+                                <select id="txn-category" class="glass-input" required>
+                                    <option value="chicken">دجاج 🍗</option><option value="meat">لحوم 🥩</option>
+                                    <option value="vegetables">خضروات 🥬</option><option value="seafood">مأكولات بحرية 🦐</option>
+                                    <option value="dairy">ألبان 🧀</option><option value="oil">زيوت وبهارات 🌿</option>
+                                    <option value="electricity">كهرباء 💡</option><option value="water">مياه 💧</option>
+                                    <option value="rent">إيجار 🏠</option><option value="salaries">مرتبات 👨‍🍳</option>
+                                    <option value="marketing">تسويق 📢</option><option value="maintenance">صيانة 🔧</option>
+                                    <option value="other">أخرى 📌</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold text-gold-400 block mb-1">المبلغ</label>
+                                <input type="number" id="txn-amount" class="glass-input" placeholder="0.00" required step="0.01" min="0" />
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gold-400 block mb-1">التاريخ</label>
+                                <input type="date" id="txn-date" class="glass-input" required />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gold-400 block mb-1">الوصف</label>
+                            <input type="text" id="txn-description" class="glass-input" placeholder="مثلاً: شراء دجاج للمطبخ" />
+                        </div>
+                        <button type="submit" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold"><i class="fa-regular fa-floppy-disk ml-2"></i>تسجيل</button>
+                    </form>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-emerald-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي الإيرادات</span>
+                        <h3 class="text-2xl font-black text-emerald-400 mt-1" id="finance-total-income">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-rose-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي المصروفات</span>
+                        <h3 class="text-2xl font-black text-rose-400 mt-1" id="finance-total-expenses">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-cyan-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">صافي الربح</span>
+                        <h3 class="text-2xl font-black text-cyan-400 mt-1" id="finance-net-profit">0</h3>
+                    </div>
+                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-gold-500">
+                        <span class="text-[11px] text-gray-400 font-bold block">عدد المعاملات</span>
+                        <h3 class="text-2xl font-black text-gold-gradient mt-1" id="finance-txn-count">0</h3>
+                    </div>
+                </div>
+                <div class="royal-card rounded-3xl overflow-hidden p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-serif font-bold text-base text-gold-gradient"><i class="fa-solid fa-list-ul ml-2"></i>سجل المعاملات</h3>
+                        <button onclick="window.clearAllTransactions()" class="text-xs text-red-400 hover:text-red-300 transition font-bold"><i class="fa-regular fa-trash-can ml-1"></i>مسح الكل</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs md:text-sm">
+                            <thead class="bg-dark-800 text-gold-400 text-[11px] font-bold border-b border-gold-500/20">
+                                <tr><th class="p-3">التاريخ</th><th class="p-3">النوع</th><th class="p-3">التصنيف</th><th class="p-3">الوصف</th><th class="p-3">المبلغ</th><th class="p-3 text-center">حذف</th></tr>
+                            </thead>
+                            <tbody id="transactions-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
+                    <h3 class="font-serif font-bold text-base text-gold-gradient mb-3"><i class="fa-solid fa-note-sticky ml-2"></i>ملاحظات يومية (خاصة) <span class="text-[10px] text-gray-400 font-normal mr-2">— تظهر فقط هنا</span></h3>
+                    <form id="form-daily-note" class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="daily-note-input" class="glass-input flex-1" placeholder="اكتب ملاحظة اليوم..." />
+                        <button type="submit" class="btn-gold px-6 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap"><i class="fa-regular fa-floppy-disk ml-1"></i>حفظ</button>
+                    </form>
+                    <div id="daily-notes-list" class="mt-4 space-y-2 max-h-48 overflow-y-auto"></div>
+                </div>
+            </section>
+
+            <!-- BRANDING (Currency List Expanded) -->
+            <section id="section-branding" class="tab-content hidden max-w-3xl">
+                <form id="form-branding" class="royal-card p-5 md:p-8 rounded-3xl space-y-4">
+                    <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient">إعدادات المطعم والعملة</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><label class="text-xs font-bold text-gold-400 block mb-1">اسم المطعم</label><input type="text" id="brand-name" class="glass-input" placeholder="Golden Spoon" required /></div>
+                        <div><label class="text-xs font-bold text-gold-400 block mb-1">معرف الرابط (Slug)</label><input type="text" id="brand-slug" class="glass-input text-gold-400 font-mono" placeholder="golden-spoon" required /></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رابط اللوجو (URL)</label><input type="url" id="brand-logo" class="glass-input" placeholder="https://..." required /></div>
+                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رقم الهاتف</label><input type="text" id="brand-phone" class="glass-input" placeholder="+201000000000" required /></div>
+                    </div>
+                    <hr class="border-gold-500/10" />
+
+                    <!-- العملات - قائمة شاملة جداً -->
+                    <div>
+                        <label class="text-xs font-bold text-gold-400 block mb-1"><i class="fa-solid fa-coins ml-1"></i>العملة المستخدمة <span class="text-gray-400 font-normal text-[10px] mr-1">(أكثر من 150 عملة حول العالم)</span></label>
+                        <select id="brand-currency" class="glass-input" required>
+                            <optgroup label="العملات الرئيسية">
+                                <option value="USD">🇺🇸 دولار أمريكي ($)</option>
+                                <option value="EUR">🇪🇺 يورو (€)</option>
+                                <option value="GBP">🇬🇧 جنيه استرليني (£)</option>
+                                <option value="EGP">🇪🇬 جنيه مصري (ج.م)</option>
+                                <option value="SAR">🇸🇦 ريال سعودي (ر.س)</option>
+                                <option value="AED">🇦🇪 درهم إماراتي (د.إ)</option>
+                                <option value="KWD">🇰🇼 دينار كويتي (د.ك)</option>
+                                <option value="BHD">🇧🇭 دينار بحريني (د.ب)</option>
+                                <option value="QAR">🇶🇦 ريال قطري (ر.ق)</option>
+                                <option value="OMR">🇴🇲 ريال عماني (ر.ع)</option>
+                                <option value="JOD">🇯🇴 دينار أردني (د.أ)</option>
+                                <option value="TRY">🇹🇷 ليرة تركية (₺)</option>
+                                <option value="CNY">🇨🇳 يوان صيني (¥)</option>
+                                <option value="JPY">🇯🇵 ين ياباني (¥)</option>
+                                <option value="INR">🇮🇳 روبية هندية (₹)</option>
+                                <option value="RUB">🇷🇺 روبل روسي (₽)</option>
+                                <option value="BRL">🇧🇷 ريال برازيلي (R$)</option>
+                                <option value="ZAR">🇿🇦 راند جنوب أفريقي (R)</option>
+                                <option value="AUD">🇦🇺 دولار أسترالي (A$)</option>
+                                <option value="CAD">🇨🇦 دولار كندي (C$)</option>
+                                <option value="CHF">🇨🇭 فرنك سويسري (CHF)</option>
+                            </optgroup>
+                            <optgroup label="آسيا والمحيط الهادئ">
+                                <option value="AFN">🇦🇫 أفغاني (؋)</option>
+                                <option value="BDT">🇧🇩 تاكا بنغلاديشي (৳)</option>
+                                <option value="BTN">🇧🇹 نولتروم بوتاني (Nu.)</option>
+                                <option value="MMK">🇲🇲 كيات ميانماري (K)</option>
+                                <option value="KHR">🇰🇭 رييل كمبودي (៛)</option>
+                                <option value="CNY">🇨🇳 يوان صيني (¥)</option>
+                                <option value="HKD">🇭🇰 دولار هونغ كونغ (HK$)</option>
+                                <option value="IDR">🇮🇩 روبية إندونيسية (Rp)</option>
+                                <option value="JPY">🇯🇵 ين ياباني (¥)</option>
+                                <option value="KZT">🇰🇿 تينغ كازاخستاني (₸)</option>
+                                <option value="KRW">🇰🇷 وون كوري (₩)</option>
+                                <option value="KGS">🇰🇬 سوم قيرغيزستاني (с)</option>
+                                <option value="LAK">🇱🇦 كيب لاوسي (₭)</option>
+                                <option value="MYR">🇲🇾 رينغيت ماليزي (RM)</option>
+                                <option value="MVR">🇲🇻 روفيا مالديفية (Rf)</option>
+                                <option value="MNT">🇲🇳 توغروغ منغولي (₮)</option>
+                                <option value="NPR">🇳🇵 روبية نيبالية (Rs)</option>
+                                <option value="PKR">🇵🇰 روبية باكستانية (Rs)</option>
+                                <option value="PHP">🇵🇭 بيزو فلبيني (₱)</option>
+                                <option value="SGD">🇸🇬 دولار سنغافوري (S$)</option>
+                                <option value="LKR">🇱🇰 روبية سريلانكية (Rs)</option>
+                                <option value="TWD">🇹🇼 دولار تايواني (NT$)</option>
+                                <option value="THB">🇹🇭 بات تايلاندي (฿)</option>
+                                <option value="UZS">🇺🇿 سوم أوزبكستاني (soʻm)</option>
+                                <option value="VND">🇻🇳 دونغ فيتنامي (₫)</option>
+                                <option value="TMT">🇹🇲 منات تركمانستاني (m)</option>
+                                <option value="TJS">🇹🇯 سوموني طاجيكستاني (SM)</option>
+                                <option value="AMD">🇦🇲 درام أرميني (֏)</option>
+                                <option value="AZN">🇦🇿 مانات أذربيجاني (₼)</option>
+                                <option value="GEL">🇬🇪 لاري جورجي (₾)</option>
+                                <option value="ILS">🇮🇱 شيكل إسرائيلي (₪)</option>
+                                <option value="IRR">🇮🇷 ريال إيراني (﷼)</option>
+                                <option value="IQD">🇮🇶 دينار عراقي (د.ع)</option>
+                                <option value="SYP">🇸🇾 ليرة سورية (ل.س)</option>
+                                <option value="LBP">🇱🇧 ليرة لبنانية (ل.ل)</option>
+                                <option value="YER">🇾🇪 ريال يمني (ر.ي)</option>
+                            </optgroup>
+                            <optgroup label="أفريقيا">
+                                <option value="DZD">🇩🇿 دينار جزائري (د.ج)</option>
+                                <option value="AOA">🇦🇴 كوانزا أنغولي (Kz)</option>
+                                <option value="BWP">🇧🇼 بولا بوتسواني (P)</option>
+                                <option value="BIF">🇧🇮 فرنك بوروندي (FBu)</option>
+                                <option value="CVE">🇨🇻 إيسكودو جزر الرأس الأخضر (Esc)</option>
+                                <option value="XAF">🇨🇲 فرنك وسط أفريقي (FCFA)</option>
+                                <option value="XOF">🇧🇫 فرنك غرب أفريقي (CFA)</option>
+                                <option value="KMF">🇰🇲 فرنك قمري (CF)</option>
+                                <option value="CDF">🇨🇩 فرنك كونغولي (FC)</option>
+                                <option value="DJF">🇩🇯 فرنك جيبوتي (Fdj)</option>
+                                <option value="EGP">🇪🇬 جنيه مصري (ج.م)</option>
+                                <option value="ERN">🇪🇷 ناكفا إريتري (Nfk)</option>
+                                <option value="ETB">🇪🇹 بير إثيوبي (Br)</option>
+                                <option value="GMD">🇬🇲 دالاسي غامبي (D)</option>
+                                <option value="GHS">🇬🇭 سيدي غاني (₵)</option>
+                                <option value="GNF">🇬🇳 فرنك غيني (FG)</option>
+                                <option value="KES">🇰🇪 شيلينغ كيني (KSh)</option>
+                                <option value="LSL">🇱🇸 لوتي ليسوتو (L)</option>
+                                <option value="LRD">🇱🇷 دولار ليبيري (L$)</option>
+                                <option value="LYD">🇱🇾 دينار ليبي (د.ل)</option>
+                                <option value="MGA">🇲🇬 أرياري مدغشقري (Ar)</option>
+                                <option value="MWK">🇲🇼 كواشا مالاوي (MK)</option>
+                                <option value="MRU">🇲🇷 أوقية موريتانية (UM)</option>
+                                <option value="MUR">🇲🇺 روبية موريشيوسية (Rs)</option>
+                                <option value="MAD">🇲🇦 درهم مغربي (د.م)</option>
+                                <option value="MZN">🇲🇿 متكال موزمبيقي (MT)</option>
+                                <option value="NAD">🇳🇦 دولار ناميبي (N$)</option>
+                                <option value="NGN">🇳🇬 نيرة نيجيرية (₦)</option>
+                                <option value="RWF">🇷🇼 فرنك رواندي (FRw)</option>
+                                <option value="STN">🇸🇹 دوبرا ساو تومي (Db)</option>
+                                <option value="SLL">🇸🇱 ليون سيراليوني (Le)</option>
+                                <option value="SOS">🇸🇴 شيلينغ صومالي (Sh)</option>
+                                <option value="ZAR">🇿🇦 راند جنوب أفريقي (R)</option>
+                                <option value="SSP">🇸🇸 جنيه جنوب سوداني (£)</option>
+                                <option value="SDG">🇸🇩 جنيه سوداني (ج.س)</option>
+                                <option value="SZL">🇸🇿 ليلانغيني سوازيلندي (L)</option>
+                                <option value="TZS">🇹🇿 شيلينغ تنزاني (TSh)</option>
+                                <option value="TND">🇹🇳 دينار تونسي (د.ت)</option>
+                                <option value="UGX">🇺🇬 شيلينغ أوغندي (USh)</option>
+                                <option value="ZMW">🇿🇲 كواشا زامبي (ZK)</option>
+                                <option value="ZWL">🇿🇼 دولار زيمبابوي (Z$)</option>
+                            </optgroup>
+                            <optgroup label="أوروبا">
+                                <option value="ALL">🇦🇱 ليك ألباني (L)</option>
+                                <option value="BAM">🇧🇦 مارك بوسني (KM)</option>
+                                <option value="BGN">🇧🇬 ليف بلغاري (лв)</option>
+                                <option value="HRK">🇭🇷 كونا كرواتي (kn)</option>
+                                <option value="CZK">🇨🇿 كرونة تشيكية (Kč)</option>
+                                <option value="DKK">🇩🇰 كرونة دنماركية (kr)</option>
+                                <option value="EUR">🇪🇺 يورو (€)</option>
+                                <option value="HUF">🇭🇺 فورنت مجري (Ft)</option>
+                                <option value="ISK">🇮🇸 كرونة آيسلندية (kr)</option>
+                                <option value="GBP">🇬🇧 جنيه استرليني (£)</option>
+                                <option value="MDL">🇲🇩 ليو مولدوفي (L)</option>
+                                <option value="NOK">🇳🇴 كرونة نرويجية (kr)</option>
+                                <option value="PLN">🇵🇱 زلوتي بولندي (zł)</option>
+                                <option value="RON">🇷🇴 ليو روماني (lei)</option>
+                                <option value="RUB">🇷🇺 روبل روسي (₽)</option>
+                                <option value="RSD">🇷🇸 دينار صربي (din.)</option>
+                                <option value="SEK">🇸🇪 كرونة سويدية (kr)</option>
+                                <option value="CHF">🇨🇭 فرنك سويسري (CHF)</option>
+                                <option value="UAH">🇺🇦 هريفنيا أوكرانية (₴)</option>
+                                <option value="TRY">🇹🇷 ليرة تركية (₺)</option>
+                            </optgroup>
+                            <optgroup label="الأمريكتان">
+                                <option value="ARS">🇦🇷 بيزو أرجنتيني ($)</option>
+                                <option value="BOB">🇧🇴 بوليفيانو بوليفي (Bs)</option>
+                                <option value="BRL">🇧🇷 ريال برازيلي (R$)</option>
+                                <option value="CAD">🇨🇦 دولار كندي (C$)</option>
+                                <option value="CLP">🇨🇱 بيزو تشيلي ($)</option>
+                                <option value="COP">🇨🇴 بيزو كولومبي ($)</option>
+                                <option value="CRC">🇨🇷 كولون كوستاريكي (₡)</option>
+                                <option value="CUP">🇨🇺 بيزو كوبي ($)</option>
+                                <option value="DOP">🇩🇴 بيزو دومينيكاني (RD$)</option>
+                                <option value="USD">🇺🇸 دولار أمريكي ($)</option>
+                                <option value="GTQ">🇬🇹 كيتزال غواتيمالي (Q)</option>
+                                <option value="HNL">🇭🇳 لمبيرة هندوراسية (L)</option>
+                                <option value="MXN">🇲🇽 بيزو مكسيكي ($)</option>
+                                <option value="NIO">🇳🇨 كوردوبا نيكاراغوية (C$)</option>
+                                <option value="PAB">🇵🇦 بالبوا بنمي (B/.)</option>
+                                <option value="PYG">🇵🇾 غواراني باراغواي (₲)</option>
+                                <option value="PEN">🇵🇪 سول بيروفي (S/)</option>
+                                <option value="UYU">🇺🇾 بيزو أوروغواي ($)</option>
+                                <option value="VES">🇻🇪 بوليفار فنزويلي (Bs.S)</option>
+                            </optgroup>
+                            <optgroup label="أوقيانوسيا">
+                                <option value="AUD">🇦🇺 دولار أسترالي (A$)</option>
+                                <option value="FJD">🇫🇯 دولار فيجي (FJ$)</option>
+                                <option value="NZD">🇳🇿 دولار نيوزيلندي (NZ$)</option>
+                                <option value="PGK">🇵🇬 كينا بابوا غينيا الجديدة (K)</option>
+                                <option value="SBD">🇸🇧 دولار جزر سليمان (SI$)</option>
+                                <option value="TOP">🇹🇴 بانغا تونغا (T$)</option>
+                                <option value="VUV">🇻🇺 فاتو فانواتو (VT)</option>
+                                <option value="WST">🇼🇸 تالا ساموا (WS$)</option>
+                            </optgroup>
+                        </select>
+                        <p class="text-[10px] text-gray-500 mt-1">سيتم تطبيق العملة تلقائياً على جميع الأسعار والإحصائيات في لوحة التحكم والمنيو.</p>
+                    </div>
+
+                    <hr class="border-gold-500/10" />
+                    <h4 class="text-xs font-bold text-gold-300"><i class="fa-solid fa-location-dot ml-1"></i> خريطة جوجل وتقييمات</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رابط Google Maps</label><input type="url" id="brand-maps-url" class="glass-input" placeholder="https://maps.google.com/..." /></div>
+                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رابط التقييم</label><input type="url" id="brand-review-url" class="glass-input" placeholder="https://g.page/r/..." /></div>
+                    </div>
+                    <hr class="border-gold-500/10" />
+                    <h4 class="text-xs font-bold text-gold-300"><i class="fa-solid fa-share-nodes ml-1"></i> التواصل الاجتماعي</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div><label class="text-xs font-bold text-gray-400 block mb-1">واتساب</label><input type="text" id="brand-whatsapp" class="glass-input" placeholder="201000000000" /></div>
+                        <div><label class="text-xs font-bold text-gray-400 block mb-1">إنستغرام</label><input type="url" id="brand-instagram" class="glass-input" placeholder="https://instagram.com/..." /></div>
+                        <div><label class="text-xs font-bold text-gray-400 block mb-1">فيسبوك</label><input type="url" id="brand-facebook" class="glass-input" placeholder="https://facebook.com/..." /></div>
+                    </div>
+                    <hr class="border-gold-500/10" />
+                    <h4 class="text-xs font-bold text-gold-300"><i class="fa-solid fa-paintbrush ml-1"></i> محتوى الهيرو</h4>
+                    <div><input type="text" id="brand-header-tagline" class="glass-input" placeholder="منيو تفاعلي ثلاثي الأبعاد" /></div>
+                    <div><input type="text" id="brand-hero-badge" class="glass-input" placeholder="تجربة طعام فاخرة" /></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><input type="text" id="brand-hero-title" class="glass-input" placeholder="أشهى الأطباق" /></div>
+                        <div><input type="text" id="brand-hero-subtitle" class="glass-input" placeholder="بنماذج ثلاثية الأبعاد" /></div>
+                    </div>
+                    <div><textarea id="brand-hero-desc" class="glass-input" rows="2" placeholder="استمتع بتجربة تصفح فريدة..."></textarea></div>
+
+                    <button type="submit" id="btn-save-branding" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold"><i class="fa-regular fa-floppy-disk ml-2"></i>حفظ كافة الإعدادات</button>
+                </form>
+            </section>
+
+            <!-- ADD DISH -->
+            <section id="section-add-dish" class="tab-content hidden max-w-2xl">
+                <form id="form-add-product" class="royal-card p-5 md:p-8 rounded-3xl space-y-4">
+                    <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient">إضافة طبق جديد</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="prod-title" placeholder="اسم الطبق" class="glass-input" required />
+                        <div><input type="number" id="prod-price" placeholder="السعر" class="glass-input" required step="0.01" min="0" /><span id="prod-currency-label" class="text-[10px] text-gold-400 block mt-1">ج.م</span></div>
+                    </div>
+                    <div><label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label><input type="text" id="prod-category" class="glass-input" placeholder="برجر، بيتزا..." required /></div>
+                    <div><label class="text-xs font-bold text-gold-400 block mb-1">ملف 3D (.glb)</label><input type="file" id="prod-file-3d" accept=".glb,.gltf" class="glass-input text-xs p-2" required /></div>
+                    <textarea id="prod-desc" placeholder="وصف الطبق..." class="glass-input p-3" rows="3" required></textarea>
+                    <div id="upload-progress" class="hidden space-y-1">
+                        <div class="flex justify-between text-xs text-gold-400 font-bold"><span>جاري الرفع...</span><span id="upload-percent">0%</span></div>
+                        <div class="w-full h-2 bg-dark-900 rounded-full overflow-hidden border border-gold-500/20"><div id="upload-bar" class="h-full bg-gold-500 w-0 transition-all"></div></div>
+                    </div>
+                    <button type="submit" id="btn-add-product" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold">رفع ونشر</button>
+                </form>
+            </section>
+
+            <!-- DISHES LIST -->
+            <section id="section-dishes-list" class="tab-content hidden">
+                <div class="royal-card rounded-3xl overflow-x-auto p-4">
+                    <table class="w-full text-right text-xs md:text-sm">
+                        <thead class="bg-dark-800 text-gold-400 text-[11px] font-bold border-b border-gold-500/20">
+                            <tr><th class="p-3">3D</th><th class="p-3">الاسم</th><th class="p-3">التصنيف</th><th class="p-3">السعر</th><th class="p-3 text-center">التحكم</th></tr>
+                        </thead>
+                        <tbody id="dishes-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="edit-dish-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="royal-card w-full max-w-lg p-5 rounded-3xl border border-gold-500/30 space-y-3">
+            <div class="flex justify-between items-center border-b border-gold-500/20 pb-3">
+                <h3 class="font-serif font-bold text-base text-gold-gradient"><i class="fa-solid fa-pen-to-square ml-1"></i>تعديل الطبق</h3>
+                <button onclick="window.closeEditModal()" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <form id="form-edit-product" class="space-y-3">
+                <input type="hidden" id="edit-prod-id" />
+                <div><label class="text-xs font-bold text-gold-400 block mb-1">الاسم</label><input type="text" id="edit-prod-title" class="glass-input" required /></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-xs font-bold text-gold-400 block mb-1">السعر</label><input type="number" id="edit-prod-price" class="glass-input" required step="0.01" min="0" /></div>
+                    <div><label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label><input type="text" id="edit-prod-category" class="glass-input" required /></div>
+                </div>
+                <div><label class="text-xs font-bold text-gold-400 block mb-1">الوصف</label><textarea id="edit-prod-desc" class="glass-input" rows="2" required></textarea></div>
+                <div><label class="text-xs font-bold text-gold-400 block mb-1">تحديث الـ 3D (اختياري)</label><input type="file" id="edit-prod-file-3d" accept=".glb,.gltf" class="glass-input text-xs" /></div>
+                <div id="edit-upload-progress" class="hidden text-xs text-gold-400 font-bold">جاري الرفع: <span id="edit-upload-percent">0%</span></div>
+                <button type="submit" id="btn-save-edit" class="btn-gold w-full py-2.5 rounded-xl font-bold text-xs md:text-sm mt-2">حفظ التغييرات</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══ FIREBASE & LOGIC ═══ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEU3ksUDW4jYgxHZdApYJij6oKhywKLIo",
+            authDomain: "d-menu-31578.firebaseapp.com",
+            databaseURL: "https://d-menu-31578-default-rtdb.firebaseio.com",
+            projectId: "d-menu-31578",
+            storageBucket: "d-menu-31578.firebasestorage.app",
+            messagingSenderId: "797012778750",
+            appId: "1:797012778750:web:5265fa2f6103efa3cd8faf",
+            measurementId: "G-Y603ML76GR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        const loginOverlay = document.getElementById('login-overlay');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const toastContainer = document.getElementById('toast-container');
+
+        let knownOrdersCount = 0;
+        let cachedProducts = [];
+        let cachedTransactions = [];
+        let cachedDailyNotes = [];
+        let currentCurrency = 'EGP';
+        let currencySymbol = 'ج.م';
+
+        // ─── خريطة العملات الموسعة (أكثر من 150 عملة) ───
+        const CURRENCY_MAP = {
+            'AED': { symbol: 'د.إ', code: 'AED' }, 'AFN': { symbol: '؋', code: 'AFN' },
+            'ALL': { symbol: 'L', code: 'ALL' }, 'AMD': { symbol: '֏', code: 'AMD' },
+            'ANG': { symbol: 'ƒ', code: 'ANG' }, 'AOA': { symbol: 'Kz', code: 'AOA' },
+            'ARS': { symbol: '$', code: 'ARS' }, 'AUD': { symbol: 'A$', code: 'AUD' },
+            'AWG': { symbol: 'ƒ', code: 'AWG' }, 'AZN': { symbol: '₼', code: 'AZN' },
+            'BAM': { symbol: 'KM', code: 'BAM' }, 'BBD': { symbol: 'Bds$', code: 'BBD' },
+            'BDT': { symbol: '৳', code: 'BDT' }, 'BGN': { symbol: 'лв', code: 'BGN' },
+            'BHD': { symbol: 'د.ب', code: 'BHD' }, 'BIF': { symbol: 'FBu', code: 'BIF' },
+            'BMD': { symbol: '$', code: 'BMD' }, 'BND': { symbol: 'B$', code: 'BND' },
+            'BOB': { symbol: 'Bs', code: 'BOB' }, 'BRL': { symbol: 'R$', code: 'BRL' },
+            'BSD': { symbol: '$', code: 'BSD' }, 'BTN': { symbol: 'Nu.', code: 'BTN' },
+            'BWP': { symbol: 'P', code: 'BWP' }, 'BYN': { symbol: 'Br', code: 'BYN' },
+            'BZD': { symbol: 'BZ$', code: 'BZD' }, 'CAD': { symbol: 'C$', code: 'CAD' },
+            'CDF': { symbol: 'FC', code: 'CDF' }, 'CHF': { symbol: 'CHF', code: 'CHF' },
+            'CLP': { symbol: '$', code: 'CLP' }, 'CNY': { symbol: '¥', code: 'CNY' },
+            'COP': { symbol: '$', code: 'COP' }, 'CRC': { symbol: '₡', code: 'CRC' },
+            'CUP': { symbol: '$', code: 'CUP' }, 'CVE': { symbol: 'Esc', code: 'CVE' },
+            'CZK': { symbol: 'Kč', code: 'CZK' }, 'DJF': { symbol: 'Fdj', code: 'DJF' },
+            'DKK': { symbol: 'kr', code: 'DKK' }, 'DOP': { symbol: 'RD$', code: 'DOP' },
+            'DZD': { symbol: 'د.ج', code: 'DZD' }, 'EGP': { symbol: 'ج.م', code: 'EGP' },
+            'ERN': { symbol: 'Nfk', code: 'ERN' }, 'ETB': { symbol: 'Br', code: 'ETB' },
+            'EUR': { symbol: '€', code: 'EUR' }, 'FJD': { symbol: 'FJ$', code: 'FJD' },
+            'FKP': { symbol: '£', code: 'FKP' }, 'GBP': { symbol: '£', code: 'GBP' },
+            'GEL': { symbol: '₾', code: 'GEL' }, 'GHS': { symbol: '₵', code: 'GHS' },
+            'GIP': { symbol: '£', code: 'GIP' }, 'GMD': { symbol: 'D', code: 'GMD' },
+            'GNF': { symbol: 'FG', code: 'GNF' }, 'GTQ': { symbol: 'Q', code: 'GTQ' },
+            'GYD': { symbol: '$', code: 'GYD' }, 'HKD': { symbol: 'HK$', code: 'HKD' },
+            'HNL': { symbol: 'L', code: 'HNL' }, 'HRK': { symbol: 'kn', code: 'HRK' },
+            'HTG': { symbol: 'G', code: 'HTG' }, 'HUF': { symbol: 'Ft', code: 'HUF' },
+            'IDR': { symbol: 'Rp', code: 'IDR' }, 'ILS': { symbol: '₪', code: 'ILS' },
+            'INR': { symbol: '₹', code: 'INR' }, 'IQD': { symbol: 'د.ع', code: 'IQD' },
+            'IRR': { symbol: '﷼', code: 'IRR' }, 'ISK': { symbol: 'kr', code: 'ISK' },
+            'JMD': { symbol: 'J$', code: 'JMD' }, 'JOD': { symbol: 'د.أ', code: 'JOD' },
+            'JPY': { symbol: '¥', code: 'JPY' }, 'KES': { symbol: 'KSh', code: 'KES' },
+            'KGS': { symbol: 'с', code: 'KGS' }, 'KHR': { symbol: '៛', code: 'KHR' },
+            'KMF': { symbol: 'CF', code: 'KMF' }, 'KPW': { symbol: '₩', code: 'KPW' },
+            'KRW': { symbol: '₩', code: 'KRW' }, 'KWD': { symbol: 'د.ك', code: 'KWD' },
+            'KYD': { symbol: '$', code: 'KYD' }, 'KZT': { symbol: '₸', code: 'KZT' },
+            'LAK': { symbol: '₭', code: 'LAK' }, 'LBP': { symbol: 'ل.ل', code: 'LBP' },
+            'LKR': { symbol: 'Rs', code: 'LKR' }, 'LRD': { symbol: 'L$', code: 'LRD' },
+            'LSL': { symbol: 'L', code: 'LSL' }, 'LYD': { symbol: 'د.ل', code: 'LYD' },
+            'MAD': { symbol: 'د.م', code: 'MAD' }, 'MDL': { symbol: 'L', code: 'MDL' },
+            'MGA': { symbol: 'Ar', code: 'MGA' }, 'MKD': { symbol: 'ден', code: 'MKD' },
+            'MMK': { symbol: 'K', code: 'MMK' }, 'MNT': { symbol: '₮', code: 'MNT' },
+            'MOP': { symbol: 'MOP$', code: 'MOP' }, 'MRU': { symbol: 'UM', code: 'MRU' },
+            'MUR': { symbol: 'Rs', code: 'MUR' }, 'MVR': { symbol: 'Rf', code: 'MVR' },
+            'MWK': { symbol: 'MK', code: 'MWK' }, 'MXN': { symbol: '$', code: 'MXN' },
+            'MYR': { symbol: 'RM', code: 'MYR' }, 'MZN': { symbol: 'MT', code: 'MZN' },
+            'NAD': { symbol: 'N$', code: 'NAD' }, 'NGN': { symbol: '₦', code: 'NGN' },
+            'NIO': { symbol: 'C$', code: 'NIO' }, 'NOK': { symbol: 'kr', code: 'NOK' },
+            'NPR': { symbol: 'Rs', code: 'NPR' }, 'NZD': { symbol: 'NZ$', code: 'NZD' },
+            'OMR': { symbol: 'ر.ع', code: 'OMR' }, 'PAB': { symbol: 'B/.', code: 'PAB' },
+            'PEN': { symbol: 'S/', code: 'PEN' }, 'PGK': { symbol: 'K', code: 'PGK' },
+            'PHP': { symbol: '₱', code: 'PHP' }, 'PKR': { symbol: 'Rs', code: 'PKR' },
+            'PLN': { symbol: 'zł', code: 'PLN' }, 'PYG': { symbol: '₲', code: 'PYG' },
+            'QAR': { symbol: 'ر.ق', code: 'QAR' }, 'RON': { symbol: 'lei', code: 'RON' },
+            'RSD': { symbol: 'din.', code: 'RSD' }, 'RUB': { symbol: '₽', code: 'RUB' },
+            'RWF': { symbol: 'FRw', code: 'RWF' }, 'SAR': { symbol: 'ر.س', code: 'SAR' },
+            'SBD': { symbol: 'SI$', code: 'SBD' }, 'SCR': { symbol: '₨', code: 'SCR' },
+            'SDG': { symbol: 'ج.س', code: 'SDG' }, 'SEK': { symbol: 'kr', code: 'SEK' },
+            'SGD': { symbol: 'S$', code: 'SGD' }, 'SHP': { symbol: '£', code: 'SHP' },
+            'SLL': { symbol: 'Le', code: 'SLL' }, 'SOS': { symbol: 'Sh', code: 'SOS' },
+            'SRD': { symbol: '$', code: 'SRD' }, 'SSP': { symbol: '£', code: 'SSP' },
+            'STN': { symbol: 'Db', code: 'STN' }, 'SYP': { symbol: 'ل.س', code: 'SYP' },
+            'SZL': { symbol: 'L', code: 'SZL' }, 'THB': { symbol: '฿', code: 'THB' },
+            'TJS': { symbol: 'SM', code: 'TJS' }, 'TMT': { symbol: 'm', code: 'TMT' },
+            'TND': { symbol: 'د.ت', code: 'TND' }, 'TOP': { symbol: 'T$', code: 'TOP' },
+            'TRY': { symbol: '₺', code: 'TRY' }, 'TTD': { symbol: 'TT$', code: 'TTD' },
+            'TWD': { symbol: 'NT$', code: 'TWD' }, 'TZS': { symbol: 'TSh', code: 'TZS' },
+            'UAH': { symbol: '₴', code: 'UAH' }, 'UGX': { symbol: 'USh', code: 'UGX' },
+            'USD': { symbol: '$', code: 'USD' }, 'UYU': { symbol: '$', code: 'UYU' },
+            'UZS': { symbol: 'soʻm', code: 'UZS' }, 'VES': { symbol: 'Bs.S', code: 'VES' },
+            'VND': { symbol: '₫', code: 'VND' }, 'VUV': { symbol: 'VT', code: 'VUV' },
+            'WST': { symbol: 'WS$', code: 'WST' }, 'XAF': { symbol: 'FCFA', code: 'XAF' },
+            'XCD': { symbol: 'EC$', code: 'XCD' }, 'XOF': { symbol: 'CFA', code: 'XOF' },
+            'XPF': { symbol: '₣', code: 'XPF' }, 'YER': { symbol: 'ر.ي', code: 'YER' },
+            'ZAR': { symbol: 'R', code: 'ZAR' }, 'ZMW': { symbol: 'ZK', code: 'ZMW' },
+            'ZWL': { symbol: 'Z$', code: 'ZWL' }
+        };
+
+        function formatCurrency(amount, currencyCode = currentCurrency) {
+            const info = CURRENCY_MAP[currencyCode] || CURRENCY_MAP['EGP'];
+            const symbol = info.symbol;
+            if (amount === undefined || amount === null || isNaN(amount)) return `0 ${symbol}`;
+            const num = Number(amount);
+            return `${num.toFixed(2)} ${symbol}`;
+        }
+
+        function getCurrencySymbol(code) {
+            return (CURRENCY_MAP[code] || CURRENCY_MAP['EGP']).symbol;
+        }
+
+        function updateCurrencyUI() {
+            const symbol = getCurrencySymbol(currentCurrency);
+            document.getElementById('header-currency-badge').innerHTML =
+                `<i class="fa-solid fa-money-bill-wave ml-1"></i> ${symbol}`;
+            document.getElementById('prod-currency-label').textContent = symbol;
+            updateAllPriceDisplays();
+        }
+
+        function updateAllPriceDisplays() {
+            renderDishesTable();
+            updateStatsUI();
+            updateFinanceUI();
+        }
+
+        function showToast(msg) {
+            const el = document.createElement('div');
+            el.className = 'toast';
+            el.textContent = msg;
+            toastContainer.appendChild(el);
+            setTimeout(() => { el.remove(); }, 3500);
+        }
+
+        function playNotificationSound() {
+            try {
+                const ctx = new(window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        // AUTH
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            loginError.classList.add('hidden');
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast('✅ تم تسجيل الدخول بنجاح');
+            } catch (err) {
+                loginError.textContent = 'بيانات الدخول غير صحيحة!';
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginOverlay.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                loadRestaurantSettings();
+                listenLiveOrders();
+                listenProducts();
+                listenTransactions();
+                listenDailyNotes();
+            } else {
+                dashboard.classList.add('hidden');
+                loginOverlay.classList.remove('hidden');
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => signOut(auth));
+        window.toggleMobileSidebar = function() {
+            document.getElementById('sidebar-menu').classList.toggle('translate-x-full');
+        };
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-btn-${tabId}`).classList.add('active');
+            if (window.innerWidth < 768) document.getElementById('sidebar-menu').classList.add('translate-x-full');
+            const titles = { 'orders': 'طلبات الطاولات المباشرة', 'stats': 'التحليلات والإحصائيات المتقدمة', 'finance': 'المالية والأرباح',
+                'branding': 'إعدادات المطعم والعملة', 'add-dish': 'إضافة طبق 3D جديد', 'dishes-list': 'إدارة الأطباق' };
+            document.getElementById('header-title').textContent = titles[tabId] || 'لوحة التحكم';
+        };
+
+        // ORDERS
+        function listenLiveOrders() {
+            const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+            onSnapshot(q, (snapshot) => {
+                const orders = [];
+                let totalRevenue = 0;
+                const dishCountMap = {};
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const order = { id: docSnap.id, ...data };
+                    orders.push(order);
+                    if (data.status === 'served') {
+                        totalRevenue += (data.totalPrice || 0);
+                        (data.items || []).forEach(item => {
+                            const key = item.title || 'unknown';
+                            dishCountMap[key] = (dishCountMap[key] || 0) + (item.qty || 0);
+                        });
+                    }
+                });
+                let topDish = '—';
+                let topCount = 0;
+                for (const [name, count] of Object.entries(dishCountMap)) {
+                    if (count > topCount) { topCount = count;
+                        topDish = name; }
+                }
+                const pendingOrders = orders.filter(o => o.status === 'pending');
+                if (orders.length > knownOrdersCount && knownOrdersCount > 0) { playNotificationSound();
+                    showToast('🔔 وصول طلب جديد!'); }
+                knownOrdersCount = orders.length;
+                const badge = document.getElementById('badge-orders-count');
+                if (pendingOrders.length > 0) { badge.textContent = pendingOrders.length;
+                    badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+                document.getElementById('stat-orders-today').textContent = orders.length;
+                document.getElementById('stat-total-revenue').textContent = formatCurrency(totalRevenue);
+                document.getElementById('stat-top-dish').textContent = topDish;
+                const avgOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
+                document.getElementById('stat-avg-order').textContent = formatCurrency(avgOrder);
+                window._orderStats = { totalRevenue, ordersCount: orders.length, avgOrder, topDish };
+                renderOrdersCards(orders);
+                updateStatsUI();
+                updateFinanceUI();
+            });
+        }
+
+        function renderOrdersCards(orders) {
+            const container = document.getElementById('orders-container');
+            if (!orders.length) {
+                container.innerHTML =
+                    `<div class="col-span-full text-center py-16 text-gray-500">لا توجد طلبات سابقة أو حالية</div>`;
+                return;
+            }
+            container.innerHTML = orders.map(o => {
+                const statusColors = { 'pending': 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                    'preparing': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                    'served': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+                    'cancelled': 'bg-red-500/20 text-red-300 border-red-500/30' };
+                const statusTitles = { 'pending': 'قيد الانتظار ⏳', 'preparing': 'جاري التحضير 👨‍🍳',
+                    'served': 'تم التقديم ✅', 'cancelled': 'ملغى ❌' };
+                const itemsListHtml = (o.items || []).map(item =>
+                    `<div class="flex justify-between items-center text-xs py-1 border-b border-gold-500/10"><span class="text-gray-200 font-bold">${item.title} <span class="text-gold-400">×${item.qty}</span></span><span class="text-gold-400 font-mono">${formatCurrency(item.price * item.qty)}</span></div>`
+                    ).join('');
+                return `<div class="royal-card p-5 rounded-3xl space-y-4 border border-gold-500/20 relative">
+                            <div class="flex justify-between items-start"><div><span class="text-[10px] text-gray-400 block font-bold">طاولة</span><h3 class="font-serif font-black text-3xl text-gold-gradient">#${o.tableNumber || '?'}</h3></div><span class="px-3 py-1 rounded-full text-[10px] font-black border ${statusColors[o.status] || statusColors['pending']}">${statusTitles[o.status] || 'جديد'}</span></div>
+                            <div class="bg-dark-900/80 p-3 rounded-2xl border border-gold-500/10 space-y-1"><p class="text-[10px] text-gold-400 font-bold mb-1">الوجبات:</p>${itemsListHtml}<div class="flex justify-between items-center pt-2 font-bold text-sm"><span class="text-gray-300">الإجمالي:</span><span class="text-gold-gradient font-serif font-black">${formatCurrency(o.totalPrice || 0)}</span></div></div>
+                            ${o.notes ? `<p class="text-[11px] text-amber-200/80 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20"><i class="fa-solid fa-comment-dots ml-1"></i> ${o.notes}</p>` : ''}
+                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gold-500/10"><button onclick="window.updateOrderStatus('${o.id}', 'preparing')" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 text-xs py-1.5 rounded-xl font-bold transition">تحضير 👨‍🍳</button><button onclick="window.updateOrderStatus('${o.id}', 'served')" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 text-xs py-1.5 rounded-xl font-bold transition">تم التقديم ✅</button></div>
+                        </div>`;
+            }).join('');
+        }
+
+        window.updateOrderStatus = async function(orderId, newStatus) {
+            try { await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
+                showToast('✅ تم التحديث'); } catch (err) { showToast('❌ خطأ: ' + err.message); }
+        };
+
+        // PRODUCTS
+        function listenProducts() {
+            onSnapshot(collection(db, 'products'), (snapshot) => {
+                cachedProducts = [];
+                snapshot.forEach(docSnap => cachedProducts.push({ id: docSnap.id, ...docSnap.data() }));
+                document.getElementById('stat-total-dishes').textContent = cachedProducts.length;
+                document.getElementById('stat-3d-models').textContent = cachedProducts.filter(p => p.modelUrl).length;
+                renderDishesTable();
+                updateStatsUI();
+            });
+        }
+
+        function renderDishesTable() {
+            const tbody = document.getElementById('dishes-table-body');
+            if (!cachedProducts.length) { tbody.innerHTML =
+                    `<tr><td colspan="5" class="text-center py-6 text-gray-500">لا توجد أطباق</td></tr>`; return; }
+            tbody.innerHTML = cachedProducts.map(p =>
+                `<tr class="border-b border-gold-500/10 hover:bg-gold-500/5">
+                            <td class="p-3"><i class="fa-solid fa-cube text-gold-400"></i></td>
+                            <td class="p-3 font-bold text-white">${p.title || ''}</td>
+                            <td class="p-3 text-xs"><span class="bg-gold-500/10 px-2.5 py-1 rounded-full text-gold-300 font-bold">${p.category || 'عام'}</span></td>
+                            <td class="p-3 font-bold text-gold-gradient">${formatCurrency(p.price || 0)}</td>
+                            <td class="p-3 text-center flex items-center justify-center gap-2">
+                                <button onclick="window.openEditModal('${p.id}')" class="bg-gold-500/20 text-gold-300 hover:bg-gold-500/40 px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                                <button onclick="window.deleteProduct('${p.id}')" class="text-red-400 hover:text-red-500 p-1"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>`
+            ).join('');
+        }
+
+        window.openEditModal = function(id) {
+            const p = cachedProducts.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('edit-prod-id').value = p.id;
+            document.getElementById('edit-prod-title').value = p.title || '';
+            document.getElementById('edit-prod-price').value = p.price || 0;
+            document.getElementById('edit-prod-category').value = p.category || '';
+            document.getElementById('edit-prod-desc').value = p.desc || '';
+            document.getElementById('edit-dish-modal').classList.remove('hidden');
+        };
+        window.closeEditModal = function() { document.getElementById('edit-dish-modal').classList.add('hidden'); };
+        window.deleteProduct = async function(id) {
+            if (confirm('حذف هذا الطبق؟')) { try { await deleteDoc(doc(db, 'products', id));
+                    showToast('🗑️ تم الحذف'); } catch (err) { showToast('❌ خطأ: ' + err.message); } }
+        };
+
+        document.getElementById('form-edit-product').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-prod-id').value;
+            const title = document.getElementById('edit-prod-title').value;
+            const price = parseFloat(document.getElementById('edit-prod-price').value);
+            const category = document.getElementById('edit-prod-category').value;
+            const desc = document.getElementById('edit-prod-desc').value;
+            const file = document.getElementById('edit-prod-file-3d').files[0];
+            const btnSave = document.getElementById('btn-save-edit');
+            btnSave.disabled = true;
+            try {
+                let updateData = { title, price, category, desc };
+                if (file) {
+                    document.getElementById('edit-upload-progress').classList.remove('hidden');
+                    const storageRef = ref(storage, `models/${Date.now()}_${file.name}`);
+                    const uploadTask = uploadBytesResumable(storageRef, file);
+                    await new Promise((resolve, reject) => {
+                        uploadTask.on('state_changed', (snap) => { document.getElementById('edit-upload-percent')
+                                .textContent = Math.round((snap.bytesTransferred / snap.totalBytes) * 100) + '%'; },
+                            reject, async () => { updateData.modelUrl = await getDownloadURL(uploadTask.snapshot
+                                    .ref);
+                                resolve(); });
+                    });
+                }
+                await updateDoc(doc(db, 'products', id), updateData);
+                showToast('✅ تم التعديل');
+                window.closeEditModal();
+            } catch (err) { showToast('❌ خطأ: ' + err.message); } finally { btnSave.disabled = false;
+                document.getElementById('edit-upload-progress').classList.add('hidden'); }
+        });
+
+        document.getElementById('form-add-product').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('prod-title').value;
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const category = document.getElementById('prod-category').value.trim() || 'عام';
+            const desc = document.getElementById('prod-desc').value;
+            const file = document.getElementById('prod-file-3d').files[0];
+            if (!file) return showToast('⚠️ اختر ملف .glb');
+            const progressContainer = document.getElementById('upload-progress');
+            const progressBar = document.getElementById('upload-bar');
+            const percentSpan = document.getElementById('upload-percent');
+            const btnSubmit = document.getElementById('btn-add-product');
+            progressContainer.classList.remove('hidden');
+            btnSubmit.disabled = true;
+            const storageRef = ref(storage, `models/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+            uploadTask.on('state_changed', (snap) => { const p = Math.round((snap.bytesTransferred / snap.totalBytes) *
+                    100);
+                percentSpan.textContent = p + '%';
+                progressBar.style.width = p + '%'; }, (err) => { progressContainer.classList.add('hidden');
+                btnSubmit.disabled = false;
+                showToast('❌ فشل الرفع: ' + err.message); }, async () => {
+                try {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    await setDoc(doc(collection(db, 'products')), { title, price, category, desc,
+                        modelUrl: downloadURL, createdAt: serverTimestamp() });
+                    progressContainer.classList.add('hidden');
+                    btnSubmit.disabled = false;
+                    document.getElementById('form-add-product').reset();
+                    showToast('🎉 تم النشر بنجاح!');
+                } catch (dbErr) { btnSubmit.disabled = false;
+                    showToast('❌ خطأ: ' + dbErr.message); }
+            });
+        });
+
+        // TRANSACTIONS
+        function listenTransactions() {
+            const q = query(collection(db, 'transactions'), orderBy('date', 'desc'));
+            onSnapshot(q, (snapshot) => {
+                cachedTransactions = [];
+                snapshot.forEach(docSnap => cachedTransactions.push({ id: docSnap.id, ...docSnap.data() }));
+                renderTransactionsTable();
+                updateFinanceUI();
+                updateStatsUI();
+                updateExpenseBreakdown();
+            });
+        }
+
+        function renderTransactionsTable() {
+            const tbody = document.getElementById('transactions-table-body');
+            if (!cachedTransactions.length) { tbody.innerHTML =
+                    `<tr><td colspan="6" class="text-center py-6 text-gray-500">لا توجد معاملات</td></tr>`; return; }
+            const categoryLabels = { 'chicken': 'دجاج 🍗', 'meat': 'لحوم 🥩', 'vegetables': 'خضروات 🥬',
+                'seafood': 'مأكولات بحرية 🦐', 'dairy': 'ألبان 🧀', 'oil': 'زيوت وبهارات 🌿', 'electricity': 'كهرباء 💡',
+                'water': 'مياه 💧', 'rent': 'إيجار 🏠', 'salaries': 'مرتبات 👨‍🍳', 'marketing': 'تسويق 📢',
+                'maintenance': 'صيانة 🔧', 'other': 'أخرى 📌' };
+            tbody.innerHTML = cachedTransactions.slice(0, 50).map(t => {
+                const isExpense = t.type === 'expense';
+                const color = isExpense ? 'text-rose-400' : 'text-emerald-400';
+                const sign = isExpense ? '-' : '+';
+                const catLabel = categoryLabels[t.category] || t.category || 'أخرى';
+                return `<tr class="transaction-row border-b border-gold-500/5">
+                            <td class="p-3 text-gray-400 text-[11px]">${t.date || '—'}</td>
+                            <td class="p-3"><span class="${isExpense ? 'text-rose-400' : 'text-emerald-400'} font-bold text-[11px]">${isExpense ? 'مصروف 🧾' : 'إيراد 💰'}</span></td>
+                            <td class="p-3"><span class="expense-category-badge bg-gold-500/10 text-gold-300">${catLabel}</span></td>
+                            <td class="p-3 text-gray-300 max-w-[120px] truncate" title="${t.description || ''}">${t.description || '—'}</td>
+                            <td class="p-3 font-bold ${color}">${sign} ${formatCurrency(t.amount)}</td>
+                            <td class="p-3 text-center"><button onclick="window.deleteTransaction('${t.id}')" class="text-red-400/60 hover:text-red-400 transition text-xs"><i class="fa-regular fa-trash-can"></i></button></td>
+                        </tr>`;
+            }).join('');
+        }
+
+        window.deleteTransaction = async function(id) {
+            if (confirm('حذف هذه المعاملة؟')) { try { await deleteDoc(doc(db, 'transactions', id));
+                    showToast('🗑️ تم الحذف'); } catch (err) { showToast('❌ خطأ: ' + err.message); } }
+        };
+        window.clearAllTransactions = async function() {
+            if (!confirm('⚠️ مسح كل المعاملات؟')) return;
+            try { const batch = writeBatch(db);
+                cachedTransactions.forEach(t => batch.delete(doc(db, 'transactions', t.id)));
+                await batch.commit();
+                showToast('🗑️ تم مسح الكل'); } catch (err) { showToast('❌ خطأ: ' + err.message); }
+        };
+
+        document.getElementById('form-transaction').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = document.getElementById('txn-type').value;
+            const category = document.getElementById('txn-category').value;
+            const amount = parseFloat(document.getElementById('txn-amount').value);
+            const date = document.getElementById('txn-date').value;
+            const description = document.getElementById('txn-description').value.trim();
+            if (!amount || amount <= 0) return showToast('⚠️ مبلغ غير صحيح');
+            if (!date) return showToast('⚠️ اختر التاريخ');
+            try {
+                await setDoc(doc(collection(db, 'transactions')), { type, category, amount, date,
+                    description: description || '', createdAt: serverTimestamp() });
+                showToast('✅ تم التسجيل');
+                document.getElementById('form-transaction').reset();
+                document.getElementById('txn-date').value = '';
+            } catch (err) { showToast('❌ خطأ: ' + err.message); }
+        });
+
+        function updateFinanceUI() {
+            let totalIncome = 0,
+                totalExpenses = 0;
+            cachedTransactions.forEach(t => { if (t.type === 'income') totalIncome += (t.amount || 0);
+                else totalExpenses += (t.amount || 0); });
+            const netProfit = totalIncome - totalExpenses;
+            document.getElementById('finance-total-income').textContent = formatCurrency(totalIncome);
+            document.getElementById('finance-total-expenses').textContent = formatCurrency(totalExpenses);
+            document.getElementById('finance-net-profit').textContent = formatCurrency(netProfit);
+            document.getElementById('finance-txn-count').textContent = cachedTransactions.length;
+            document.getElementById('stat-total-expenses').textContent = formatCurrency(totalExpenses);
+            document.getElementById('stat-net-profit').textContent = formatCurrency(netProfit);
+        }
+
+        function updateExpenseBreakdown() {
+            const container = document.getElementById('expense-breakdown');
+            const expenses = cachedTransactions.filter(t => t.type === 'expense');
+            if (!expenses.length) { container.innerHTML =
+                `<p class="text-gray-400 text-xs">لا توجد مصروفات</p>`; return; }
+            const categoryMap = {};
+            expenses.forEach(t => { const cat = t.category || 'other';
+                categoryMap[cat] = (categoryMap[cat] || 0) + (t.amount || 0); });
+            const total = Object.values(categoryMap).reduce((a, b) => a + b, 0);
+            const sorted = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]);
+            const categoryLabels = { 'chicken': 'دجاج 🍗', 'meat': 'لحوم 🥩', 'vegetables': 'خضروات 🥬',
+                'seafood': 'مأكولات بحرية 🦐', 'dairy': 'ألبان 🧀', 'oil': 'زيوت وبهارات 🌿',
+                'electricity': 'كهرباء 💡', 'water': 'مياه 💧', 'rent': 'إيجار 🏠', 'salaries': 'مرتبات 👨‍🍳',
+                'marketing': 'تسويق 📢', 'maintenance': 'صيانة 🔧', 'other': 'أخرى 📌' };
+            container.innerHTML = sorted.map(([cat, amt]) => {
+                const pct = total > 0 ? ((amt / total) * 100).toFixed(1) : 0;
+                const label = categoryLabels[cat] || cat;
+                return `<div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-300 w-24 truncate">${label}</span>
+                            <div class="flex-1 h-2 bg-dark-900 rounded-full overflow-hidden border border-gold-500/10"><div class="h-full bg-gold-500 rounded-full" style="width: ${pct}%"></div></div>
+                            <span class="text-xs text-gold-400 font-bold whitespace-nowrap">${formatCurrency(amt)} (${pct}%)</span>
+                        </div>`;
+            }).join('');
+        }
+
+        function updateStatsUI() {}
+
+        // DAILY NOTES
+        function listenDailyNotes() {
+            const q = query(collection(db, 'dailyNotes'), orderBy('createdAt', 'desc'));
+            onSnapshot(q, (snapshot) => {
+                cachedDailyNotes = [];
+                snapshot.forEach(docSnap => cachedDailyNotes.push({ id: docSnap.id, ...docSnap.data() }));
+                renderDailyNotes();
+            });
+        }
+
+        function renderDailyNotes() {
+            const container = document.getElementById('daily-notes-list');
+            if (!cachedDailyNotes.length) { container.innerHTML =
+                `<p class="text-gray-400 text-xs">لا توجد ملاحظات</p>`; return; }
+            container.innerHTML = cachedDailyNotes.slice(0, 20).map(n =>
+                `<div class="flex justify-between items-start bg-dark-800/60 p-3 rounded-xl border border-gold-500/10 hover:border-gold-500/30 transition">
+                            <div class="flex-1"><p class="text-sm text-gray-200">${n.note || ''}</p><span class="text-[10px] text-gray-500">${n.date || ''}</span></div>
+                            <button onclick="window.deleteDailyNote('${n.id}')" class="text-red-400/50 hover:text-red-400 transition text-xs ml-2"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>`
+            ).join('');
+        }
+        window.deleteDailyNote = async function(id) {
+            if (confirm('حذف الملاحظة؟')) { try { await deleteDoc(doc(db, 'dailyNotes', id));
+                    showToast('🗑️ تم الحذف'); } catch (err) { showToast('❌ خطأ: ' + err.message); } }
+        };
+        document.getElementById('form-daily-note').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const note = document.getElementById('daily-note-input').value.trim();
+            if (!note) return showToast('⚠️ اكتب ملاحظة');
+            const today = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric',
+                weekday: 'short' });
+            try { await setDoc(doc(collection(db, 'dailyNotes')), { note, date: today, createdAt: serverTimestamp() });
+                document.getElementById('daily-note-input').value = '';
+                showToast('✅ تم حفظ الملاحظة'); } catch (err) { showToast('❌ خطأ: ' + err.message); }
+        });
+
+        // BRANDING / SETTINGS
+        async function loadRestaurantSettings() {
+            try {
+                const snap = await getDoc(doc(db, 'restaurants', 'settings'));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('brand-name').value = data.name || '';
+                    document.getElementById('brand-slug').value = data.slug || '';
+                    document.getElementById('brand-logo').value = data.logo || '';
+                    document.getElementById('brand-phone').value = data.phone || '';
+                    document.getElementById('brand-maps-url').value = data.maps_url || '';
+                    document.getElementById('brand-review-url').value = data.review_url || '';
+                    document.getElementById('brand-whatsapp').value = data.whatsapp || '';
+                    document.getElementById('brand-instagram').value = data.instagram || '';
+                    document.getElementById('brand-facebook').value = data.facebook || '';
+                    document.getElementById('brand-header-tagline').value = data.header_tagline || '';
+                    document.getElementById('brand-hero-badge').value = data.hero_badge || '';
+                    document.getElementById('brand-hero-title').value = data.hero_title || '';
+                    document.getElementById('brand-hero-subtitle').value = data.hero_subtitle || '';
+                    document.getElementById('brand-hero-desc').value = data.hero_desc || '';
+                    const currency = data.currency || 'EGP';
+                    document.getElementById('brand-currency').value = currency;
+                    currentCurrency = currency;
+                    currencySymbol = getCurrencySymbol(currency);
+                    updateCurrencyUI();
+                    document.getElementById('preview-menu-link').href = `index.html?res=${data.slug || ''}`;
+                }
+            } catch (e) { console.warn(e); }
+        }
+
+        document.getElementById('form-branding').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-branding');
+            btn.disabled = true;
+            const currency = document.getElementById('brand-currency').value;
+            const data = {
+                name: document.getElementById('brand-name').value,
+                slug: document.getElementById('brand-slug').value,
+                logo: document.getElementById('brand-logo').value,
+                phone: document.getElementById('brand-phone').value,
+                maps_url: document.getElementById('brand-maps-url').value,
+                review_url: document.getElementById('brand-review-url').value,
+                whatsapp: document.getElementById('brand-whatsapp').value,
+                instagram: document.getElementById('brand-instagram').value,
+                facebook: document.getElementById('brand-facebook').value,
+                header_tagline: document.getElementById('brand-header-tagline').value,
+                hero_badge: document.getElementById('brand-hero-badge').value,
+                hero_title: document.getElementById('brand-hero-title').value,
+                hero_subtitle: document.getElementById('brand-hero-subtitle').value,
+                hero_desc: document.getElementById('brand-hero-desc').value,
+                currency: currency,
+                updatedAt: serverTimestamp()
+            };
+            try {
+                await setDoc(doc(db, 'restaurants', 'settings'), data, { merge: true });
+                currentCurrency = currency;
+                currencySymbol = getCurrencySymbol(currency);
+                updateCurrencyUI();
+                showToast('✅ تم حفظ الإعدادات والعملة الجديدة!');
+            } catch (err) { showToast('❌ خطأ: ' + err.message); } finally { btn.disabled = false; }
+        });
+
+        // INIT
+        document.getElementById('txn-date').value = new Date().toISOString().split('T')[0];
+
+        // Override recent transactions in stats tab
+        const originalRender = renderTransactionsTable;
+        renderTransactionsTable = function() {
+            originalRender();
+            const container = document.getElementById('recent-transactions');
+            const recent = cachedTransactions.slice(0, 5);
+            if (!recent.length) { container.innerHTML =
+                `<p class="text-gray-400 text-xs">لا توجد معاملات</p>`; return; }
+            container.innerHTML = recent.map(t => {
+                const isExpense = t.type === 'expense';
+                const sign = isExpense ? '-' : '+';
+                const color = isExpense ? 'text-rose-400' : 'text-emerald-400';
+                return `<div class="flex justify-between items-center border-b border-gold-500/5 py-2"><span class="text-xs text-gray-300">${t.description || t.category || 'معاملة'}</span><span class="text-xs font-bold ${color}">${sign} ${formatCurrency(t.amount)}</span></div>`;
+            }).join('');
+        };
+
+        const originalFinanceUI = updateFinanceUI;
+        updateFinanceUI = function() { originalFinanceUI();
+            updateExpenseBreakdown(); };
+
+        switchTab('orders');
+
+        window.formatCurrency = formatCurrency;
+        window.getCurrencySymbol = getCurrencySymbol;
+        window.updateCurrencyUI = updateCurrencyUI;
+
+        console.log('🚀 3D Dining Dashboard with 150+ Currencies loaded!');
+    </script>
+</body>
+</html>
