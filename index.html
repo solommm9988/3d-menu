@@ -80,7 +80,7 @@
             border-radius: 10px;
         }
 
-        /* Optimized Glassmorphism */
+        /* Glassmorphism */
         .royal-glass {
             background: rgba(26, 20, 16, 0.92);
             backdrop-filter: blur(10px);
@@ -88,7 +88,7 @@
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
 
-        /* Lightweight Product Card */
+        /* Product Card */
         .product-card {
             background: rgba(26, 20, 16, 0.85);
             border-radius: 20px;
@@ -137,6 +137,8 @@
             --progress-bar-color: #d4af37;
             width: 100%;
             height: 100%;
+            /* إلغاء التحريك والتزحزح غير المرغوب */
+            touch-action: pan-y;
         }
 
         /* Category filter */
@@ -322,9 +324,27 @@
             </div>
 
             <div class="flex-1 relative bg-gradient-to-b from-[#1a1410] to-[#2d0808] flex items-center justify-center p-2">
-                <model-viewer id="modal-viewer-element" src="" auto-rotate camera-controls disable-zoom bounds="auto" camera-target="auto auto auto" field-of-view="30deg" min-field-of-view="30deg" max-field-of-view="30deg" ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.2" exposure="1.5" loading="lazy" class="w-full h-full"></model-viewer>
+                <!-- تثبيت مركز الكاميرا والأبعاد لعدم خروج المجسم عن النص -->
+                <model-viewer 
+                    id="modal-viewer-element" 
+                    src="" 
+                    auto-rotate 
+                    camera-controls 
+                    disable-zoom 
+                    disable-pan
+                    camera-target="0m 0m 0m"
+                    min-camera-orbit="auto 0deg auto"
+                    max-camera-orbit="auto 90deg auto"
+                    interaction-prompt="none"
+                    ar ar-modes="webxr scene-viewer quick-look" 
+                    shadow-intensity="1.2" 
+                    exposure="1.5" 
+                    loading="lazy" 
+                    class="w-full h-full">
+                </model-viewer>
+                
                 <div class="absolute bottom-3 text-[10px] text-gold-300/70 bg-black/60 px-3 py-1 rounded-full border border-gold-400/20 pointer-events-none flex items-center gap-1.5">
-                    <i class="fa-solid fa-hand-pointer text-gold-400"></i> اسحب للتدوير
+                    <i class="fa-solid fa-hand-pointer text-gold-400"></i> اسحب للتدوير الأفقي
                 </div>
             </div>
 
@@ -502,10 +522,8 @@
                 const hasDiscount = p.oldPrice && Number(p.oldPrice) > Number(p.price);
                 const discountPercent = hasDiscount ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
                 
-                // Fast Loading Preview Image / Icon
-                const imgDisplay = p.imageUrl ? 
-                    `<img src="${p.imageUrl}" alt="${p.title}" class="w-full h-full object-cover rounded-xl" loading="lazy" />` : 
-                    `<div class="flex flex-col items-center justify-center text-gold-400/50"><i class="fa-solid fa-utensils text-3xl mb-1"></i><span class="text-[10px]">استعرض 3D</span></div>`;
+                // رابط الصورة للطبق من الداتابيز أو استخدام صورة تلقائية للـ 3D
+                const imageSrc = p.imageUrl || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80`;
 
                 return `
                     <div class="product-card p-3 flex flex-col justify-between relative">
@@ -514,7 +532,9 @@
                                 <i class="fa-solid fa-cube text-[8px]"></i> 3D
                             </span>
                             ${hasDiscount ? `<span class="absolute top-2 left-2 z-10 discount-badge text-[9px] font-black px-2 py-0.5 rounded-full">خصم ${discountPercent}%</span>` : ''}
-                            ${imgDisplay}
+                            
+                            <!-- عرض صورة الطعام فوراً بشكل خفيف وسريع -->
+                            <img src="${imageSrc}" alt="${p.title || 'طبق'}" class="w-full h-full object-cover rounded-xl" loading="lazy" />
                         </div>
 
                         <div class="space-y-1 mb-2.5 flex-1">
@@ -570,8 +590,12 @@
 
             document.getElementById('modal-desc').textContent = p.desc || '';
             
+            const modelViewer = document.getElementById('modal-viewer-element');
             const modelSrc = (p.modelUrl && typeof p.modelUrl === 'string' && p.modelUrl.startsWith('http')) ? p.modelUrl : DEFAULT_MODEL;
-            document.getElementById('modal-viewer-element').setAttribute('src', modelSrc);
+            
+            // ضبط الصورة كـ Poster وقت التحميل
+            if (p.imageUrl) modelViewer.setAttribute('poster', p.imageUrl);
+            modelViewer.setAttribute('src', modelSrc);
             
             document.getElementById('modal-add-btn').onclick = () => {
                 window.addToCart(activeModalProduct, currentModalQty);
@@ -582,8 +606,10 @@
         };
 
         window.close3DModal = function() {
+            const modelViewer = document.getElementById('modal-viewer-element');
             document.getElementById('modal-3d').classList.add('hidden');
-            document.getElementById('modal-viewer-element').removeAttribute('src');
+            modelViewer.removeAttribute('src');
+            modelViewer.removeAttribute('poster');
         };
 
         window.adjustModalQty = function(delta) {
