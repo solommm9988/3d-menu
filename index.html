@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>👑 Royal 3D Menu | المنيو الملكي التفاعلي</title>
+    <title>👑 Royal Menu | المنيو الملكي التفاعلي</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -45,40 +45,6 @@
                     fontFamily: {
                         sans: ['Tajawal', 'sans-serif'],
                         serif: ['Amiri', 'serif'],
-                    },
-                    animation: {
-                        'float-slow': 'floatSlow 8s ease-in-out infinite',
-                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
-                        'gold-shimmer': 'goldShimmer 3s linear infinite',
-                        'sparkle': 'sparkle 2.5s ease-in-out infinite',
-                        'drift': 'drift 14s ease-in-out infinite alternate',
-                        'bounce-gentle': 'bounceGentle 4s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        floatSlow: {
-                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                            '50%': { transform: 'translateY(-20px) rotate(2deg)' },
-                        },
-                        pulseGlow: {
-                            '0%, 100%': { boxShadow: '0 0 20px rgba(212,175,55,0.3)' },
-                            '50%': { boxShadow: '0 0 60px rgba(212,175,55,0.7)' },
-                        },
-                        goldShimmer: {
-                            '0%': { backgroundPosition: '-200% center' },
-                            '100%': { backgroundPosition: '200% center' },
-                        },
-                        sparkle: {
-                            '0%, 100%': { opacity: 0.6, transform: 'scale(0.9)' },
-                            '50%': { opacity: 1, transform: 'scale(1.1)' },
-                        },
-                        drift: {
-                            '0%': { transform: 'translate(0, 0) scale(1)' },
-                            '100%': { transform: 'translate(30px, -20px) scale(1.05)' },
-                        },
-                        bounceGentle: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-8px)' },
-                        }
                     }
                 }
             }
@@ -94,7 +60,7 @@
         }
 
         body {
-            background: linear-gradient(160deg, #1a1410 0%, #2d0808 40%, #4a0e0e 80%, #1a1410 100%);
+            background: #120e0c;
             color: #f5e6d3;
             font-family: 'Tajawal', sans-serif;
             min-height: 100vh;
@@ -110,158 +76,59 @@
             background: #2d0808;
         }
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #d4af37, #b8860b);
+            background: #d4af37;
             border-radius: 10px;
         }
 
-        /* Glowing Orbs */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(120px);
-            pointer-events: none;
-            z-index: 0;
-            animation: drift 14s ease-in-out infinite alternate;
-        }
-        .orb-1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.25), transparent 70%);
-            top: -10%;
-            right: -10%;
-        }
-        .orb-2 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(184, 134, 11, 0.2), transparent 70%);
-            bottom: -10%;
-            left: -10%;
-            animation-delay: 6s;
-        }
-        .orb-3 {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.12), transparent 70%);
-            top: 40%;
-            left: 5%;
-            animation-delay: 10s;
-        }
-
-        /* Glassmorphism */
+        /* Optimized Glassmorphism */
         .royal-glass {
-            background: rgba(26, 20, 16, 0.78);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .royal-glass-strong {
             background: rgba(26, 20, 16, 0.92);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
         }
 
-        /* Product Card - Luxury */
+        /* Lightweight Product Card */
         .product-card {
-            background: rgba(26, 20, 16, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 28px;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            transform: translateY(0);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), transparent 60%);
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            border-radius: 28px;
-            pointer-events: none;
+            background: rgba(26, 20, 16, 0.85);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.18);
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
         .product-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            border-color: rgba(212, 175, 55, 0.6);
-            box-shadow: 0 24px 60px rgba(212, 175, 55, 0.2);
-        }
-        .product-card:hover::before {
-            opacity: 1;
-        }
-
-        .product-card .shine {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent 60%);
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            pointer-events: none;
-            border-radius: 28px;
-        }
-        .product-card:hover .shine {
-            opacity: 0.3;
+            transform: translateY(-4px);
+            border-color: rgba(212, 175, 55, 0.5);
         }
 
         /* Gold Gradient Text */
         .text-gold-gradient {
-            background: linear-gradient(135deg, #f5d061 0%, #d4af37 30%, #f5d061 60%, #b8860b 100%);
-            background-size: 200% 200%;
+            background: linear-gradient(135deg, #f5d061 0%, #d4af37 50%, #b8860b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: goldShimmer 3.5s ease-in-out infinite;
         }
 
         /* Buttons */
         .btn-gold {
-            background: linear-gradient(135deg, #f5d68a 0%, #d4af37 45%, #b8942e 100%);
+            background: linear-gradient(135deg, #f5d68a 0%, #d4af37 50%, #b8942e 100%);
             color: #1a1410;
             font-weight: 900;
-            box-shadow: 0 4px 24px rgba(212, 175, 55, 0.4);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-gold::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), transparent 50%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: transform 0.15s ease, opacity 0.2s ease;
         }
         .btn-gold:active {
-            transform: scale(0.94);
-        }
-        .btn-gold:hover::after {
-            opacity: 1;
+            transform: scale(0.96);
         }
 
         .btn-outline-gold {
             background: transparent;
             color: #d4af37;
-            border: 2px solid #d4af37;
+            border: 1.5px solid #d4af37;
             font-weight: 700;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         .btn-outline-gold:hover {
             background: #d4af37;
             color: #1a1410;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
         }
 
         /* model-viewer */
@@ -270,46 +137,34 @@
             --progress-bar-color: #d4af37;
             width: 100%;
             height: 100%;
-            min-height: 200px;
         }
 
         /* Category filter */
         .cat-btn {
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
+            transition: all 0.2s ease;
         }
         .cat-btn.active {
-            background: linear-gradient(135deg, #d4af37, #f5d061);
+            background: #d4af37;
             color: #1a1410 !important;
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.5);
-            transform: scale(1.08);
-            border-color: transparent !important;
-        }
-
-        /* Floating Cart */
-        .cart-float {
-            animation: pulseGlow 2.8s ease-in-out infinite;
+            font-weight: 800;
         }
 
         /* Toast */
         .toast {
             position: fixed;
-            bottom: 100px;
+            bottom: 90px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(20px);
             z-index: 999;
             background: rgba(26, 20, 16, 0.95);
-            backdrop-filter: blur(16px);
             color: #f5e6d3;
-            padding: 14px 32px;
-            border-radius: 60px;
+            padding: 12px 28px;
+            border-radius: 50px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             border: 1px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
             opacity: 0;
-            transform: translateX(-50%) translateY(20px);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.3s ease;
             pointer-events: none;
             white-space: nowrap;
         }
@@ -318,87 +173,25 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Particles */
-        .particle {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: radial-gradient(circle, #f5d061, #b8860b);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0.5;
-            animation: floatSlow 7s ease-in-out infinite alternate;
+        /* Image/Model Container */
+        .card-img-container {
+            background: radial-gradient(circle at center, rgba(45, 8, 8, 0.5), rgba(15, 12, 10, 0.9));
+            border-radius: 14px;
+            border: 1px solid rgba(212, 175, 55, 0.12);
         }
 
-        /* Responsive */
-        @media (max-width: 480px) {
-            .product-card {
-                border-radius: 20px;
-            }
-            .royal-glass {
-                backdrop-filter: blur(12px);
-            }
-            .orb-1 {
-                width: 200px;
-                height: 200px;
-            }
-            .orb-2 {
-                width: 180px;
-                height: 180px;
-            }
-            .orb-3 {
-                width: 120px;
-                height: 120px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .product-card {
-                border-radius: 32px;
-            }
-        }
-
-        /* 3D Model Container */
-        .model-container {
-            position: relative;
-            background: radial-gradient(ellipse at center, rgba(26, 20, 16, 0.8), rgba(13, 10, 8, 0.95));
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-        }
-
-        .model-container .glow-ring {
-            position: absolute;
-            inset: -2px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), transparent 40%, rgba(212, 175, 55, 0.2));
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
-        /* 3D Badge */
         .badge-3d {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(184, 134, 11, 0.2));
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.25);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .discount-badge {
+            background: #dc2626;
+            color: #ffffff;
         }
     </style>
 </head>
 <body>
-
-    <!-- Particles -->
-    <div class="particle" style="top:15%;left:10%;width:8px;height:8px;animation-delay:0s;"></div>
-    <div class="particle" style="top:70%;left:85%;width:5px;height:5px;animation-delay:2s;"></div>
-    <div class="particle" style="top:40%;left:95%;width:7px;height:7px;animation-delay:4s;"></div>
-    <div class="particle" style="top:85%;left:5%;width:6px;height:6px;animation-delay:1s;"></div>
-    <div class="particle" style="top:25%;left:80%;width:4px;height:4px;animation-delay:3s;"></div>
-
-    <!-- Orbs -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
 
     <!-- Toast -->
     <div id="toast" class="toast">✨ تمت الإضافة!</div>
@@ -407,24 +200,24 @@
     <header class="sticky top-0 z-50 royal-glass border-b border-gold-400/20 px-4 py-3">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="relative w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-gold-500 to-gold-300 shadow-2xl shadow-gold-400/30 animate-sparkle">
-                    <img id="res-logo" src="https://via.placeholder.com/150?text=👑" class="w-full h-full object-cover rounded-full bg-[#1a1410] border-2 border-gold-400/40" />
+                <div class="relative w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-gold-500 to-gold-300">
+                    <img id="res-logo" src="https://via.placeholder.com/150?text=👑" class="w-full h-full object-cover rounded-full bg-[#1a1410] border border-gold-400/40" />
                 </div>
                 <div>
-                    <h1 id="res-name" class="font-serif text-xl font-black text-gold-gradient">Golden Spoon</h1>
+                    <h1 id="res-name" class="font-serif text-lg font-black text-gold-gradient">Golden Spoon</h1>
                     <p id="header-tagline" class="text-[10px] text-gold-400 font-bold flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                         <span>منيو 3D تفاعلي فاخر</span>
                     </p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1.5 sm:gap-2">
-                <button onclick="window.callWaiter()" class="bg-white/10 border border-gold-400/30 text-gold-300 px-3 py-1.5 rounded-full text-[11px] font-bold hover:bg-gold-400 hover:text-charcoal transition-all flex items-center gap-1.5 backdrop-blur-sm">
+            <div class="flex items-center gap-2">
+                <button onclick="window.callWaiter()" class="bg-white/10 border border-gold-400/30 text-gold-300 px-3 py-1.5 rounded-full text-[11px] font-bold hover:bg-gold-400 hover:text-black transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-bell"></i>
                     <span class="hidden xs:inline">الويتر</span>
                 </button>
-                <a id="res-phone-btn" href="#" class="btn-gold px-3.5 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 shadow-lg">
+                <a id="res-phone-btn" href="#" class="btn-gold px-3.5 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 shadow-md">
                     <i class="fa-solid fa-phone"></i>
                     <span id="res-phone" class="hidden sm:inline">اتصل</span>
                 </a>
@@ -433,49 +226,58 @@
     </header>
 
     <!-- ═══ HERO ═══ -->
-    <section class="relative py-10 md:py-16 px-4 text-center overflow-hidden">
-        <div class="max-w-4xl mx-auto space-y-4 relative z-10">
-            <span id="hero-badge" class="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-gold-400/10 border border-gold-400/30 text-gold-300 text-[11px] font-bold tracking-wide backdrop-blur-sm">
+    <section class="relative py-8 md:py-12 px-4 text-center">
+        <div class="max-w-4xl mx-auto space-y-3 relative z-10">
+            <span id="hero-badge" class="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-gold-400/10 border border-gold-400/30 text-gold-300 text-[11px] font-bold">
                 <i class="fa-solid fa-crown text-[10px]"></i> تجربة 3D ملكية فريدة
             </span>
-            <h2 class="font-serif text-3xl sm:text-5xl md:text-6xl font-black leading-tight">
+            <h2 class="font-serif text-2xl sm:text-4xl md:text-5xl font-black leading-tight">
                 <span id="hero-title" class="text-gold-gradient">شاهد الأطباق</span>
                 <br />
-                <span id="hero-subtitle" class="text-cream-200 text-2xl sm:text-4xl md:text-5xl">مجسمة أمامك بتقنية 3D</span>
+                <span id="hero-subtitle" class="text-cream-200 text-xl sm:text-3xl">مجسمة أمامك بتقنية 3D</span>
             </h2>
             <p id="hero-desc" class="text-cream-200/70 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed font-medium px-2">
                 استعرض الأطباق بتقنية الواقع المعزز، اختر ما يناسبك، وسنحضره لك طازجاً بأسرع وقت.
             </p>
+
+            <!-- 🛵 DELIVERY BUTTON 🛵 -->
+            <div class="pt-2">
+                <button onclick="document.getElementById('footer-section').scrollIntoView({ behavior: 'smooth' })" class="btn-gold px-6 py-2.5 rounded-full text-xs sm:text-sm font-black inline-flex items-center gap-2 shadow-lg border border-gold-300">
+                    <i class="fa-solid fa-motorcycle text-base"></i>
+                    <span>لطلب دليفري</span>
+                    <i class="fa-solid fa-arrow-down text-xs"></i>
+                </button>
+            </div>
         </div>
     </section>
 
     <!-- ═══ CATEGORIES ═══ -->
-    <div class="sticky top-[61px] z-40 royal-glass-strong py-3 px-4 border-y border-gold-400/20 mb-6">
-        <div class="max-w-7xl mx-auto flex gap-2 overflow-x-auto no-scrollbar justify-start md:justify-center scroll-smooth" id="category-filters">
-            <button class="cat-btn active px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap" onclick="window.filterCat('الكل', this)">✨ الكل</button>
+    <div class="sticky top-[58px] z-40 royal-glass py-2.5 px-4 border-y border-gold-400/20 mb-6">
+        <div class="max-w-7xl mx-auto flex gap-2 overflow-x-auto no-scrollbar justify-start md:justify-center" id="category-filters">
+            <button class="cat-btn active px-4 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap" onclick="window.filterCat('الكل', this)">✨ الكل</button>
         </div>
     </div>
 
     <!-- ═══ PRODUCTS GRID ═══ -->
     <main class="max-w-7xl mx-auto px-4 pb-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6" id="products-grid">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5" id="products-grid">
             <div class="col-span-full text-center py-20">
-                <div class="inline-block w-12 h-12 border-4 border-gold-400/30 border-t-gold-500 rounded-full animate-spin"></div>
-                <p class="text-gold-300/60 text-sm mt-4 font-medium">جاري تحميل الأطباق الفاخرة...</p>
+                <div class="inline-block w-10 h-10 border-3 border-gold-400/30 border-t-gold-500 rounded-full animate-spin"></div>
+                <p class="text-gold-300/60 text-sm mt-3 font-medium">جاري تحميل الأطباق الفاخرة...</p>
             </div>
         </div>
     </main>
 
     <!-- ═══ FOOTER ═══ -->
-    <footer class="mt-8 border-t border-gold-400/15 pt-8 pb-24 royal-glass">
-        <div class="max-w-7xl mx-auto px-4 text-center space-y-5">
-            <h3 class="font-serif font-bold text-xl text-gold-gradient">نحن في انتظارك</h3>
+    <footer id="footer-section" class="mt-8 border-t border-gold-400/15 pt-8 pb-24 royal-glass scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+            <h3 class="font-serif font-bold text-lg text-gold-gradient">نحن في انتظارك</h3>
 
             <div class="flex flex-wrap items-center justify-center gap-3">
-                <a id="footer-maps-btn" href="#" target="_blank" class="hidden bg-white/10 border border-gold-400/30 text-gold-300 hover:bg-gold-400 hover:text-charcoal px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 backdrop-blur-sm">
+                <a id="footer-maps-btn" href="#" target="_blank" class="hidden bg-white/10 border border-gold-400/30 text-gold-300 hover:bg-gold-400 hover:text-black px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
                     <i class="fa-solid fa-map-location-dot"></i> الموقع
                 </a>
-                <a id="footer-review-btn" href="#" target="_blank" class="hidden bg-gold-400 text-charcoal px-4 py-2 rounded-2xl text-xs font-black shadow-lg transition-all flex items-center gap-2 hover:shadow-xl">
+                <a id="footer-review-btn" href="#" target="_blank" class="hidden bg-gold-400 text-black px-4 py-2 rounded-xl text-xs font-black shadow-md flex items-center gap-2">
                     <i class="fa-solid fa-star"></i> قيمنا
                 </a>
             </div>
@@ -487,60 +289,63 @@
     </footer>
 
     <!-- ═══ FLOATING CART ═══ -->
-    <div id="floating-cart-btn" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md hidden">
-        <button onclick="window.openCartModal()" class="w-full btn-gold py-3.5 px-5 rounded-2xl flex items-center justify-between shadow-2xl shadow-gold-400/40 border border-gold-300/50 cart-float">
+    <div id="floating-cart-btn" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md hidden">
+        <button onclick="window.openCartModal()" class="w-full btn-gold py-3 px-4 rounded-2xl flex items-center justify-between shadow-2xl border border-gold-300">
             <div class="flex items-center gap-3">
-                <div class="relative bg-charcoal/30 text-gold-300 w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm backdrop-blur-sm">
+                <div class="relative bg-black/20 text-black w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm">
                     <i class="fa-solid fa-basket-shopping"></i>
-                    <span id="cart-count-badge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black shadow-md">0</span>
+                    <span id="cart-count-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-black">0</span>
                 </div>
                 <div class="text-right">
-                    <p class="text-[10px] text-charcoal/70 font-bold leading-none">سلة الطلبات</p>
-                    <p class="text-xs font-black text-charcoal mt-0.5">طاولة: <span id="cart-table-num-display" class="underline decoration-gold-400">لم تحدد</span></p>
+                    <p class="text-[10px] text-black/70 font-bold leading-none">سلة الطلبات</p>
+                    <p class="text-xs font-black text-black mt-0.5">طاولة: <span id="cart-table-num-display" class="underline">لم تحدد</span></p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <span id="cart-total-price" class="font-serif font-black text-lg text-charcoal">0 ج.م</span>
-                <i class="fa-solid fa-chevron-left text-[10px] bg-charcoal/20 p-1.5 rounded-lg"></i>
+                <span id="cart-total-price" class="font-serif font-black text-base text-black">0 ج.م</span>
+                <i class="fa-solid fa-chevron-left text-[10px] bg-black/10 p-1.5 rounded-lg"></i>
             </div>
         </button>
     </div>
 
     <!-- ═══ 3D MODAL ═══ -->
-    <div id="modal-3d" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 bg-charcoal/70 backdrop-blur-xl">
-        <div class="relative w-full max-w-3xl h-[90vh] bg-gradient-to-b from-[#1a1410] to-[#2d0808] rounded-[32px] overflow-hidden flex flex-col border border-gold-400/30 shadow-2xl shadow-gold-400/20 animate-float-slow">
-            <div class="flex items-center justify-between p-4 border-b border-gold-400/20 bg-black/30">
+    <div id="modal-3d" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 bg-black/80 backdrop-blur-md">
+        <div class="relative w-full max-w-2xl h-[85vh] bg-[#1a1410] rounded-3xl overflow-hidden flex flex-col border border-gold-400/30 shadow-2xl">
+            <div class="flex items-center justify-between p-3.5 border-b border-gold-400/20 bg-black/40">
                 <div class="flex items-center gap-2">
-                    <span class="bg-gold-400/20 text-gold-300 text-[10px] font-black px-3 py-1 rounded-full border border-gold-400/30 flex items-center gap-1">
+                    <span class="bg-gold-400/20 text-gold-300 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-gold-400/30 flex items-center gap-1">
                         <i class="fa-solid fa-cube"></i> 3D
                     </span>
-                    <h3 id="modal-title" class="font-serif font-bold text-lg text-gold-gradient">الطبق</h3>
+                    <h3 id="modal-title" class="font-serif font-bold text-base text-gold-gradient">الطبق</h3>
                 </div>
-                <button onclick="window.close3DModal()" class="w-9 h-9 rounded-full bg-white/10 text-gold-300 hover:bg-gold-400 hover:text-charcoal flex items-center justify-center transition-all text-sm">✕</button>
+                <button onclick="window.close3DModal()" class="w-8 h-8 rounded-full bg-white/10 text-gold-300 hover:bg-gold-400 hover:text-black transition-all text-sm">✕</button>
             </div>
 
             <div class="flex-1 relative bg-gradient-to-b from-[#1a1410] to-[#2d0808] flex items-center justify-center p-2">
-                <model-viewer id="modal-viewer-element" src="" auto-rotate camera-controls ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.5" exposure="1.8" class="w-full h-full"></model-viewer>
-                <div class="absolute bottom-3 text-[10px] text-gold-300/60 bg-black/40 px-3 py-1.5 rounded-full border border-gold-400/20 backdrop-blur-sm shadow-sm pointer-events-none flex items-center gap-1.5">
+                <model-viewer id="modal-viewer-element" src="" auto-rotate camera-controls disable-zoom bounds="auto" camera-target="auto auto auto" field-of-view="30deg" min-field-of-view="30deg" max-field-of-view="30deg" ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.2" exposure="1.5" loading="lazy" class="w-full h-full"></model-viewer>
+                <div class="absolute bottom-3 text-[10px] text-gold-300/70 bg-black/60 px-3 py-1 rounded-full border border-gold-400/20 pointer-events-none flex items-center gap-1.5">
                     <i class="fa-solid fa-hand-pointer text-gold-400"></i> اسحب للتدوير
                 </div>
             </div>
 
-            <div class="p-4 border-t border-gold-400/20 bg-black/30 space-y-3">
+            <div class="p-4 border-t border-gold-400/20 bg-black/40 space-y-3">
                 <p id="modal-desc" class="text-xs text-cream-200/70 line-clamp-2 leading-relaxed">وصف الطبق</p>
                 <div class="flex items-center justify-between pt-1">
                     <div>
                         <span class="text-[9px] text-gold-400/60 block font-bold">السعر</span>
-                        <span id="modal-price" class="font-serif font-black text-2xl text-gold-gradient">0 ج.م</span>
+                        <div class="flex items-center gap-2">
+                            <span id="modal-price" class="font-serif font-black text-xl text-gold-gradient">0 ج.م</span>
+                            <span id="modal-old-price" class="text-xs text-gray-500 line-through hidden">0 ج.م</span>
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-2 bg-black/40 p-1 rounded-2xl border border-gold-400/30">
-                        <button onclick="window.adjustModalQty(-1)" class="w-8 h-8 rounded-xl bg-white/10 text-gold-300 flex items-center justify-center font-bold text-lg hover:bg-gold-400 hover:text-charcoal transition-all">−</button>
+                    <div class="flex items-center gap-2 bg-black/40 p-1 rounded-xl border border-gold-400/30">
+                        <button onclick="window.adjustModalQty(-1)" class="w-7 h-7 rounded-lg bg-white/10 text-gold-300 flex items-center justify-center font-bold text-base hover:bg-gold-400 hover:text-black transition-all">−</button>
                         <span id="modal-qty" class="font-bold text-sm w-4 text-center text-cream-200">1</span>
-                        <button onclick="window.adjustModalQty(1)" class="w-8 h-8 rounded-xl bg-white/10 text-gold-300 flex items-center justify-center font-bold text-lg hover:bg-gold-400 hover:text-charcoal transition-all">+</button>
+                        <button onclick="window.adjustModalQty(1)" class="w-7 h-7 rounded-lg bg-white/10 text-gold-300 flex items-center justify-center font-bold text-base hover:bg-gold-400 hover:text-black transition-all">+</button>
                     </div>
 
-                    <button id="modal-add-btn" class="btn-gold px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg">
+                    <button id="modal-add-btn" class="btn-gold px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md">
                         <i class="fa-solid fa-cart-plus"></i> أضف
                     </button>
                 </div>
@@ -549,17 +354,17 @@
     </div>
 
     <!-- ═══ CART MODAL ═══ -->
-    <div id="cart-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 bg-charcoal/70 backdrop-blur-xl">
-        <div class="relative w-full max-w-lg bg-gradient-to-b from-[#1a1410] to-[#2d0808] rounded-[32px] overflow-hidden flex flex-col border border-gold-400/30 max-h-[92vh] shadow-2xl shadow-gold-400/20">
-            <div class="flex items-center justify-between p-4 border-b border-gold-400/20 bg-black/30">
-                <h3 class="font-serif font-bold text-lg text-gold-gradient"><i class="fa-solid fa-receipt ml-2"></i>تأكيد الطلب</h3>
-                <button onclick="window.closeCartModal()" class="w-8 h-8 rounded-full bg-white/10 text-gold-300 flex items-center justify-center hover:bg-gold-400 hover:text-charcoal transition-all text-sm">✕</button>
+    <div id="cart-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 bg-black/80 backdrop-blur-md">
+        <div class="relative w-full max-w-lg bg-[#1a1410] rounded-3xl overflow-hidden flex flex-col border border-gold-400/30 max-h-[90vh] shadow-2xl">
+            <div class="flex items-center justify-between p-4 border-b border-gold-400/20 bg-black/40">
+                <h3 class="font-serif font-bold text-base text-gold-gradient"><i class="fa-solid fa-receipt ml-2"></i>تأكيد الطلب</h3>
+                <button onclick="window.closeCartModal()" class="w-8 h-8 rounded-full bg-white/10 text-gold-300 flex items-center justify-center hover:bg-gold-400 hover:text-black transition-all text-sm">✕</button>
             </div>
 
             <div class="p-4 overflow-y-auto space-y-4 flex-1">
-                <div class="bg-black/40 p-3.5 rounded-2xl border border-gold-400/20 space-y-2">
+                <div class="bg-black/40 p-3 rounded-xl border border-gold-400/20 space-y-1.5">
                     <label class="text-xs font-bold text-gold-400 block"><i class="fa-solid fa-chair ml-1"></i> رقم الطاولة</label>
-                    <input type="number" id="order-table-number" placeholder="مثلاً: 5" class="w-full bg-black/30 border border-gold-400/30 rounded-xl px-3 py-2 text-sm text-cream-200 focus:outline-none focus:border-gold-500 focus:ring-2 focus:ring-gold-400/30 shadow-sm" required />
+                    <input type="number" id="order-table-number" placeholder="مثلاً: 5" class="w-full bg-black/50 border border-gold-400/30 rounded-lg px-3 py-2 text-sm text-cream-200 focus:outline-none focus:border-gold-500" required />
                 </div>
 
                 <div>
@@ -569,23 +374,30 @@
 
                 <div>
                     <label class="text-xs font-bold text-gold-400/80 block mb-1">ملاحظات</label>
-                    <textarea id="order-notes" placeholder="مثل: بدون بصل، صوص إضافي..." class="w-full bg-black/30 border border-gold-400/20 rounded-xl p-2.5 text-xs text-cream-200 focus:outline-none focus:border-gold-500 focus:ring-2 focus:ring-gold-400/30" rows="2"></textarea>
+                    <textarea id="order-notes" placeholder="مثل: بدون بصل، صوص إضافي..." class="w-full bg-black/50 border border-gold-400/20 rounded-lg p-2.5 text-xs text-cream-200 focus:outline-none focus:border-gold-500" rows="2"></textarea>
+                </div>
+
+                <div id="after-order-review-container" class="hidden pt-2 border-t border-gold-400/20 text-center space-y-2">
+                    <p class="text-xs text-emerald-400 font-bold">🎉 تم إرسال طلبك بنجاح!</p>
+                    <a id="modal-review-btn" href="#" target="_blank" class="btn-gold w-full py-2 rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-star text-amber-900"></i> شاركنا رأيك وتقييمك للمطعم
+                    </a>
                 </div>
             </div>
 
-            <div class="p-4 border-t border-gold-400/20 bg-black/30 space-y-3">
+            <div class="p-4 border-t border-gold-400/20 bg-black/40 space-y-3">
                 <div class="flex justify-between items-center text-sm">
                     <span class="text-gold-400/80 font-bold">الإجمالي</span>
-                    <span id="modal-cart-total" class="font-serif font-black text-2xl text-gold-gradient">0 ج.م</span>
+                    <span id="modal-cart-total" class="font-serif font-black text-xl text-gold-gradient">0 ج.م</span>
                 </div>
-                <button onclick="window.sendOrderToFirebase()" id="btn-submit-order" class="btn-gold w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-lg">
+                <button onclick="window.sendOrderToFirebase()" id="btn-submit-order" class="btn-gold w-full py-2.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-md">
                     <i class="fa-solid fa-paper-plane"></i> إرسال للمطبخ
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ═══ FIREBASE + FULL LOGIC ═══ -->
+    <!-- ═══ FIREBASE + LOGIC ═══ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -604,8 +416,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ═══ DEFAULT 3D MODEL (Burger from CDN) ═══
-        // This ensures every dish has a 3D model even if none is uploaded
         const DEFAULT_MODEL = "https://modelviewer.dev/shared-assets/models/glTF-Sample-Assets/Models/Burger/glTF-Binary/Burger.glb";
 
         let allProducts = [];
@@ -613,7 +423,6 @@
         let activeModalProduct = null;
         let currentModalQty = 1;
 
-        // ─── Toast ───
         function showToast(msg, emoji = '✨') {
             const el = document.getElementById('toast');
             el.textContent = `${emoji} ${msg}`;
@@ -622,7 +431,6 @@
             el._timer = setTimeout(() => el.classList.remove('show'), 2200);
         }
 
-        // ─── Branding ───
         function listenRestaurant() {
             onSnapshot(doc(db, 'restaurants', 'settings'), (snap) => {
                 if (snap.exists()) {
@@ -633,10 +441,8 @@
                         document.getElementById('res-phone').textContent = d.phone;
                         document.getElementById('res-phone-btn').href = 'tel:' + d.phone;
                     }
-                    if (d.header_tagline) document.getElementById('header-tagline').querySelector('span:last-child')
-                        .textContent = d.header_tagline;
-                    if (d.hero_badge) document.getElementById('hero-badge').innerHTML =
-                        `<i class="fa-solid fa-crown text-[10px]"></i> ${d.hero_badge}`;
+                    if (d.header_tagline) document.getElementById('header-tagline').querySelector('span:last-child').textContent = d.header_tagline;
+                    if (d.hero_badge) document.getElementById('hero-badge').innerHTML = `<i class="fa-solid fa-crown text-[10px]"></i> ${d.hero_badge}`;
                     if (d.hero_title) document.getElementById('hero-title').textContent = d.hero_title;
                     if (d.hero_subtitle) document.getElementById('hero-subtitle').textContent = d.hero_subtitle;
                     if (d.hero_desc) document.getElementById('hero-desc').textContent = d.hero_desc;
@@ -650,30 +456,26 @@
                         const btn = document.getElementById('footer-review-btn');
                         btn.href = d.review_url;
                         btn.classList.remove('hidden');
+                        document.getElementById('modal-review-btn').href = d.review_url;
                     }
 
                     const sc = document.getElementById('social-links-container');
                     let html = '';
-                    if (d.whatsapp) html +=
-                        `<a href="https://wa.me/${d.whatsapp}" target="_blank" class="hover:scale-110 transition-transform p-2"><i class="fa-brands fa-whatsapp"></i></a>`;
-                    if (d.instagram) html +=
-                        `<a href="${d.instagram}" target="_blank" class="hover:scale-110 transition-transform p-2"><i class="fa-brands fa-instagram"></i></a>`;
-                    if (d.facebook) html +=
-                        `<a href="${d.facebook}" target="_blank" class="hover:scale-110 transition-transform p-2"><i class="fa-brands fa-facebook"></i></a>`;
+                    if (d.whatsapp) html += `<a href="https://wa.me/${d.whatsapp}" target="_blank" class="p-2"><i class="fa-brands fa-whatsapp"></i></a>`;
+                    if (d.instagram) html += `<a href="${d.instagram}" target="_blank" class="p-2"><i class="fa-brands fa-instagram"></i></a>`;
+                    if (d.facebook) html += `<a href="${d.facebook}" target="_blank" class="p-2"><i class="fa-brands fa-facebook"></i></a>`;
                     sc.innerHTML = html;
                 }
             });
         }
 
-        // ─── Products ───
         function listenProducts() {
             onSnapshot(collection(db, 'products'), (snap) => {
                 allProducts = [];
                 const cats = new Set(['الكل']);
                 snap.forEach(d => {
                     const data = d.data();
-                    // Ensure each product has a modelUrl, fallback to default if missing
-                    if (!data.modelUrl || !data.modelUrl.includes('.glb')) {
+                    if (!data.modelUrl || typeof data.modelUrl !== 'string' || !data.modelUrl.startsWith('http')) {
                         data.modelUrl = DEFAULT_MODEL;
                     }
                     allProducts.push({ id: d.id, ...data });
@@ -682,7 +484,7 @@
 
                 const fc = document.getElementById('category-filters');
                 fc.innerHTML = Array.from(cats).map(cat =>
-                    `<button class="cat-btn ${cat === 'الكل' ? 'active' : 'bg-white/5 text-gold-300 border border-gold-400/20'} px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap backdrop-blur-sm" onclick="window.filterCat('${cat}', this)">${cat}</button>`
+                    `<button class="cat-btn ${cat === 'الكل' ? 'active' : 'bg-white/5 text-gold-300 border border-gold-400/20'} px-4 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap" onclick="window.filterCat('${cat}', this)">${cat}</button>`
                 ).join('');
 
                 renderProducts(allProducts);
@@ -692,60 +494,63 @@
         function renderProducts(products) {
             const grid = document.getElementById('products-grid');
             if (!products.length) {
-                grid.innerHTML =
-                    `<div class="col-span-full text-center py-16"><p class="text-gold-300/60 text-sm">لا توجد أطباق متاحة حالياً</p></div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-16"><p class="text-gold-300/60 text-sm">لا توجد أطباق متاحة حالياً</p></div>`;
                 return;
             }
 
             grid.innerHTML = products.map(p => {
-                // Use the modelUrl from Firebase, or fallback to default
-                const modelSrc = (p.modelUrl && p.modelUrl.includes('.glb')) ? p.modelUrl : DEFAULT_MODEL;
+                const hasDiscount = p.oldPrice && Number(p.oldPrice) > Number(p.price);
+                const discountPercent = hasDiscount ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
+                
+                // Fast Loading Preview Image / Icon
+                const imgDisplay = p.imageUrl ? 
+                    `<img src="${p.imageUrl}" alt="${p.title}" class="w-full h-full object-cover rounded-xl" loading="lazy" />` : 
+                    `<div class="flex flex-col items-center justify-center text-gold-400/50"><i class="fa-solid fa-utensils text-3xl mb-1"></i><span class="text-[10px]">استعرض 3D</span></div>`;
 
                 return `
-                        <div class="product-card p-4 flex flex-col justify-between relative">
-                            <div class="shine"></div>
-                            <div class="model-container relative h-44 sm:h-52 rounded-2xl overflow-hidden mb-3 flex items-center justify-center">
-                                <div class="glow-ring"></div>
-                                <span class="absolute top-2 right-2 z-10 badge-3d text-gold-300 text-[9px] font-black px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                                    <i class="fa-solid fa-cube text-[8px]"></i> 3D
-                                </span>
-                                <model-viewer src="${modelSrc}" auto-rotate camera-controls disable-zoom shadow-intensity="1.2" exposure="1.5" loading="eager" class="w-full h-full"></model-viewer>
-                            </div>
-
-                            <div class="space-y-1.5 mb-3 flex-1">
-                                <div class="flex justify-between items-start gap-2">
-                                    <h3 class="font-serif font-bold text-sm text-cream-100 leading-tight">${p.title || ''}</h3>
-                                    <span class="font-serif font-black text-base text-gold-gradient whitespace-nowrap">${p.price || 0} ج.م</span>
-                                </div>
-                                <p class="text-[11px] text-cream-200/60 line-clamp-2 leading-relaxed">${p.desc || 'أشهى المكونات الطازجة'}</p>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gold-400/10">
-                                <button onclick="window.open3DModal('${p.id}')" class="btn-outline-gold text-xs py-1.5 rounded-xl font-bold flex items-center justify-center gap-1">
-                                    <i class="fa-solid fa-cube"></i> استعرض 3D
-                                </button>
-                                <button onclick="window.quickAddToCart('${p.id}')" class="btn-gold text-xs py-1.5 rounded-xl font-bold flex items-center justify-center gap-1 shadow-md">
-                                    <i class="fa-solid fa-cart-plus"></i> اطلب
-                                </button>
-                            </div>
+                    <div class="product-card p-3 flex flex-col justify-between relative">
+                        <div class="card-img-container relative h-36 sm:h-40 rounded-xl overflow-hidden mb-2.5 flex items-center justify-center">
+                            <span class="absolute top-2 right-2 z-10 badge-3d text-gold-300 text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <i class="fa-solid fa-cube text-[8px]"></i> 3D
+                            </span>
+                            ${hasDiscount ? `<span class="absolute top-2 left-2 z-10 discount-badge text-[9px] font-black px-2 py-0.5 rounded-full">خصم ${discountPercent}%</span>` : ''}
+                            ${imgDisplay}
                         </div>
-                    `;
+
+                        <div class="space-y-1 mb-2.5 flex-1">
+                            <div class="flex justify-between items-start gap-1">
+                                <h3 class="font-serif font-bold text-xs sm:text-sm text-cream-100 leading-tight">${p.title || ''}</h3>
+                                <div class="text-left">
+                                    <span class="font-serif font-black text-sm sm:text-base text-gold-gradient whitespace-nowrap block">${p.price || 0} ج.م</span>
+                                    ${hasDiscount ? `<span class="text-[9px] text-gray-500 line-through block">${p.oldPrice} ج.م</span>` : ''}
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-cream-200/60 line-clamp-2 leading-relaxed">${p.desc || 'أشهى المكونات الطازجة'}</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-gold-400/10">
+                            <button onclick="window.open3DModal('${p.id}')" class="btn-outline-gold text-[11px] py-1.5 rounded-lg font-bold flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-cube"></i> استعرض 3D
+                            </button>
+                            <button onclick="window.quickAddToCart('${p.id}')" class="btn-gold text-[11px] py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-cart-plus"></i> اطلب
+                            </button>
+                        </div>
+                    </div>
+                `;
             }).join('');
         }
 
-        // ─── Filters ───
         window.filterCat = function(cat, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className =
-                    "cat-btn bg-white/5 text-gold-300 border border-gold-400/20 px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap backdrop-blur-sm";
+                b.className = "cat-btn bg-white/5 text-gold-300 border border-gold-400/20 px-4 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap";
             });
-            btn.className = "cat-btn active px-5 py-2 rounded-full text-[11px] font-bold whitespace-nowrap backdrop-blur-sm";
+            btn.className = "cat-btn active px-4 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap";
 
             if (cat === 'الكل') renderProducts(allProducts);
             else renderProducts(allProducts.filter(p => p.category === cat));
         };
 
-        // ─── 3D Modal ───
         window.open3DModal = function(id) {
             const p = allProducts.find(item => item.id === id);
             if (!p) return;
@@ -754,9 +559,20 @@
             document.getElementById('modal-qty').textContent = '1';
             document.getElementById('modal-title').textContent = p.title || '';
             document.getElementById('modal-price').textContent = (p.price || 0) + ' ج.م';
+            
+            const oldPriceEl = document.getElementById('modal-old-price');
+            if (p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
+                oldPriceEl.textContent = p.oldPrice + ' ج.م';
+                oldPriceEl.classList.remove('hidden');
+            } else {
+                oldPriceEl.classList.add('hidden');
+            }
+
             document.getElementById('modal-desc').textContent = p.desc || '';
-            const modelSrc = (p.modelUrl && p.modelUrl.includes('.glb')) ? p.modelUrl : DEFAULT_MODEL;
+            
+            const modelSrc = (p.modelUrl && typeof p.modelUrl === 'string' && p.modelUrl.startsWith('http')) ? p.modelUrl : DEFAULT_MODEL;
             document.getElementById('modal-viewer-element').setAttribute('src', modelSrc);
+            
             document.getElementById('modal-add-btn').onclick = () => {
                 window.addToCart(activeModalProduct, currentModalQty);
                 window.close3DModal();
@@ -767,6 +583,7 @@
 
         window.close3DModal = function() {
             document.getElementById('modal-3d').classList.add('hidden');
+            document.getElementById('modal-viewer-element').removeAttribute('src');
         };
 
         window.adjustModalQty = function(delta) {
@@ -775,11 +592,12 @@
             document.getElementById('modal-qty').textContent = currentModalQty;
         };
 
-        // ─── Cart ───
         window.quickAddToCart = function(id) {
             const p = allProducts.find(item => item.id === id);
-            if (p) { window.addToCart(p, 1);
-                showToast('تمت الإضافة', '🛒'); }
+            if (p) { 
+                window.addToCart(p, 1);
+                showToast('تمت الإضافة', '🛒'); 
+            }
         };
 
         window.addToCart = function(product, qty) {
@@ -806,14 +624,18 @@
                 container.innerHTML = `<p class="text-xs text-center text-gold-300/50 py-2">السلة فارغة</p>`;
             } else {
                 container.innerHTML = cart.map(item =>
-                    `<div class="flex items-center justify-between bg-black/30 p-2.5 rounded-xl border border-gold-400/15">
-                                <div><p class="text-xs font-bold text-cream-100">${item.title}</p><p class="text-[10px] text-gold-400">${item.price} ج.م × ${item.qty}</p></div>
-                                <div class="flex items-center gap-2"><span class="font-serif font-black text-sm text-gold-gradient">${item.price * item.qty} ج.م</span><button onclick="window.removeFromCart('${item.id}')" class="text-red-400/60 hover:text-red-400 p-1 text-xs"><i class="fa-solid fa-trash"></i></button></div>
-                            </div>`
+                    `<div class="flex items-center justify-between bg-black/40 p-2.5 rounded-lg border border-gold-400/15">
+                        <div><p class="text-xs font-bold text-cream-100">${item.title}</p><p class="text-[10px] text-gold-400">${item.price} ج.م × ${item.qty}</p></div>
+                        <div class="flex items-center gap-2"><span class="font-serif font-black text-xs text-gold-gradient">${item.price * item.qty} ج.م</span><button onclick="window.removeFromCart('${item.id}')" class="text-red-400/60 hover:text-red-400 p-1 text-xs"><i class="fa-solid fa-trash"></i></button></div>
+                    </div>`
                 ).join('');
             }
             const tableVal = document.getElementById('order-table-number').value || 'لم تحدد';
             document.getElementById('cart-table-num-display').textContent = tableVal;
+            
+            document.getElementById('after-order-review-container').classList.add('hidden');
+            document.getElementById('btn-submit-order').classList.remove('hidden');
+
             document.getElementById('cart-modal').classList.remove('hidden');
         };
 
@@ -827,7 +649,6 @@
             window.openCartModal();
         };
 
-        // ─── Call Waiter ───
         window.callWaiter = function() {
             const table = prompt('رقم طاولتك:');
             if (!table) return;
@@ -839,10 +660,9 @@
                 status: 'pending',
                 createdAt: serverTimestamp()
             }).then(() => showToast('تم إرسال إشعار للويتر', '🔔'))
-                .catch(() => showToast('حدث خطأ', '❌'));
+            .catch(() => showToast('حدث خطأ', '❌'));
         };
 
-        // ─── Send Order ───
         window.sendOrderToFirebase = async function() {
             const tableNumber = document.getElementById('order-table-number').value.trim();
             const notes = document.getElementById('order-notes').value.trim();
@@ -873,7 +693,10 @@
                 showToast('تم إرسال الطلب للمطبخ', '🎉');
                 cart = [];
                 updateCartUI();
-                window.closeCartModal();
+                
+                document.getElementById('btn-submit-order').classList.add('hidden');
+                document.getElementById('after-order-review-container').classList.remove('hidden');
+                
                 document.getElementById('order-table-number').value = '';
                 document.getElementById('order-notes').value = '';
             } catch (err) {
@@ -884,7 +707,6 @@
             }
         };
 
-        // ─── Init ───
         listenRestaurant();
         listenProducts();
 
