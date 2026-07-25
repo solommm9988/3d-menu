@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>👑 Royal Menu | المنيو الملكي التفاعلي</title>
+    <title>👑 Royal 3D Menu | المنيو الملكي</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,11 +80,11 @@
             border-radius: 10px;
         }
 
-        /* Glassmorphism */
+        /* Lightweight Header & Glass */
         .royal-glass {
             background: rgba(26, 20, 16, 0.92);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
 
@@ -113,7 +113,7 @@
             background: linear-gradient(135deg, #f5d68a 0%, #d4af37 50%, #b8942e 100%);
             color: #1a1410;
             font-weight: 900;
-            transition: transform 0.15s ease, opacity 0.2s ease;
+            transition: transform 0.15s ease;
         }
         .btn-gold:active {
             transform: scale(0.96);
@@ -131,14 +131,13 @@
             color: #1a1410;
         }
 
-        /* model-viewer */
+        /* Optimized Model Viewer - Fixed Center Orbit */
         model-viewer {
             --poster-color: transparent;
             --progress-bar-color: #d4af37;
             width: 100%;
             height: 100%;
-            /* إلغاء التحريك والتزحزح غير المرغوب */
-            touch-action: pan-y;
+            touch-action: pan-y; /* يسمح بالسكرول العادي للصفحة مع تدوير الأكل أفصياً */
         }
 
         /* Category filter */
@@ -175,8 +174,8 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Image/Model Container */
-        .card-img-container {
+        /* 3D Container */
+        .model-container {
             background: radial-gradient(circle at center, rgba(45, 8, 8, 0.5), rgba(15, 12, 10, 0.9));
             border-radius: 14px;
             border: 1px solid rgba(212, 175, 55, 0.12);
@@ -310,13 +309,13 @@
         </button>
     </div>
 
-    <!-- ═══ 3D MODAL ═══ -->
+    <!-- ═══ FULLSCREEN 3D MODAL ═══ -->
     <div id="modal-3d" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 bg-black/80 backdrop-blur-md">
         <div class="relative w-full max-w-2xl h-[85vh] bg-[#1a1410] rounded-3xl overflow-hidden flex flex-col border border-gold-400/30 shadow-2xl">
             <div class="flex items-center justify-between p-3.5 border-b border-gold-400/20 bg-black/40">
                 <div class="flex items-center gap-2">
                     <span class="bg-gold-400/20 text-gold-300 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-gold-400/30 flex items-center gap-1">
-                        <i class="fa-solid fa-cube"></i> 3D
+                        <i class="fa-solid fa-cube"></i> تكبير 3D
                     </span>
                     <h3 id="modal-title" class="font-serif font-bold text-base text-gold-gradient">الطبق</h3>
                 </div>
@@ -324,7 +323,6 @@
             </div>
 
             <div class="flex-1 relative bg-gradient-to-b from-[#1a1410] to-[#2d0808] flex items-center justify-center p-2">
-                <!-- تثبيت مركز الكاميرا والأبعاد لعدم خروج المجسم عن النص -->
                 <model-viewer 
                     id="modal-viewer-element" 
                     src="" 
@@ -339,7 +337,6 @@
                     ar ar-modes="webxr scene-viewer quick-look" 
                     shadow-intensity="1.2" 
                     exposure="1.5" 
-                    loading="lazy" 
                     class="w-full h-full">
                 </model-viewer>
                 
@@ -519,22 +516,35 @@
             }
 
             grid.innerHTML = products.map(p => {
+                const modelSrc = (p.modelUrl && typeof p.modelUrl === 'string' && p.modelUrl.startsWith('http')) ? p.modelUrl : DEFAULT_MODEL;
                 const hasDiscount = p.oldPrice && Number(p.oldPrice) > Number(p.price);
                 const discountPercent = hasDiscount ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
-                
-                // رابط الصورة للطبق من الداتابيز أو استخدام صورة تلقائية للـ 3D
-                const imageSrc = p.imageUrl || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80`;
 
                 return `
                     <div class="product-card p-3 flex flex-col justify-between relative">
-                        <div class="card-img-container relative h-36 sm:h-40 rounded-xl overflow-hidden mb-2.5 flex items-center justify-center">
-                            <span class="absolute top-2 right-2 z-10 badge-3d text-gold-300 text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <!-- 3D Viewer Container (Direct 3D) -->
+                        <div class="model-container relative h-44 sm:h-48 rounded-xl overflow-hidden mb-2.5 flex items-center justify-center">
+                            <span class="absolute top-2 right-2 z-10 badge-3d text-gold-300 text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 pointer-events-none">
                                 <i class="fa-solid fa-cube text-[8px]"></i> 3D
                             </span>
-                            ${hasDiscount ? `<span class="absolute top-2 left-2 z-10 discount-badge text-[9px] font-black px-2 py-0.5 rounded-full">خصم ${discountPercent}%</span>` : ''}
+                            ${hasDiscount ? `<span class="absolute top-2 left-2 z-10 discount-badge text-[9px] font-black px-2 py-0.5 rounded-full pointer-events-none">خصم ${discountPercent}%</span>` : ''}
                             
-                            <!-- عرض صورة الطعام فوراً بشكل خفيف وسريع -->
-                            <img src="${imageSrc}" alt="${p.title || 'طبق'}" class="w-full h-full object-cover rounded-xl" loading="lazy" />
+                            <!-- موديل 3D مباشر مع تثبيت المركز ومنع التزحزح والتحميل الذكي الخفيف -->
+                            <model-viewer 
+                                src="${modelSrc}" 
+                                auto-rotate 
+                                camera-controls 
+                                disable-zoom 
+                                disable-pan
+                                camera-target="0m 0m 0m"
+                                min-camera-orbit="auto 0deg auto"
+                                max-camera-orbit="auto 90deg auto"
+                                interaction-prompt="none"
+                                shadow-intensity="1" 
+                                exposure="1.3" 
+                                loading="lazy" 
+                                class="w-full h-full">
+                            </model-viewer>
                         </div>
 
                         <div class="space-y-1 mb-2.5 flex-1">
@@ -550,7 +560,7 @@
 
                         <div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-gold-400/10">
                             <button onclick="window.open3DModal('${p.id}')" class="btn-outline-gold text-[11px] py-1.5 rounded-lg font-bold flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-cube"></i> استعرض 3D
+                                <i class="fa-solid fa-expand"></i> تكبير
                             </button>
                             <button onclick="window.quickAddToCart('${p.id}')" class="btn-gold text-[11px] py-1.5 rounded-lg font-bold flex items-center justify-center gap-1 shadow-sm">
                                 <i class="fa-solid fa-cart-plus"></i> اطلب
@@ -592,9 +602,6 @@
             
             const modelViewer = document.getElementById('modal-viewer-element');
             const modelSrc = (p.modelUrl && typeof p.modelUrl === 'string' && p.modelUrl.startsWith('http')) ? p.modelUrl : DEFAULT_MODEL;
-            
-            // ضبط الصورة كـ Poster وقت التحميل
-            if (p.imageUrl) modelViewer.setAttribute('poster', p.imageUrl);
             modelViewer.setAttribute('src', modelSrc);
             
             document.getElementById('modal-add-btn').onclick = () => {
@@ -609,7 +616,6 @@
             const modelViewer = document.getElementById('modal-viewer-element');
             document.getElementById('modal-3d').classList.add('hidden');
             modelViewer.removeAttribute('src');
-            modelViewer.removeAttribute('poster');
         };
 
         window.adjustModalQty = function(delta) {
