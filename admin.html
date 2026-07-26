@@ -1,738 +1,436 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>👑 لوحة التحكم | SaaS Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>👑 Royal Menu | المنيو الملكي</title>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
 
+    <!-- CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fffdf5',
+                            100: '#fef9e7',
+                            300: '#f7d070',
+                            400: '#f3b938',
+                            500: '#d4af37',
+                            600: '#b58a1f',
+                            700: '#8c6511',
+                        },
+                        menuBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        mainText: '#0f172a',
+                        subText: '#64748b'
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        serif: ['Amiri', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         * {
+            -webkit-tap-highlight-color: transparent;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
+            background-color: #f8fafc;
+            color: #0f172a;
             font-family: 'Tajawal', sans-serif;
-            background: #0d0c0b;
-            color: #f3efe6;
             min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 90px;
         }
-        .font-serif {
-            font-family: 'Playfair Display', serif;
-        }
+
         ::-webkit-scrollbar {
+            height: 4px;
             width: 4px;
         }
         ::-webkit-scrollbar-track {
-            background: #0d0c0b;
+            background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
-            background: #d4af37;
+            background: #cbd5e1;
             border-radius: 10px;
         }
-        .royal-card {
-            background: linear-gradient(145deg, rgba(30, 27, 24, 0.9), rgba(18, 16, 14, 0.95));
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(212, 175, 55, 0.18);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-        }
-        .text-gold-gradient {
-            background: linear-gradient(135deg, #fff2a8 0%, #d4af37 50%, #aa7c11 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, #f5d061 0%, #d4af37 50%, #b8942e 100%);
-            color: #0d0c0b;
-            font-weight: 800;
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
-        }
-        .btn-gold-outline {
-            background: transparent;
-            color: #d4af37;
-            font-weight: 700;
-            padding: 0.6rem 1.8rem;
-            border-radius: 60px;
-            border: 2px solid #d4af37;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .btn-gold-outline:hover {
-            background: #d4af37;
-            color: #0d0c0b;
-        }
-        .glass-input {
-            background: rgba(13, 12, 11, 0.8);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: 14px;
-            padding: 0.75rem 1.2rem;
-            width: 100%;
-            outline: none;
-            transition: all 0.3s ease;
-            color: #ffffff;
-            font-size: 0.95rem;
-        }
-        .glass-input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
-        }
-        .glass-input option {
-            background: #1a1715;
-            color: #f3efe6;
-            padding: 8px;
-        }
-        .sidebar {
-            background: rgba(18, 16, 14, 0.98);
-            backdrop-filter: blur(20px);
-            border-left: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        .nav-tab {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border-radius: 14px;
-            padding: 0.8rem 1.2rem;
-            font-weight: 700;
-            color: #a19a8a;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            width: 100%;
-        }
-        .nav-tab:hover {
-            color: #f3efe6;
-            background: rgba(212, 175, 55, 0.08);
-        }
-        .nav-tab.active {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(245, 208, 97, 0.2));
-            color: #f5d061;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        .login-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background: rgba(13, 12, 11, 0.96);
-            backdrop-filter: blur(24px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        #toast-container {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 200;
-            pointer-events: none;
-        }
-        .toast {
-            background: #171513;
-            color: #f3efe6;
-            padding: 12px 32px;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
-            border: 1px solid #d4af37;
-        }
-        .stat-card {
-            transition: all 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px -10px rgba(212, 175, 55, 0.15);
-        }
-        .expense-category-badge {
-            font-size: 10px;
-            padding: 2px 12px;
-            border-radius: 30px;
-            font-weight: 700;
-        }
-        .transaction-row {
-            transition: background 0.2s ease;
-        }
-        .transaction-row:hover {
-            background: rgba(212, 175, 55, 0.06);
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        /* 🖨️ التنسيق المحترف والكامل للطباعة الحرارية */
-        @media print {
-            body {
-                background: #ffffff !important;
-                color: #000000 !important;
-            }
-            #dashboard, #login-overlay, #toast-container, #edit-dish-modal, aside, main, header {
-                display: none !important;
-            }
-            #printable-receipt {
-                display: block !important;
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 80mm !important;
-                color: #000000 !important;
-                background: #ffffff !important;
-                font-family: monospace, 'Tajawal', sans-serif !important;
-                padding: 10px !important;
-            }
+        .cat-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+        .cat-btn.active {
+            background: #0f172a;
+            color: #f3b938 !important;
+            border-color: #0f172a !important;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+        }
+
+        .menu-card {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+        .menu-card:active {
+            transform: scale(0.99);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            z-index: 999;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 13px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .size-radio:checked + label {
+            background-color: #0f172a;
+            color: #f3b938;
+            border-color: #0f172a;
+            font-weight: 800;
         }
     </style>
 </head>
 <body>
 
-    <div id="toast-container"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">✨ تمت الإضافة!</div>
 
-    <!-- LOGIN OVERLAY -->
-    <div id="login-overlay" class="login-overlay">
-        <div class="royal-card p-8 rounded-3xl max-w-md w-full border border-gold-500/30 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 rounded-full bg-gold-500/20 text-gold-300 flex items-center justify-center text-2xl mx-auto mb-3 border border-gold-500/40">
-                    <i class="fa-solid fa-crown"></i>
+    <!-- ═══ LIVE ORDER TRACKER CARD (كارت متابعة الطلب للزبون) ═══ -->
+    <div id="live-order-tracker" class="hidden max-w-4xl mx-auto px-4 mt-3">
+        <div class="bg-slate-900 text-white p-3.5 rounded-2xl shadow-lg border border-amber-400/40 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+                <div>
+                    <span class="text-[10px] text-slate-400 font-bold block leading-none">متابعة أوردرك الحالي:</span>
+                    <span id="tracker-status-text" class="text-amber-400 font-extrabold text-xs mt-1 block">⏳ قيد الانتظار بالمطبخ...</span>
                 </div>
-                <h2 class="font-serif text-3xl font-black text-gold-gradient">تسجيل دخول الأدمن</h2>
-                <p class="text-xs text-gray-400 mt-1">لوحة التحكم الفاخرة وإدارة الطلبات</p>
             </div>
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <label class="text-xs font-bold text-gold-400 block mb-1">البريد الإلكتروني</label>
-                    <input type="email" id="login-email" class="glass-input" placeholder="admin@example.com" required />
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gold-400 block mb-1">كلمة المرور</label>
-                    <input type="password" id="login-password" class="glass-input" placeholder="••••••••" required />
-                </div>
-                <button type="submit" class="btn-gold w-full py-3 rounded-xl mt-2 text-sm">دخول لوحة التحكم</button>
-                <p id="login-error" class="text-xs text-center text-red-400 font-bold hidden mt-2"></p>
-            </form>
+            <button onclick="window.clearOrderTracker()" class="text-slate-400 hover:text-white text-[10px] bg-white/10 px-2.5 py-1 rounded-lg">إخفاء</button>
         </div>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="flex flex-col md:flex-row min-h-screen hidden">
-
-        <!-- Mobile Top Nav -->
-        <div class="md:hidden flex items-center justify-between p-4 bg-dark-800 border-b border-gold-500/20 sticky top-0 z-40">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-gold-500 text-dark-900 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-utensils text-xs"></i>
+    <!-- ═══ HEADER / APP BAR ═══ -->
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200/80 px-4 py-3">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img id="res-logo" src="https://via.placeholder.com/100?text=👑" class="w-10 h-10 object-cover rounded-xl border border-slate-200 shadow-sm" />
+                <div>
+                    <h1 id="res-name" class="font-bold text-base text-slate-900 leading-tight">Golden Spoon</h1>
+                    <p id="header-tagline" class="text-[11px] text-slate-500 font-medium flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>المنيو الرقمي السريع</span>
+                    </p>
                 </div>
-                <span class="font-serif font-bold text-gold-gradient">Dining SaaS</span>
             </div>
-            <button onclick="window.toggleMobileSidebar()" class="text-gold-400 text-xl p-2 focus:outline-none">
-                <i class="fa-solid fa-bars"></i>
+
+            <div class="flex items-center gap-2">
+                <button onclick="window.callWaiter()" class="bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-amber-100 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-bell text-amber-500"></i>
+                    <span>طلب الويتر</span>
+                </button>
+                <a id="res-phone-btn" href="#" class="bg-slate-100 text-slate-700 p-2 rounded-xl text-xs flex items-center justify-center hover:bg-slate-200 transition-all">
+                    <i class="fa-solid fa-phone text-slate-600"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══ SEARCH & BANNER ═══ -->
+    <section class="max-w-4xl mx-auto px-4 pt-4 space-y-3">
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
+            <div class="space-y-0.5">
+                <span id="hero-badge" class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">طلب خارجي أو من الطاولة</span>
+                <h2 id="hero-title" class="font-bold text-sm sm:text-base">اختر وجبتك المفضلة بسهولة</h2>
+            </div>
+            <button onclick="window.openDeliveryModal()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+                <i class="fa-solid fa-motorcycle"></i>
+                <span>لطلب دليفري</span>
             </button>
         </div>
 
-        <!-- Sidebar -->
-        <aside id="sidebar-menu" class="sidebar w-full md:w-72 p-6 flex flex-col justify-between fixed md:sticky inset-y-0 right-0 z-30 transform translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto">
-            <div>
-                <div class="flex items-center justify-between pb-6 border-b border-gold-500/20">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-gold-600 to-gold-300 flex items-center justify-center text-dark-900 text-lg font-black shadow-lg">
-                            <i class="fa-solid fa-utensils"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-serif font-bold text-lg text-gold-gradient">Royal Dining</h2>
-                            <span class="text-[10px] font-bold text-gold-400 uppercase tracking-widest block">Dashboard SaaS</span>
-                        </div>
-                    </div>
-                    <button onclick="window.toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white text-lg">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+        <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input 
+                type="text" 
+                id="menu-search-input" 
+                placeholder="ابحث عن طبق أو وجبة..." 
+                oninput="window.handleSearch(this.value)"
+                class="w-full bg-white border border-slate-200 rounded-xl pr-10 pl-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 shadow-sm"
+            />
+        </div>
+    </section>
 
-                <nav class="mt-8 space-y-2">
-                    <button onclick="switchTab('orders')" id="tab-btn-orders" class="nav-tab active">
-                        <i class="fa-solid fa-bell text-gold-400"></i><span>طلبات الطاولات</span>
-                        <span id="badge-orders-count" class="mr-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black hidden">0</span>
-                    </button>
-                    <button onclick="switchTab('stats')" id="tab-btn-stats" class="nav-tab">
-                        <i class="fa-solid fa-chart-line"></i> التحليلات والإحصائيات
-                    </button>
-                    <button onclick="switchTab('finance')" id="tab-btn-finance" class="nav-tab">
-                        <i class="fa-solid fa-coins"></i> المالية والأرباح
-                    </button>
-                    <button onclick="switchTab('branding')" id="tab-btn-branding" class="nav-tab">
-                        <i class="fa-solid fa-store"></i> الهوية والإعدادات
-                    </button>
-                    <button onclick="switchTab('add-dish')" id="tab-btn-add-dish" class="nav-tab">
-                        <i class="fa-solid fa-circle-plus"></i> إضافة طبق جديد
-                    </button>
-                    <button onclick="switchTab('dishes-list')" id="tab-btn-dishes-list" class="nav-tab">
-                        <i class="fa-solid fa-utensils"></i> إدارة الأطباق
-                    </button>
-                </nav>
+    <!-- ═══ CATEGORIES FILTER BAR ═══ -->
+    <nav class="sticky top-[57px] z-30 bg-slate-980/95 backdrop-blur-md py-3 px-4 my-3 border-y border-slate-200/60 bg-slate-50/90">
+        <div class="max-w-4xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="category-filters">
+            <button class="cat-btn active px-4 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap" onclick="window.filterCat('الكل', this)">الكل</button>
+        </div>
+    </nav>
+
+    <!-- ═══ MENU DISHES LIST ═══ -->
+    <main class="max-w-4xl mx-auto px-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="products-grid">
+            <div class="col-span-full text-center py-16">
+                <div class="inline-block w-8 h-8 border-2 border-slate-300 border-t-amber-500 rounded-full animate-spin"></div>
+                <p class="text-slate-400 text-xs mt-3 font-medium">جاري تحميل قائمة الطعام...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer id="footer-section" class="mt-12 bg-white border-t border-slate-200 py-8 px-4 text-center">
+        <div class="max-w-4xl mx-auto space-y-4">
+            <h3 class="font-bold text-sm text-slate-800">تواصل معنا والتقييمات</h3>
+
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <a id="footer-maps-btn" href="#" target="_blank" class="hidden bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border border-slate-200">
+                    <i class="fa-solid fa-map-location-dot text-slate-500"></i> الموقع
+                </a>
+                <a id="footer-review-btn" href="#" target="_blank" class="hidden bg-amber-400 hover:bg-amber-500 text-slate-950 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-star"></i> قيم تجربتك
+                </a>
             </div>
 
-            <div class="pt-6 mt-6 border-t border-gold-500/10">
-                <button id="logout-btn" class="btn-gold-outline w-full text-center text-xs py-2.5 rounded-xl">
-                    <i class="fa-solid fa-right-from-bracket ml-2"></i> تسجيل الخروج
+            <div class="flex justify-center items-center gap-4 text-lg text-slate-600 pt-1" id="social-links-container"></div>
+
+            <p class="text-[10px] text-slate-400 border-t border-slate-100 pt-3">© 2026 جميع الحقوق محفوظة — المنيو الرقمي</p>
+        </div>
+    </footer>
+
+    <!-- ═══ FLOATING BOTTOM CART BAR ═══ -->
+    <div id="floating-cart-btn" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[94%] max-w-lg hidden">
+        <button onclick="window.openCartModal()" class="w-full bg-slate-900 text-white py-3 px-4 rounded-2xl flex items-center justify-between shadow-xl hover:bg-slate-800 transition-all border border-slate-700">
+            <div class="flex items-center gap-3">
+                <div class="relative bg-amber-400 text-slate-950 w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span id="cart-count-badge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black">0</span>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-400 font-medium leading-none">عرض السلة</p>
+                    <p class="text-xs font-bold text-white mt-0.5">طاولة: <span id="cart-table-num-display" class="text-amber-400">لم تحدد</span></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="cart-total-price" class="font-bold text-sm text-amber-400">0 ج.م</span>
+                <i class="fa-solid fa-chevron-left text-[10px] text-slate-400"></i>
+            </div>
+        </button>
+    </div>
+
+    <!-- ═══ DELIVERY / CONTACT MODAL ═══ -->
+    <div id="delivery-modal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4">
+        <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-900 text-white">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm leading-tight text-white">طلب دليفري وتواصل</h3>
+                        <p class="text-[10px] text-slate-400">اختر وسيلة التواصل المناسبة لك</p>
+                    </div>
+                </div>
+                <button onclick="window.closeDeliveryModal()" class="w-7 h-7 rounded-full bg-white/10 text-slate-300 hover:bg-white/20 flex items-center justify-center text-xs">✕</button>
+            </div>
+
+            <div class="p-5 space-y-3">
+                <a id="delivery-modal-phone" href="#" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 p-3.5 rounded-2xl font-bold text-xs flex items-center justify-between transition-all border border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500 text-white flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-xs font-extrabold">الاتصال الهاتفي المباشر</span>
+                            <span id="delivery-modal-phone-num" class="block text-[11px] text-slate-500 font-normal">--</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
+                </a>
+
+                <a id="delivery-modal-whatsapp" href="#" target="_blank" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-950 p-3.5 rounded-2xl font-bold text-xs flex items-center justify-between transition-all border border-emerald-200/80">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-base">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-xs font-extrabold text-emerald-950">الطلب عبر واتساب</span>
+                            <span class="block text-[10px] text-emerald-700 font-normal">مراسلة مباشرة وإرسال القائمة</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-xs text-emerald-600"></i>
+                </a>
+
+                <div class="pt-3 border-t border-slate-100">
+                    <span class="text-[11px] text-slate-400 font-bold block mb-2 text-center">صفحاتنا على منصات التواصل</span>
+                    <div id="delivery-social-container" class="flex justify-center items-center gap-3 text-lg"></div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-slate-50 border-t border-slate-100 text-center">
+                <button onclick="window.closeDeliveryModal()" class="w-full py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition-colors">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ DISH DETAILS MODAL ═══ -->
+    <div id="modal-img" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4">
+        <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[85vh] shadow-2xl">
+            <div class="absolute top-3 left-3 z-10">
+                <button onclick="window.closeImgModal()" class="w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black transition-all flex items-center justify-center text-xs">✕</button>
+            </div>
+
+            <div class="relative h-52 bg-slate-100 flex items-center justify-center overflow-hidden">
+                <img id="modal-img-element" src="" alt="طبق" class="w-full h-full object-cover" />
+            </div>
+
+            <div class="p-5 space-y-4 overflow-y-auto">
+                <div>
+                    <h3 id="modal-title" class="font-bold text-lg text-slate-900 leading-tight">الطبق</h3>
+                    <p id="modal-desc" class="text-xs text-slate-500 mt-1 leading-relaxed">وصف الطبق</p>
+                </div>
+
+                <div id="modal-sizes-container" class="hidden space-y-2 pt-2 border-t border-slate-100">
+                    <label class="text-xs font-bold text-slate-700 block"><i class="fa-solid fa-layer-group ml-1 text-amber-500"></i> اختر الحجم / النوع:</label>
+                    <div id="modal-sizes-list" class="grid grid-cols-2 gap-2"></div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold block">السعر</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="modal-price" class="font-bold text-lg text-slate-900">0 ج.م</span>
+                            <span id="modal-old-price" class="text-xs text-slate-400 line-through hidden">0 ج.م</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                        <button onclick="window.adjustModalQty(-1)" class="w-7 h-7 rounded-lg bg-white text-slate-800 shadow-sm flex items-center justify-center font-bold text-sm hover:bg-slate-200 transition-all">−</button>
+                        <span id="modal-qty" class="font-bold text-xs w-4 text-center text-slate-800">1</span>
+                        <button onclick="window.adjustModalQty(1)" class="w-7 h-7 rounded-lg bg-white text-slate-800 shadow-sm flex items-center justify-center font-bold text-sm hover:bg-slate-200 transition-all">+</button>
+                    </div>
+                </div>
+
+                <button id="modal-add-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all">
+                    <i class="fa-solid fa-cart-plus"></i> إضافة إلى الطلب
                 </button>
             </div>
-        </aside>
+        </div>
+    </div>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-10 overflow-y-auto">
-            <header class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-gold-500/20">
-                <h1 class="font-serif text-xl md:text-3xl font-black text-white" id="header-title">طلبات الطاولات المباشرة</h1>
-                <div class="flex items-center gap-3">
-                    <span id="header-currency-badge" class="text-xs bg-gold-500/10 text-gold-400 px-3 py-1.5 rounded-full border border-gold-500/20 font-bold">
-                        <i class="fa-solid fa-money-bill-wave ml-1"></i> ج.م
-                    </span>
-                    <a id="preview-menu-link" href="index.html" target="_blank" class="btn-gold-outline text-xs py-1.5 px-3 rounded-full">
-                        <i class="fa-solid fa-eye"></i> معاينة المنيو ↗
+    <!-- ═══ CART MODAL ═══ -->
+    <div id="cart-modal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4">
+        <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-100">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-amber-500"></i> تفاصيل وتأكيد الطلب
+                </h3>
+                <button onclick="window.closeCartModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs">✕</button>
+            </div>
+
+            <div class="p-4 overflow-y-auto space-y-4 flex-1">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1"><i class="fa-solid fa-user ml-1 text-slate-500"></i> الاسم (اختياري)</label>
+                        <input type="text" id="order-customer-name" placeholder="اسمك الكريم" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1"><i class="fa-solid fa-phone ml-1 text-slate-500"></i> رقم الهاتف (مهم للطلب)</label>
+                        <input type="tel" id="order-customer-phone" placeholder="رقم الموبايل للمتابعة" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1"><i class="fa-solid fa-chair ml-1 text-slate-500"></i> رقم الطاولة</label>
+                        <input type="number" id="order-table-number" placeholder="أدخل رقم الطاولة (مثلاً: 5)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" required />
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs font-bold text-slate-500 mb-2">الأطباق المختارة</p>
+                    <div id="cart-items-container" class="space-y-2 max-h-44 overflow-y-auto"></div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">ملاحظات إضافية للمطبخ</label>
+                    <textarea id="order-notes" placeholder="مثل: بدون بصل، صوص إضافي..." class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400" rows="2"></textarea>
+                </div>
+
+                <div id="after-order-review-container" class="hidden pt-2 border-t border-slate-100 text-center space-y-2">
+                    <p class="text-xs text-emerald-600 font-bold">🎉 تم إرسال طلبك للمطبخ بنجاح!</p>
+                    <a id="modal-review-btn" href="#" target="_blank" class="bg-amber-400 text-slate-950 w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-star"></i> شاركنا تقييمك للمطعم
                     </a>
                 </div>
-            </header>
-
-            <!-- ORDERS -->
-            <section id="section-orders" class="tab-content space-y-6">
-                <div class="flex flex-wrap items-center justify-between gap-3 bg-dark-800/80 p-4 rounded-2xl border border-gold-500/20">
-                    <div class="flex items-center gap-2 text-xs md:text-sm text-gray-300">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-                        مراقبة الطلبات الحية مباشرة من الطاولات
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="window.testNotificationSound()" class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
-                            <i class="fa-solid fa-volume-high"></i> تجربة التنبيه الصوتي
-                        </button>
-                        <button onclick="window.clearFinishedOrders()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
-                            <i class="fa-solid fa-broom"></i> تنظيف المنتهي
-                        </button>
-                        <button onclick="window.clearAllOrders()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
-                            <i class="fa-regular fa-trash-can"></i> مسح جميع الطلبات
-                        </button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-container">
-                    <div class="col-span-full text-center py-16 text-gray-500">
-                        <i class="fa-solid fa-receipt text-3xl text-gold-500 mb-2 block"></i>
-                        لا توجد طلبات جديدة حالياً
-                    </div>
-                </div>
-            </section>
-
-            <!-- STATS -->
-            <section id="section-stats" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 stats-grid">
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-gold-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي الإيرادات</span>
-                        <h3 class="text-2xl font-black text-gold-gradient mt-1" id="stat-total-revenue">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-emerald-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">طلبات اليوم</span>
-                        <h3 class="text-2xl font-black text-emerald-400 mt-1" id="stat-orders-today">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-rose-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي المصروفات</span>
-                        <h3 class="text-2xl font-black text-rose-400 mt-1" id="stat-total-expenses">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-cyan-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">صافي الربح</span>
-                        <h3 class="text-2xl font-black text-cyan-400 mt-1" id="stat-net-profit">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-purple-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">متوسط قيمة الطلب</span>
-                        <h3 class="text-2xl font-black text-purple-400 mt-1" id="stat-avg-order">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-orange-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">الأطباق بالمنيو</span>
-                        <h3 class="text-2xl font-black text-orange-400 mt-1" id="stat-total-dishes">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-indigo-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">أطباق مصورة</span>
-                        <h3 class="text-2xl font-black text-indigo-400 mt-1" id="stat-img-models">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-teal-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">الطبق الأكثر طلباً</span>
-                        <h3 class="text-2xl font-black text-teal-400 mt-1" id="stat-top-dish">—</h3>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
-                        <h3 class="font-serif font-bold text-base text-gold-gradient mb-3"><i class="fa-solid fa-chart-pie ml-2"></i>توزيع المصروفات حسب الفئة</h3>
-                        <div id="expense-breakdown" class="space-y-2 text-sm"><p class="text-gray-400 text-xs">لا توجد مصروفات مسجلة</p></div>
-                    </div>
-                    <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
-                        <h3 class="font-serif font-bold text-base text-gold-gradient mb-3"><i class="fa-solid fa-clock ml-2"></i>آخر 5 معاملات</h3>
-                        <div id="recent-transactions" class="space-y-2 text-sm"><p class="text-gray-400 text-xs">لا توجد معاملات</p></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- FINANCE -->
-            <section id="section-finance" class="tab-content hidden space-y-6">
-                <div class="royal-card p-5 md:p-8 rounded-3xl border border-gold-500/20">
-                    <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient mb-4"><i class="fa-solid fa-pen-to-square ml-2"></i>تسجيل معاملة جديدة</h3>
-                    <form id="form-transaction" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs font-bold text-gold-400 block mb-1">النوع</label>
-                                <select id="txn-type" class="glass-input" required>
-                                    <option value="expense">مصروف 🧾</option>
-                                    <option value="income">إيراد 💰</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label>
-                                <select id="txn-category" class="glass-input" required>
-                                    <option value="chicken">دجاج 🍗</option><option value="meat">لحوم 🥩</option>
-                                    <option value="vegetables">خضروات 🥬</option><option value="seafood">مأكولات بحرية 🦐</option>
-                                    <option value="dairy">ألبان 🧀</option><option value="oil">زيوت وبهارات 🌿</option>
-                                    <option value="electricity">كهرباء 💡</option><option value="water">مياه 💧</option>
-                                    <option value="rent">إيجار 🏠</option><option value="salaries">مرتبات 👨‍🍳</option>
-                                    <option value="marketing">تسويق 📢</option><option value="maintenance">صيانة 🔧</option>
-                                    <option value="other">أخرى 📌</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs font-bold text-gold-400 block mb-1">المبلغ</label>
-                                <input type="number" id="txn-amount" class="glass-input" placeholder="0.00" required step="0.01" min="0" />
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gold-400 block mb-1">التاريخ</label>
-                                <input type="date" id="txn-date" class="glass-input" required />
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-gold-400 block mb-1">الوصف</label>
-                            <input type="text" id="txn-description" class="glass-input" placeholder="مثلاً: شراء دجاج للمطبخ" />
-                        </div>
-                        <button type="submit" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold"><i class="fa-regular fa-floppy-disk ml-2"></i>تسجيل</button>
-                    </form>
-                </div>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-emerald-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي الإيرادات</span>
-                        <h3 class="text-2xl font-black text-emerald-400 mt-1" id="finance-total-income">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-rose-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">إجمالي المصروفات</span>
-                        <h3 class="text-2xl font-black text-rose-400 mt-1" id="finance-total-expenses">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-cyan-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">صافي الربح</span>
-                        <h3 class="text-2xl font-black text-cyan-400 mt-1" id="finance-net-profit">0</h3>
-                    </div>
-                    <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-gold-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">عدد المعاملات</span>
-                        <h3 class="text-2xl font-black text-gold-gradient mt-1" id="finance-txn-count">0</h3>
-                    </div>
-                </div>
-                <div class="royal-card rounded-3xl overflow-hidden p-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-serif font-bold text-base text-gold-gradient"><i class="fa-solid fa-list-ul ml-2"></i>سجل المعاملات</h3>
-                        <div class="flex gap-2">
-                            <button onclick="window.exportFinanceToExcel()" class="btn-gold-outline text-xs py-1 px-3 rounded-lg"><i class="fa-solid fa-file-excel ml-1"></i>تصدير Excel</button>
-                            <button onclick="window.clearAllTransactions()" class="text-xs text-red-400 hover:text-red-300 transition font-bold"><i class="fa-regular fa-trash-can ml-1"></i>مسح الكل</button>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-xs md:text-sm">
-                            <thead class="bg-dark-800 text-gold-400 text-[11px] font-bold border-b border-gold-500/20">
-                                <tr><th class="p-3">التاريخ</th><th class="p-3">النوع</th><th class="p-3">التصنيف</th><th class="p-3">الوصف</th><th class="p-3">المبلغ</th><th class="p-3 text-center">حذف</th></tr>
-                            </thead>
-                            <tbody id="transactions-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
-                    <h3 class="font-serif font-bold text-base text-gold-gradient mb-3"><i class="fa-solid fa-note-sticky ml-2"></i>ملاحظات يومية (خاصة) <span class="text-[10px] text-gray-400 font-normal mr-2">— تظهر فقط هنا</span></h3>
-                    <form id="form-daily-note" class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="daily-note-input" class="glass-input flex-1" placeholder="اكتب ملاحظة اليوم..." />
-                        <button type="submit" class="btn-gold px-6 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap"><i class="fa-regular fa-floppy-disk ml-1"></i>حفظ</button>
-                    </form>
-                    <div id="daily-notes-list" class="mt-4 space-y-2 max-h-48 overflow-y-auto"></div>
-                </div>
-            </section>
-
-            <!-- BRANDING -->
-            <section id="section-branding" class="tab-content hidden max-w-3xl">
-                <form id="form-branding" class="royal-card p-5 md:p-8 rounded-3xl space-y-4">
-                    <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient">إعدادات المطعم والعملة</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div><label class="text-xs font-bold text-gold-400 block mb-1">اسم المطعم</label><input type="text" id="brand-name" class="glass-input" placeholder="Golden Spoon" required /></div>
-                        <div><label class="text-xs font-bold text-gold-400 block mb-1">معرف الرابط (Slug)</label><input type="text" id="brand-slug" class="glass-input text-gold-400 font-mono" placeholder="golden-spoon" required /></div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رابط اللوجو (URL)</label><input type="url" id="brand-logo" class="glass-input" placeholder="https://..." required /></div>
-                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رقم الهاتف</label><input type="text" id="brand-phone" class="glass-input" placeholder="+201000000000" required /></div>
-                    </div>
-                    <hr class="border-gold-500/10" />
-
-                    <div>
-                        <label class="text-xs font-bold text-gold-400 block mb-1"><i class="fa-solid fa-coins ml-1"></i>العملة المستخدمة</label>
-                        <select id="brand-currency" class="glass-input" required>
-                            <optgroup label="العملات العربية">
-                                <option value="EGP">🇪🇬 جنيه مصري (ج.م)</option>
-                                <option value="SAR">🇸🇦 ريال سعودي (ر.س)</option>
-                                <option value="AED">🇦🇪 درهم إماراتي (د.إ)</option>
-                                <option value="KWD">🇰🇼 دينار كويتي (د.ك)</option>
-                                <option value="QAR">🇶🇦 ريال قطري (ر.ق)</option>
-                                <option value="BHD">🇧🇭 دينار بحريني (د.ب)</option>
-                                <option value="OMR">🇴🇲 ريال عماني (ر.ع)</option>
-                                <option value="JOD">🇯🇴 دينار أردني (د.أ)</option>
-                                <option value="IQD">🇮🇶 دينار عراقي (د.ع)</option>
-                                <option value="LBP">🇱🇧 ليرة لبنانية (ل.ل)</option>
-                                <option value="LYD">🇱🇾 دينار ليبي (د.ل)</option>
-                                <option value="DZD">🇩🇿 دينار جزائري (د.ج)</option>
-                                <option value="MAD">🇲🇦 درهم مغربي (د.م)</option>
-                                <option value="TND">🇹🇳 دينار تونسي (د.ت)</option>
-                                <option value="SDG">🇸🇩 جنيه سوداني (ج.س)</option>
-                                <option value="YER">🇾🇪 ريال يمني (ر.ي)</option>
-                                <option value="SYP">🇸🇾 ليرة سورية (ل.س)</option>
-                                <option value="MRU">🇲🇷 أوقية موريتانية (أ.م)</option>
-                                <option value="SOS">🇸🇴 شلن صومالي (ش.ص)</option>
-                                <option value="DJF">🇩🇯 فرنك جيبوتي (ف.ج)</option>
-                                <option value="KMF">🇰🇲 فرنك قمري (ف.ق)</option>
-                            </optgroup>
-                            <optgroup label="العملات العالمية الكبرى">
-                                <option value="USD">🇺🇸 دولار أمريكي ($)</option>
-                                <option value="EUR">🇪🇺 يورو (€)</option>
-                                <option value="GBP">🇬🇧 جنيه استرليني (£)</option>
-                                <option value="JPY">🇯🇵 ين ياباني (¥)</option>
-                                <option value="CNY">🇨🇳 يوان صيني (¥)</option>
-                                <option value="CHF">🇨🇭 فرنك سويسري (CHF)</option>
-                                <option value="CAD">🇨🇦 دولار كندي (CA$)</option>
-                                <option value="AUD">🇦🇺 دولار أسترالي (A$)</option>
-                                <option value="NZD">🇳🇿 دولار نيوزيلندي (NZ$)</option>
-                                <option value="INR">🇮🇳 روبية هندية (₹)</option>
-                                <option value="RUB">🇷🇺 روبيل روسي (₽)</option>
-                                <option value="TRY">🇹🇷 ليرة تركية (₺)</option>
-                                <option value="BRL">🇧🇷 ريال برازيلي (R$)</option>
-                                <option value="ZAR">🇿🇦 راند جنوب إفريقي (R)</option>
-                                <option value="KRW">🇰🇷 وون كوري (₩)</option>
-                                <option value="MXN">🇲🇽 بيزو مكسيكي (Mex$)</option>
-                                <option value="SGD">🇸🇬 دولار سنغافوري (S$)</option>
-                                <option value="HKD">🇭🇰 دولار هونغ كونغ (HK$)</option>
-                                <option value="SEK">🇸🇪 كرونة سويدية (kr)</option>
-                                <option value="NOK">🇳🇴 كرونة نرويجية (kr)</option>
-                                <option value="DKK">🇩🇰 كرونة دنماركية (kr)</option>
-
-                                <option value="PLN">🇵🇱 زلوتي بولندي (zł)</option>
-                                <option value="THB">🇹🇭 بات تايلاندي (฿)</option>
-                                <option value="IDR">🇮🇩 روبية إندونيسية (Rp)</option>
-                                <option value="MYR">🇲🇾 رينغيت ماليزي (RM)</option>
-                                <option value="PHP">🇵🇭 بيزو الفلبين (₱)</option>
-                                <option value="PKR">🇵🇰 روبية باكستانية (Rs)</option>
-                                <option value="BDT">🇧🇩 تاكا بنغلاديشية (৳)</option>
-                                <option value="VND">🇻🇳 دونغ فيتنامي (₫)</option>
-                                <option value="EGP_A">🇦🇫 أفغاني أفغانستان (؋)</option>
-                                <option value="ARS">🇦🇷 بيزو أرجنتيني ($)</option>
-                                <option value="AZN">🇦🇿 مانات أذربيجاني (₼)</option>
-                                <option value="CLP">🇨🇱 بيزو تشيلي ($)</option>
-                                <option value="COP">🇨🇴 بيزو كولومبي ($)</option>
-                                <option value="CZK">🇨🇿 كرونة تشيكية (Kč)</option>
-                                <option value="GHS">🇬🇭 سيدي غاني (₵)</option>
-                                <option value="HUF">🇭🇺 فورينت مجري (Ft)</option>
-                                <option value="ILS">🇮🇱 شيكل (₪)</option>
-                                <option value="KES">🇰🇪 شلن كيني (KSh)</option>
-                                <option value="KZT">🇰🇿 تينغ كازاخستاني (₸)</option>
-                                <option value="NGN">🇳🇬 نايرا نيجيرية (₦)</option>
-                                <option value="PER">🇵🇪 سول بيروفي (S/)</option>
-                                <option value="RON">🇷🇴 ليو رومانيا (lei)</option>
-
-                                <option value="UAH">🇺🇦 هريفنا أوكرانية (₴)</option>
-                                <option value="UYU">🇺🇾 بيزو أوروغواي ($U)</option>
-                                <option value="UZS">🇺🇿 سوم أوزبكستاني (soʻm)</option>
-                            </optgroup>
-                        </select>
-                        <p class="text-[10px] text-gray-500 mt-1">سيتم تطبيق العملة تلقائياً على جميع الأسعار والإحصائيات في لوحة التحكم والمنيو.</p>
-                    </div>
-
-                    <hr class="border-gold-500/10" />
-                    <h4 class="text-xs font-bold text-gold-300"><i class="fa-solid fa-location-dot ml-1"></i> خريطة جوجل وتقييمات</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رابط Google Maps</label><input type="url" id="brand-maps-url" class="glass-input" placeholder="https://maps.google.com/..." /></div>
-                        <div><label class="text-xs font-bold text-gold-400 block mb-1">رابط التقييم</label><input type="url" id="brand-review-url" class="glass-input" placeholder="https://g.page/r/..." /></div>
-                    </div>
-                    <hr class="border-gold-500/10" />
-                    <h4 class="text-xs font-bold text-gold-300"><i class="fa-solid fa-share-nodes ml-1"></i> التواصل الاجتماعي</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div><label class="text-xs font-bold text-gray-400 block mb-1">واتساب</label><input type="text" id="brand-whatsapp" class="glass-input" placeholder="201000000000" /></div>
-                        <div><label class="text-xs font-bold text-gray-400 block mb-1">إنستغرام</label><input type="url" id="brand-instagram" class="glass-input" placeholder="https://instagram.com/..." /></div>
-                        <div><label class="text-xs font-bold text-gray-400 block mb-1">فيسبوك</label><input type="url" id="brand-facebook" class="glass-input" placeholder="https://facebook.com/..." /></div>
-                    </div>
-                    <hr class="border-gold-500/10" />
-                    <h4 class="text-xs font-bold text-gold-300"><i class="fa-solid fa-paintbrush ml-1"></i> محتوى الهيرو</h4>
-                    <div><input type="text" id="brand-header-tagline" class="glass-input" placeholder="منيو تفاعلي فاخر" /></div>
-                    <div><input type="text" id="brand-hero-badge" class="glass-input" placeholder="تجربة طعام فاخرة" /></div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div><input type="text" id="brand-hero-title" class="glass-input" placeholder="أشهى الأطباق" /></div>
-                        <div><input type="text" id="brand-hero-subtitle" class="glass-input" placeholder="مجهزة خصيصاً لك" /></div>
-                    </div>
-                    <div><textarea id="brand-hero-desc" class="glass-input" rows="2" placeholder="استمتع بتجربة تصفح فريدة..."></textarea></div>
-
-                    <button type="submit" id="btn-save-branding" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold"><i class="fa-regular fa-floppy-disk ml-2"></i>حفظ كافة الإعدادات</button>
-                </form>
-            </section>
-
-            <!-- ADD DISH -->
-            <section id="section-add-dish" class="tab-content hidden max-w-2xl">
-                <form id="form-add-product" class="royal-card p-5 md:p-8 rounded-3xl space-y-4">
-                    <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient">إضافة طبق جديد</h3>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-bold text-gold-400 block mb-1">اسم الطبق</label>
-                            <input type="text" id="prod-title" placeholder="اسم الطبق (مثل: قهوة / برجر)" class="glass-input" required />
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label>
-                            <input type="text" id="prod-category" class="glass-input" placeholder="مشروبات، برجر، حلويات..." required />
-                        </div>
-                    </div>
-
-                    <!-- Single Base Price -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-dark-900/50 p-3 rounded-2xl border border-gold-500/10">
-                        <div>
-                            <label class="text-xs font-bold text-gold-400 block mb-1">السعر الأساسي (في حال عدم وجود أحجام)</label>
-                            <input type="number" id="prod-price" placeholder="السعر" class="glass-input" step="0.01" min="0" />
-                            <span id="prod-currency-label" class="text-[10px] text-gold-400 block mt-1">ج.م</span>
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-gold-400 block mb-1">السعر القديم (خصم)</label>
-                            <input type="number" id="prod-old-price" placeholder="اختياري" class="glass-input" step="0.01" min="0" />
-                        </div>
-                    </div>
-
-                    <!-- Sizes / Variants Input Section -->
-                    <div class="bg-dark-900/80 p-4 rounded-2xl border border-gold-500/20 space-y-3">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <label class="text-xs font-bold text-gold-300 block"><i class="fa-solid fa-list-ol ml-1"></i>الأحجام أو الأنواع (اختياري)</label>
-                                <span class="text-[10px] text-gray-400">مثال: (صغير - 20) ، (كبير - 35) ، (دبل - 80)</span>
-                            </div>
-                            <button type="button" onclick="window.addSizeRow('add-sizes-list')" class="bg-gold-500/20 hover:bg-gold-500/40 text-gold-300 text-xs px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
-                                <i class="fa-solid fa-plus text-[10px]"></i> إضافة حجم
-                            </button>
-                        </div>
-                        <div id="add-sizes-list" class="space-y-2"></div>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-bold text-gold-400 block mb-1">صورة الطبق (JPG, PNG, WEBP)</label>
-                        <input type="file" id="prod-file-img" accept="image/*" class="glass-input text-xs p-2" required />
-                    </div>
-
-                    <textarea id="prod-desc" placeholder="وصف الطبق والمكونات..." class="glass-input p-3" rows="3" required></textarea>
-
-                    <div id="upload-progress" class="hidden space-y-1">
-                        <div class="flex justify-between text-xs text-gold-400 font-bold"><span>جاري الرفع...</span><span id="upload-percent">0%</span></div>
-                        <div class="w-full h-2 bg-dark-900 rounded-full overflow-hidden border border-gold-500/20"><div id="upload-bar" class="h-full bg-gold-500 w-0 transition-all"></div></div>
-                    </div>
-                    
-                    <button type="submit" id="btn-add-product" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold">رفع ونشر الطبق</button>
-                </form>
-            </section>
-
-            <!-- DISHES LIST -->
-            <section id="section-dishes-list" class="tab-content hidden">
-                <div class="royal-card rounded-3xl overflow-x-auto p-4">
-                    <table class="w-full text-right text-xs md:text-sm">
-                        <thead class="bg-dark-800 text-gold-400 text-[11px] font-bold border-b border-gold-500/20">
-                            <tr><th class="p-3">الصورة</th><th class="p-3">الاسم</th><th class="p-3">التصنيف</th><th class="p-3">السعر / الأحجام</th><th class="p-3 text-center">التحكم</th></tr>
-                        </thead>
-                        <tbody id="dishes-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- EDIT MODAL -->
-    <div id="edit-dish-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="royal-card w-full max-w-lg p-5 rounded-3xl border border-gold-500/30 space-y-3 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-gold-500/20 pb-3">
-                <h3 class="font-serif font-bold text-base text-gold-gradient"><i class="fa-solid fa-pen-to-square ml-1"></i>تعديل الطبق</h3>
-                <button onclick="window.closeEditModal()" class="text-gray-400 hover:text-white">✕</button>
             </div>
-            <form id="form-edit-product" class="space-y-3">
-                <input type="hidden" id="edit-prod-id" />
-                <div><label class="text-xs font-bold text-gold-400 block mb-1">الاسم</label><input type="text" id="edit-prod-title" class="glass-input" required /></div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-xs font-bold text-gold-400 block mb-1">السعر الحالي</label><input type="number" id="edit-prod-price" class="glass-input" step="0.01" min="0" /></div>
-                    <div><label class="text-xs font-bold text-gold-400 block mb-1">السعر القديم</label><input type="number" id="edit-prod-old-price" class="glass-input" step="0.01" min="0" /></div>
+
+            <div class="p-4 border-t border-slate-100 bg-slate-50 space-y-3">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-500 font-bold">إجمالي المبلغ</span>
+                    <span id="modal-cart-total" class="font-bold text-base text-slate-900">0 ج.م</span>
                 </div>
-
-                <!-- Edit Sizes Section -->
-                <div class="bg-dark-900/80 p-3 rounded-2xl border border-gold-500/20 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label class="text-xs font-bold text-gold-300 block">الأحجام أو الأنواع المتاحة</label>
-                        <button type="button" onclick="window.addSizeRow('edit-sizes-list')" class="bg-gold-500/20 hover:bg-gold-500/40 text-gold-300 text-[11px] px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-[9px]"></i> إضافة
-                        </button>
-                    </div>
-                    <div id="edit-sizes-list" class="space-y-2"></div>
-                </div>
-
-                <div><label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label><input type="text" id="edit-prod-category" class="glass-input" required /></div>
-                <div><label class="text-xs font-bold text-gold-400 block mb-1">الوصف</label><textarea id="edit-prod-desc" class="glass-input" rows="2" required></textarea></div>
-                <div><label class="text-xs font-bold text-gold-400 block mb-1">تحديث الصورة (اختياري)</label><input type="file" id="edit-prod-file-img" accept="image/*" class="glass-input text-xs" /></div>
-                <div id="edit-upload-progress" class="hidden text-xs text-gold-400 font-bold">جاري الرفع: <span id="edit-upload-percent">0%</span></div>
-                <button type="submit" id="btn-save-edit" class="btn-gold w-full py-2.5 rounded-xl font-bold text-xs md:text-sm mt-2">حفظ التغييرات</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 🧾 RECEIPT FOR THERMAL PRINTING (الفاتورة الحرارية للطباعة) 🧾 -->
-    <div id="printable-receipt" style="display: none;">
-        <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
-            <img id="receipt-logo" src="" style="max-width: 60px; max-height: 60px; margin: 0 auto 5px auto; display: block;" />
-            <h2 id="receipt-res-name" style="font-size: 16px; font-weight: bold; margin: 0;"></h2>
-            <p id="receipt-phone" style="font-size: 11px; margin: 2px 0;"></p>
-            <p id="receipt-date" style="font-size: 10px; color: #333; margin-top: 2px;"></p>
-            <h3 id="receipt-table-num" style="font-size: 18px; font-weight: bold; margin-top: 6px; border: 1px solid #000; padding: 2px 6px; display: inline-block;"></h3>
-        </div>
-
-        <table style="width: 100%; text-align: right; border-collapse: collapse; margin-bottom: 8px;">
-            <thead>
-                <tr style="border-bottom: 1px solid #000; font-size: 11px;">
-                    <th style="padding: 3px 0;">الصنف</th>
-                    <th style="padding: 3px 0; text-align: center;">العدد</th>
-                    <th style="padding: 3px 0; text-align: left;">السعر</th>
-                </tr>
-            </thead>
-            <tbody id="receipt-items-list"></tbody>
-        </table>
-
-        <div id="receipt-notes-box" style="display: none; border-top: 1px solid #000; padding-top: 4px; margin-bottom: 6px; font-size: 11px;">
-            <strong>ملاحظات:</strong> <span id="receipt-notes"></span>
-        </div>
-
-        <div style="border-top: 2px dashed #000; padding-top: 6px; text-align: center;">
-            <p id="receipt-total-price" style="font-size: 15px; font-weight: bold; margin: 0;"></p>
-            <p style="font-size: 10px; margin-top: 6px;">*** شكراً لزيارتكم ***</p>
+                <button onclick="window.sendOrderToFirebase()" id="btn-submit-order" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-paper-plane"></i> إرسال الطلب الآن
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- ═══ FIREBASE & LOGIC ═══ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDEU3ksUDW4jYgxHZdApYJij6oKhywKLIo",
@@ -746,850 +444,434 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
-        const loginOverlay = document.getElementById('login-overlay');
-        const dashboard = document.getElementById('dashboard');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-        const logoutBtn = document.getElementById('logout-btn');
-        const toastContainer = document.getElementById('toast-container');
+        const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
 
-        let knownOrdersCount = 0;
-        let cachedProducts = [];
-        let cachedTransactions = [];
-        let cachedDailyNotes = [];
-        let cachedOrders = [];
-        let restaurantSettings = {};
-        let currentCurrency = 'EGP';
+        let allProducts = [];
+        let filteredProducts = [];
+        let cart = [];
+        let activeModalProduct = null;
+        let currentSelectedSize = null;
+        let currentModalQty = 1;
+        let activeCategory = 'الكل';
+        let searchQuery = '';
+        let activeTrackerUnsubscribe = null;
 
-        // Web Audio Context للتنبيهات
-        let audioCtx = null;
-
-        function initAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        // تفعيل الصوت عند النقر في أي مكان داخل الصفحة
-        window.addEventListener('click', () => initAudioContext(), { once: true });
-        window.addEventListener('keydown', () => initAudioContext(), { once: true });
-
-        // خريطة عملات العالم الشاملة
-        const CURRENCY_MAP = {
-            'EGP': { symbol: 'ج.م', code: 'EGP' },
-            'SAR': { symbol: 'ر.س', code: 'SAR' },
-            'AED': { symbol: 'د.إ', code: 'AED' },
-            'KWD': { symbol: 'د.ك', code: 'KWD' },
-            'QAR': { symbol: 'ر.ق', code: 'QAR' },
-            'BHD': { symbol: 'د.ب', code: 'BHD' },
-            'OMR': { symbol: 'ر.ع', code: 'OMR' },
-            'JOD': { symbol: 'د.أ', code: 'JOD' },
-            'IQD': { symbol: 'د.ع', code: 'IQD' },
-            'LBP': { symbol: 'ل.ل', code: 'LBP' },
-            'LYD': { symbol: 'د.ل', code: 'LYD' },
-            'DZD': { symbol: 'د.ج', code: 'DZD' },
-            'MAD': { symbol: 'د.م', code: 'MAD' },
-            'TND': { symbol: 'د.ت', code: 'TND' },
-            'SDG': { symbol: 'ج.س', code: 'SDG' },
-            'YER': { symbol: 'ر.ي', code: 'YER' },
-            'SYP': { symbol: 'ل.س', code: 'SYP' },
-            'MRU': { symbol: 'أ.م', code: 'MRU' },
-            'SOS': { symbol: 'ش.ص', code: 'SOS' },
-            'DJF': { symbol: 'ف.ج', code: 'DJF' },
-            'KMF': { symbol: 'ف.ق', code: 'KMF' },
-            'USD': { symbol: '$', code: 'USD' },
-            'EUR': { symbol: '€', code: 'EUR' },
-            'GBP': { symbol: '£', code: 'GBP' },
-            'JPY': { symbol: '¥', code: 'JPY' },
-            'CNY': { symbol: '¥', code: 'CNY' },
-            'CHF': { symbol: 'CHF', code: 'CHF' },
-            'CAD': { symbol: 'CA$', code: 'CAD' },
-            'AUD': { symbol: 'A$', code: 'AUD' },
-            'NZD': { symbol: 'NZ$', code: 'NZD' },
-            'INR': { symbol: '₹', code: 'INR' },
-            'RUB': { symbol: '₽', code: 'RUB' },
-            'TRY': { symbol: '₺', code: 'TRY' },
-            'BRL': { symbol: 'R$', code: 'BRL' },
-            'ZAR': { symbol: 'R', code: 'ZAR' },
-            'KRW': { symbol: '₩', code: 'KRW' },
-            'MXN': { symbol: 'Mex$', code: 'MXN' },
-            'SGD': { symbol: 'S$', code: 'SGD' },
-            'HKD': { symbol: 'HK$', code: 'HKD' },
-            'SEK': { symbol: 'kr', code: 'SEK' },
-            'NOK': { symbol: 'kr', code: 'NOK' },
-            'DKK': { symbol: 'kr', code: 'DKK' },
-            'PLN': { symbol: 'zł', code: 'PLN' },
-            'THB': { symbol: '฿', code: 'THB' },
-            'IDR': { symbol: 'Rp', code: 'IDR' },
-            'MYR': { symbol: 'RM', code: 'MYR' },
-            'PHP': { symbol: '₱', code: 'PHP' },
-            'PKR': { symbol: 'Rs', code: 'PKR' },
-            'BDT': { symbol: '৳', code: 'BDT' },
-            'VND': { symbol: '₫', code: 'VND' },
-            'AFN': { symbol: '؋', code: 'AFN' },
-            'ARS': { symbol: '$', code: 'ARS' },
-            'AZN': { symbol: '₼', code: 'AZN' },
-            'CLP': { symbol: '$', code: 'CLP' },
-            'COP': { symbol: '$', code: 'COP' },
-            'CZK': { symbol: 'Kč', code: 'CZK' },
-            'GHS': { symbol: '₵', code: 'GHS' },
-            'HUF': { symbol: 'Ft', code: 'HUF' },
-            'ILS': { symbol: '₪', code: 'ILS' },
-            'KES': { symbol: 'KSh', code: 'KES' },
-            'KZT': { symbol: '₸', code: 'KZT' },
-            'NGN': { symbol: '₦', code: 'NGN' },
-            'PER': { symbol: 'S/', code: 'PER' },
-            'RON': { symbol: 'lei', code: 'RON' },
-            'UAH': { symbol: '₴', code: 'UAH' },
-            'UYU': { symbol: '$U', code: 'UYU' },
-            'UZS': { symbol: 'soʻm', code: 'UZS' }
-        };
-
-        function formatCurrency(amount, currencyCode = currentCurrency) {
-            const info = CURRENCY_MAP[currencyCode] || CURRENCY_MAP['EGP'];
-            const symbol = info.symbol;
-            if (amount === undefined || amount === null || isNaN(amount)) return `0 ${symbol}`;
-            const num = Number(amount);
-            return `${num.toFixed(2)} ${symbol}`;
-        }
-
-        function getCurrencySymbol(code) {
-            return (CURRENCY_MAP[code] || CURRENCY_MAP['EGP']).symbol;
-        }
-
-        function updateCurrencyUI() {
-            const symbol = getCurrencySymbol(currentCurrency);
-            document.getElementById('header-currency-badge').innerHTML =
-                `<i class="fa-solid fa-money-bill-wave ml-1"></i> ${symbol}`;
-            document.getElementById('prod-currency-label').textContent = symbol;
-            updateAllPriceDisplays();
-        }
-
-        function updateAllPriceDisplays() {
-            renderDishesTable();
-            updateStatsUI();
-            updateFinanceUI();
-        }
-
-        function showToast(msg) {
-            const el = document.createElement('div');
-            el.className = 'toast';
-            el.textContent = msg;
-            toastContainer.appendChild(el);
-            setTimeout(() => { el.remove(); }, 3500);
-        }
-
-        // 🔔 نغمة جرس المطبخ/الأوردر المزدوجة العالية
-        function playNotificationSound() {
-            try {
-                initAudioContext();
-                if (!audioCtx) return;
-
-                const now = audioCtx.currentTime;
-
-                const osc1 = audioCtx.createOscillator();
-                const gain1 = audioCtx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(880, now);
-                gain1.gain.setValueAtTime(0.5, now);
-                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                osc1.connect(gain1);
-                gain1.connect(audioCtx.destination);
-                osc1.start(now);
-                osc1.stop(now + 0.5);
-
-                const osc2 = audioCtx.createOscillator();
-                const gain2 = audioCtx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(1318.51, now + 0.15);
-                gain2.gain.setValueAtTime(0.6, now + 0.15);
-                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-                osc2.connect(gain2);
-                gain2.connect(audioCtx.destination);
-                osc2.start(now + 0.15);
-                osc2.stop(now + 0.8);
-
-            } catch (e) {
-                console.error("Audio playback error:", e);
-            }
-        }
-
-        window.testNotificationSound = function() {
-            playNotificationSound();
-            showToast('🔔 نغمة التنبيه شغالة زي الفل!');
-        };
-
-        // ➕ دالة إضافة صف حجم/نوع جديد
-        window.addSizeRow = function(containerId, name = '', price = '') {
-            const container = document.getElementById(containerId);
-            const row = document.createElement('div');
-            row.className = 'flex items-center gap-2 size-input-row';
-            row.innerHTML = `
-                <input type="text" placeholder="اسم الحجم (مثلاً: صغير / لارج)" value="${name}" class="glass-input text-xs py-2 size-name-input" required />
-                <input type="number" placeholder="السعر" value="${price}" step="0.01" min="0" class="glass-input text-xs py-2 w-28 size-price-input" required />
-                <button type="button" onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
-            `;
-            container.appendChild(row);
-        };
-
-        function getSizesFromContainer(containerId) {
-            const rows = document.querySelectorAll(`#${containerId} .size-input-row`);
-            const sizes = [];
-            rows.forEach(r => {
-                const name = r.querySelector('.size-name-input').value.trim();
-                const price = parseFloat(r.querySelector('.size-price-input').value);
-                if (name && !isNaN(price)) {
-                    sizes.push({ name, price });
+        function checkTableFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tableParam = urlParams.get('table');
+            if (tableParam) {
+                const tableInput = document.getElementById('order-table-number');
+                if (tableInput) {
+                    tableInput.value = tableParam;
+                    document.getElementById('cart-table-num-display').textContent = tableParam;
                 }
-            });
-            return sizes;
+            }
         }
 
-        // AUTH
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            initAudioContext();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            loginError.classList.add('hidden');
+        function showToast(msg, emoji = '✨') {
+            const el = document.getElementById('toast');
+            el.textContent = `${emoji} ${msg}`;
+            el.classList.add('show');
+            clearTimeout(el._timer);
+            el._timer = setTimeout(() => el.classList.remove('show'), 2200);
+        }
+
+        // 🔄 متابعة حالة الطلب لايف للزبون المضمونة
+        function trackMyActiveOrder() {
+            const myOrderId = localStorage.getItem('last_order_id');
+            if (!myOrderId) return;
+
+            if (activeTrackerUnsubscribe) activeTrackerUnsubscribe();
+
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                showToast('✅ تم تسجيل الدخول بنجاح');
-            } catch (err) {
-                loginError.textContent = 'بيانات الدخول غير صحيحة!';
-                loginError.classList.remove('hidden');
-            }
-        });
+                activeTrackerUnsubscribe = onSnapshot(doc(db, 'orders', myOrderId), (snap) => {
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        const trackerBox = document.getElementById('live-order-tracker');
+                        const statusText = document.getElementById('tracker-status-text');
+                        trackerBox.classList.remove('hidden');
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loginOverlay.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                loadRestaurantSettings();
-                listenLiveOrders();
-                listenProducts();
-                listenTransactions();
-                listenDailyNotes();
-            } else {
-                dashboard.classList.add('hidden');
-                loginOverlay.classList.remove('hidden');
-            }
-        });
+                        const statusMap = {
+                            'pending': '⏳ قيد الانتظار بالمطبخ...',
+                            'preparing': '👨‍🍳 جاري تحضير وجبتك الآن!',
+                            'served': '✅ تم التقديم / وجبتك جاهزة بالهناء والشفاء!',
+                            'cancelled': '❌ اعتذار: تم إلغاء الطلب من المطعم'
+                        };
 
-        logoutBtn.addEventListener('click', () => signOut(auth));
-        window.toggleMobileSidebar = function() {
-            document.getElementById('sidebar-menu').classList.toggle('translate-x-full');
-        };
-
-        window.switchTab = function(tabId) {
-            initAudioContext();
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-            document.getElementById(`section-${tabId}`).classList.remove('hidden');
-            document.getElementById(`tab-btn-${tabId}`).classList.add('active');
-            if (window.innerWidth < 768) document.getElementById('sidebar-menu').classList.add('translate-x-full');
-            const titles = { 'orders': 'طلبات الطاولات المباشرة', 'stats': 'التحليلات والإحصائيات المتقدمة', 'finance': 'المالية والأرباح',
-                'branding': 'إعدادات المطعم والعملة', 'add-dish': 'إضافة طبق جديد', 'dishes-list': 'إدارة الأطباق' };
-            document.getElementById('header-title').textContent = titles[tabId] || 'لوحة التحكم';
-        };
-
-        // ORDERS & PRINTING LOGIC
-        function listenLiveOrders() {
-            const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-            onSnapshot(q, (snapshot) => {
-                cachedOrders = [];
-                let totalRevenue = 0;
-                const dishCountMap = {};
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const order = { id: docSnap.id, ...data };
-                    cachedOrders.push(order);
-                    if (data.status === 'served') {
-                        totalRevenue += (data.totalPrice || 0);
-                        (data.items || []).forEach(item => {
-                            const key = item.title || 'unknown';
-                            dishCountMap[key] = (dishCountMap[key] || 0) + (item.qty || 0);
-                        });
+                        statusText.textContent = statusMap[data.status] || 'جاري التجهيز...';
                     }
                 });
-                let topDish = '—';
-                let topCount = 0;
-                for (const [name, count] of Object.entries(dishCountMap)) {
-                    if (count > topCount) { topCount = count; topDish = name; }
-                }
-                const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
-                
-                if (cachedOrders.length > knownOrdersCount && knownOrdersCount > 0) { 
-                    playNotificationSound(); 
-                    showToast('🔔 وصول طلب جديد للمطبخ!'); 
-                }
-                knownOrdersCount = cachedOrders.length;
+            } catch (e) {
+                console.error("Tracker Error:", e);
+            }
+        }
 
-                const badge = document.getElementById('badge-orders-count');
-                if (pendingOrders.length > 0) { badge.textContent = pendingOrders.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
-                document.getElementById('stat-orders-today').textContent = cachedOrders.length;
-                document.getElementById('stat-total-revenue').textContent = formatCurrency(totalRevenue);
-                document.getElementById('stat-top-dish').textContent = topDish;
-                const avgOrder = cachedOrders.length > 0 ? totalRevenue / cachedOrders.length : 0;
-                document.getElementById('stat-avg-order').textContent = formatCurrency(avgOrder);
-                renderOrdersCards(cachedOrders);
-                updateStatsUI();
-                updateFinanceUI();
+        window.clearOrderTracker = function() {
+            localStorage.removeItem('last_order_id');
+            document.getElementById('live-order-tracker').classList.add('hidden');
+            if (activeTrackerUnsubscribe) activeTrackerUnsubscribe();
+        };
+
+        function listenRestaurant() {
+            onSnapshot(doc(db, 'restaurants', 'settings'), (snap) => {
+                if (snap.exists()) {
+                    const d = snap.data();
+                    if (d.name) document.getElementById('res-name').textContent = d.name;
+                    if (d.logo) document.getElementById('res-logo').src = d.logo;
+                    if (d.phone) {
+                        document.getElementById('res-phone-btn').href = 'tel:' + d.phone;
+                        document.getElementById('delivery-modal-phone').href = 'tel:' + d.phone;
+                        document.getElementById('delivery-modal-phone-num').textContent = d.phone;
+                    }
+                    if (d.header_tagline) document.getElementById('header-tagline').querySelector('span:last-child').textContent = d.header_tagline;
+                    if (d.hero_badge) document.getElementById('hero-badge').textContent = d.hero_badge;
+                    if (d.hero_title) document.getElementById('hero-title').textContent = d.hero_title;
+
+                    if (d.whatsapp) {
+                        document.getElementById('delivery-modal-whatsapp').href = `https://wa.me/${d.whatsapp}?text=${encodeURIComponent('السلام عليكم، أود الطلب من المنيو')}`;
+                    }
+
+                    if (d.maps_url) {
+                        const btn = document.getElementById('footer-maps-btn');
+                        btn.href = d.maps_url;
+                        btn.classList.remove('hidden');
+                    }
+                    if (d.review_url) {
+                        const btn = document.getElementById('footer-review-btn');
+                        btn.href = d.review_url;
+                        btn.classList.remove('hidden');
+                        document.getElementById('modal-review-btn').href = d.review_url;
+                    }
+
+                    const sc = document.getElementById('social-links-container');
+                    const deliverySocial = document.getElementById('delivery-social-container');
+                    let html = '';
+                    if (d.whatsapp) html += `<a href="https://wa.me/${d.whatsapp}" target="_blank" class="hover:text-amber-500 transition-colors p-1"><i class="fa-brands fa-whatsapp"></i></a>`;
+                    if (d.instagram) html += `<a href="${d.instagram}" target="_blank" class="hover:text-amber-500 transition-colors p-1"><i class="fa-brands fa-instagram"></i></a>`;
+                    if (d.facebook) html += `<a href="${d.facebook}" target="_blank" class="hover:text-amber-500 transition-colors p-1"><i class="fa-brands fa-facebook"></i></a>`;
+                    
+                    sc.innerHTML = html;
+                    if (deliverySocial) deliverySocial.innerHTML = html || '<span class="text-xs text-slate-400 font-normal">لا توجد روابط مسجلة</span>';
+                }
             });
         }
 
-        function renderOrdersCards(orders) {
-            const container = document.getElementById('orders-container');
-            if (!orders.length) {
-                container.innerHTML = `<div class="col-span-full text-center py-16 text-gray-500">لا توجد طلبات سابقة أو حالية</div>`;
+        window.openDeliveryModal = function() {
+            document.getElementById('delivery-modal').classList.remove('hidden');
+        };
+
+        window.closeDeliveryModal = function() {
+            document.getElementById('delivery-modal').classList.add('hidden');
+        };
+
+        function listenProducts() {
+            onSnapshot(collection(db, 'products'), (snap) => {
+                allProducts = [];
+                const cats = new Set(['الكل']);
+                snap.forEach(d => {
+                    const data = d.data();
+                    allProducts.push({ id: d.id, ...data });
+                    if (data.category) cats.add(data.category);
+                });
+
+                const fc = document.getElementById('category-filters');
+                fc.innerHTML = Array.from(cats).map(cat =>
+                    `<button class="cat-btn ${cat === activeCategory ? 'active' : ''} px-4 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap" onclick="window.filterCat('${cat}', this)">${cat}</button>`
+                ).join('');
+
+                applyFilters();
+            });
+        }
+
+        function applyFilters() {
+            filteredProducts = allProducts.filter(p => {
+                const matchesCat = (activeCategory === 'الكل') || (p.category === activeCategory);
+                const matchesSearch = !searchQuery || (p.title && p.title.toLowerCase().includes(searchQuery.toLowerCase())) || (p.desc && p.desc.toLowerCase().includes(searchQuery.toLowerCase()));
+                return matchesCat && matchesSearch;
+            });
+            renderProducts(filteredProducts);
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('products-grid');
+            if (!products.length) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-xs">لا توجد أطباق تطابق بحثك حالياً</div>`;
                 return;
             }
-            container.innerHTML = orders.map(o => {
-                const statusColors = { 'pending': 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-                    'preparing': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-                    'served': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-                    'cancelled': 'bg-red-500/20 text-red-300 border-red-500/30' };
-                const statusTitles = { 'pending': 'قيد الانتظار ⏳', 'preparing': 'جاري التحضير 👨‍🍳',
-                    'served': 'تم التقديم ✅', 'cancelled': 'ملغى ❌' };
-                const itemsListHtml = (o.items || []).map(item =>
-                    `<div class="flex justify-between items-center text-xs py-1 border-b border-gold-500/10"><span class="text-gray-200 font-bold">${item.title} <span class="text-gold-400">×${item.qty}</span></span><span class="text-gold-400 font-mono">${formatCurrency(item.price * item.qty)}</span></div>`
-                    ).join('');
-                return `<div class="royal-card p-5 rounded-3xl space-y-4 border border-gold-500/20 relative">
-                            <div class="flex justify-between items-start">
-                                <div><span class="text-[10px] text-gray-400 block font-bold">طاولة</span><h3 class="font-serif font-black text-3xl text-gold-gradient">#${o.tableNumber || '?'}</h3></div>
-                                <div class="flex flex-col items-end gap-1">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black border ${statusColors[o.status] || statusColors['pending']}">${statusTitles[o.status] || 'جديد'}</span>
-                                        <button onclick="window.deleteSingleOrder('${o.id}')" title="حذف الطلب" class="text-rose-400/70 hover:text-rose-400 p-1 transition text-xs">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </button>
-                                    </div>
-                                    <button onclick="window.printOrderReceipt('${o.id}')" class="btn-gold-outline text-[10px] py-1 px-2.5 rounded-lg mt-1"><i class="fa-solid fa-print ml-1"></i>طباعة فاتورة</button>
-                                </div>
-                            </div>
-                            <div class="bg-dark-900/80 p-3 rounded-2xl border border-gold-500/10 space-y-1"><p class="text-[10px] text-gold-400 font-bold mb-1">الوجبات:</p>${itemsListHtml}<div class="flex justify-between items-center pt-2 font-bold text-sm"><span class="text-gray-300">الإجمالي:</span><span class="text-gold-gradient font-serif font-black">${formatCurrency(o.totalPrice || 0)}</span></div></div>
-                            ${o.notes ? `<p class="text-[11px] text-amber-200/80 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20"><i class="fa-solid fa-comment-dots ml-1"></i> ${o.notes}</p>` : ''}
-                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gold-500/10"><button onclick="window.updateOrderStatus('${o.id}', 'preparing')" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 text-xs py-1.5 rounded-xl font-bold transition">تحضير 👨‍🍳</button><button onclick="window.updateOrderStatus('${o.id}', 'served')" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 text-xs py-1.5 rounded-xl font-bold transition">تم التقديم ✅</button></div>
-                        </div>`;
-            }).join('');
-        }
 
-        window.updateOrderStatus = async function(orderId, newStatus) {
-            try { await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
-                showToast('✅ تم التحديث'); } catch (err) { showToast('❌ خطأ: ' + err.message); }
-        };
-
-        window.deleteSingleOrder = async function(orderId) {
-            if (!confirm('هل أنت تأكد من حذف هذا الطلب؟')) return;
-            try {
-                await deleteDoc(doc(db, 'orders', orderId));
-                showToast('🗑️ تم حذف الطلب بنجاح');
-            } catch (err) {
-                showToast('❌ خطأ في الحذف: ' + err.message);
-            }
-        };
-
-        window.clearAllOrders = async function() {
-            if (!cachedOrders.length) return showToast('⚠️ لا توجد طلبات لمسحها');
-            if (!confirm('⚠️ هل أنت متأكد من مسح جميع الطلبات نهائياً من النظام؟')) return;
-
-            try {
-                const batch = writeBatch(db);
-                cachedOrders.forEach(order => {
-                    batch.delete(doc(db, 'orders', order.id));
-                });
-                await batch.commit();
-                showToast('🗑️ تم مسح كافة الطلبات بنجاح');
-            } catch (err) {
-                showToast('❌ خطأ: ' + err.message);
-            }
-        };
-
-        window.clearFinishedOrders = async function() {
-            const finishedOrders = cachedOrders.filter(o => o.status === 'served' || o.status === 'cancelled');
-            if (!finishedOrders.length) return showToast('⚠️ لا توجد طلبات منتهية أو ملغاة');
-            if (!confirm(`هل تريد مسح (${finishedOrders.length}) طلب منتهي أو ملغى؟`)) return;
-
-            try {
-                const batch = writeBatch(db);
-                finishedOrders.forEach(order => {
-                    batch.delete(doc(db, 'orders', order.id));
-                });
-                await batch.commit();
-                showToast('🧹 تم تنظيف الطلبات المنتهية');
-            } catch (err) {
-                showToast('❌ خطأ: ' + err.message);
-            }
-        };
-
-        window.printOrderReceipt = function(orderId) {
-            const order = cachedOrders.find(o => o.id === orderId);
-            if (!order) return;
-
-            const logoImg = document.getElementById('receipt-logo');
-            if (restaurantSettings.logo) {
-                logoImg.src = restaurantSettings.logo;
-                logoImg.style.display = 'block';
-            } else {
-                logoImg.style.display = 'none';
-            }
-
-            document.getElementById('receipt-res-name').textContent = restaurantSettings.name || 'Royal Dining';
-            document.getElementById('receipt-phone').textContent = restaurantSettings.phone ? `هاتف: ${restaurantSettings.phone}` : '';
-            
-            const orderDate = order.createdAt ? new Date(order.createdAt.seconds * 1000) : new Date();
-            document.getElementById('receipt-date').textContent = orderDate.toLocaleString('ar-EG');
-            document.getElementById('receipt-table-num').textContent = `طاولة #${order.tableNumber || '1'}`;
-
-            const itemsHtml = (order.items || []).map(i => `
-                <tr style="border-bottom: 1px solid #ddd; font-size: 11px;">
-                    <td style="padding: 4px 0;">${i.title}</td>
-                    <td style="padding: 4px 0; text-align: center;">${i.qty}</td>
-                    <td style="padding: 4px 0; text-align: left;">${i.price * i.qty} ${getCurrencySymbol(currentCurrency)}</td>
-                </tr>
-            `).join('');
-            document.getElementById('receipt-items-list').innerHTML = itemsHtml;
-
-            const notesBox = document.getElementById('receipt-notes-box');
-            if (order.notes && order.notes !== 'بدون ملاحظات') {
-                document.getElementById('receipt-notes').textContent = order.notes;
-                notesBox.style.display = 'block';
-            } else {
-                notesBox.style.display = 'none';
-            }
-
-            document.getElementById('receipt-total-price').textContent = `الإجمالي: ${formatCurrency(order.totalPrice || 0)}`;
-
-            window.print();
-        };
-
-        // PRODUCTS
-        function listenProducts() {
-            onSnapshot(collection(db, 'products'), (snapshot) => {
-                cachedProducts = [];
-                snapshot.forEach(docSnap => cachedProducts.push({ id: docSnap.id, ...docSnap.data() }));
-                document.getElementById('stat-total-dishes').textContent = cachedProducts.length;
-                document.getElementById('stat-img-models').textContent = cachedProducts.filter(p => p.imageUrl).length;
-                renderDishesTable();
-                updateStatsUI();
-            });
-        }
-
-        function renderDishesTable() {
-            const tbody = document.getElementById('dishes-table-body');
-            if (!cachedProducts.length) { tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-500">لا توجد أطباق</td></tr>`; return; }
-            tbody.innerHTML = cachedProducts.map(p => {
-                let priceDisplay = formatCurrency(p.price || 0);
-                if (Array.isArray(p.sizes) && p.sizes.length > 0) {
-                    priceDisplay = p.sizes.map(s => `<span class="bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 rounded text-[10px] ml-1 block sm:inline-block">${s.name}: ${s.price} ${getCurrencySymbol(currentCurrency)}</span>`).join('');
+            grid.innerHTML = products.map(p => {
+                const imgSrc = (p.imageUrl && typeof p.imageUrl === 'string' && p.imageUrl.startsWith('http')) ? p.imageUrl : DEFAULT_IMAGE;
+                const hasSizes = Array.isArray(p.sizes) && p.sizes.length > 0;
+                
+                let displayPrice = p.price || 0;
+                let priceLabel = '';
+                if (hasSizes) {
+                    const minPrice = Math.min(...p.sizes.map(s => Number(s.price)));
+                    displayPrice = minPrice;
+                    priceLabel = '<span class="text-[10px] text-slate-400 font-normal">يبدأ من </span>';
                 }
+
+                const hasDiscount = !hasSizes && p.oldPrice && Number(p.oldPrice) > Number(p.price);
+
                 return `
-                    <tr class="border-b border-gold-500/10 hover:bg-gold-500/5">
-                        <td class="p-3">
-                            <img src="${p.imageUrl || 'https://via.placeholder.com/50'}" alt="${p.title || 'طبق'}" class="w-10 h-10 object-cover rounded-lg border border-gold-500/20" />
-                        </td>
-                        <td class="p-3 font-bold text-white">${p.title || ''}</td>
-                        <td class="p-3 text-xs"><span class="bg-gold-500/10 px-2.5 py-1 rounded-full text-gold-300 font-bold">${p.category || 'عام'}</span></td>
-                        <td class="p-3 font-bold text-gold-gradient">${priceDisplay}</td>
-                        <td class="p-3 text-center flex items-center justify-center gap-2">
-                            <button onclick="window.openEditModal('${p.id}')" class="bg-gold-500/20 text-gold-300 hover:bg-gold-500/40 px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
-                            <button onclick="window.deleteProduct('${p.id}')" class="text-red-400 hover:text-red-500 p-1"><i class="fa-regular fa-trash-can"></i></button>
-                        </td>
-                    </tr>
+                    <div class="menu-card p-3 flex items-center gap-3 relative">
+                        <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 cursor-pointer" onclick="window.openImgModal('${p.id}')">
+                            <img src="${imgSrc}" alt="${p.title || 'طبق'}" class="w-full h-full object-cover" loading="lazy" />
+                            ${hasDiscount ? `<span class="absolute top-1 right-1 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">خصم</span>` : ''}
+                            ${hasSizes ? `<span class="absolute top-1 right-1 bg-amber-500 text-slate-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded-md">أنواع</span>` : ''}
+                        </div>
+
+                        <div class="flex-1 min-w-0 flex flex-col justify-between h-full py-0.5">
+                            <div>
+                                <h3 class="font-bold text-xs sm:text-sm text-slate-900 truncate leading-tight cursor-pointer" onclick="window.openImgModal('${p.id}')">${p.title || ''}</h3>
+                                <p class="text-[11px] text-slate-500 line-clamp-2 mt-1 leading-snug">${p.desc || 'مجهز بطازج المكونات'}</p>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2 mt-1 border-t border-slate-100">
+                                <div>
+                                    ${priceLabel}<span class="font-extrabold text-xs sm:text-sm text-slate-900">${displayPrice} ج.م</span>
+                                    ${hasDiscount ? `<span class="text-[10px] text-slate-400 line-through mr-1">${p.oldPrice} ج.م</span>` : ''}
+                                </div>
+                                <button onclick="window.openImgModal('${p.id}')" class="bg-slate-900 hover:bg-amber-400 hover:text-slate-950 text-white px-2.5 py-1 rounded-lg font-bold text-xs flex items-center gap-1 transition-colors shadow-sm">
+                                    <span>${hasSizes ? 'اختر' : 'طلب'}</span>
+                                    <i class="fa-solid ${hasSizes ? 'fa-list-check' : 'fa-plus'} text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 `;
             }).join('');
         }
 
-        window.openEditModal = function(id) {
-            const p = cachedProducts.find(item => item.id === id);
+        window.filterCat = function(cat, btn) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFilters();
+        };
+
+        window.handleSearch = function(val) {
+            searchQuery = val.trim();
+            applyFilters();
+        };
+
+        window.openImgModal = function(id) {
+            const p = allProducts.find(item => item.id === id);
             if (!p) return;
-            document.getElementById('edit-prod-id').value = p.id;
-            document.getElementById('edit-prod-title').value = p.title || '';
-            document.getElementById('edit-prod-price').value = p.price || '';
-            document.getElementById('edit-prod-old-price').value = p.oldPrice || '';
-            document.getElementById('edit-prod-category').value = p.category || '';
-            document.getElementById('edit-prod-desc').value = p.desc || '';
+            activeModalProduct = p;
+            currentModalQty = 1;
+            document.getElementById('modal-qty').textContent = '1';
+            document.getElementById('modal-title').textContent = p.title || '';
+            document.getElementById('modal-desc').textContent = p.desc || '';
             
-            const editSizesList = document.getElementById('edit-sizes-list');
-            editSizesList.innerHTML = '';
+            const sizesContainer = document.getElementById('modal-sizes-container');
+            const sizesList = document.getElementById('modal-sizes-list');
+            const oldPriceEl = document.getElementById('modal-old-price');
+
             if (Array.isArray(p.sizes) && p.sizes.length > 0) {
-                p.sizes.forEach(s => window.addSizeRow('edit-sizes-list', s.name, s.price));
-            }
-
-            document.getElementById('edit-dish-modal').classList.remove('hidden');
-        };
-
-        window.closeEditModal = function() { document.getElementById('edit-dish-modal').classList.add('hidden'); };
-
-        window.deleteProduct = async function(id) {
-            if (confirm('حذف هذا الطبق؟')) { 
-                try { 
-                    await deleteDoc(doc(db, 'products', id));
-                    showToast('🗑️ تم الحذف'); 
-                } catch (err) { showToast('❌ خطأ: ' + err.message); } 
-            }
-        };
-
-        document.getElementById('form-edit-product').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('edit-prod-id').value;
-            const title = document.getElementById('edit-prod-title').value;
-            const priceVal = document.getElementById('edit-prod-price').value;
-            const price = priceVal ? parseFloat(priceVal) : 0;
-            const oldPriceVal = document.getElementById('edit-prod-old-price').value;
-            const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
-            const category = document.getElementById('edit-prod-category').value;
-            const desc = document.getElementById('edit-prod-desc').value;
-            const file = document.getElementById('edit-prod-file-img').files[0];
-            const sizes = getSizesFromContainer('edit-sizes-list');
-
-            const btnSave = document.getElementById('btn-save-edit');
-            btnSave.disabled = true;
-            try {
-                let updateData = { title, price, oldPrice, category, desc, sizes };
-                if (file) {
-                    document.getElementById('edit-upload-progress').classList.remove('hidden');
-                    const storageRef = ref(storage, `images/${Date.now()}_${file.name}`);
-                    const uploadTask = uploadBytesResumable(storageRef, file);
-                    await new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed', (snap) => { 
-                            document.getElementById('edit-upload-percent').textContent = Math.round((snap.bytesTransferred / snap.totalBytes) * 100) + '%'; 
-                        }, reject, async () => { 
-                            updateData.imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                            resolve(); 
-                        });
-                    });
-                }
-                await updateDoc(doc(db, 'products', id), updateData);
-                showToast('✅ تم التعديل بنجاح');
-                window.closeEditModal();
-            } catch (err) { showToast('❌ خطأ: ' + err.message); } finally { 
-                btnSave.disabled = false;
-                document.getElementById('edit-upload-progress').classList.add('hidden'); 
-            }
-        });
-
-        document.getElementById('form-add-product').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const title = document.getElementById('prod-title').value;
-            const priceVal = document.getElementById('prod-price').value;
-            const price = priceVal ? parseFloat(priceVal) : 0;
-            const oldPriceVal = document.getElementById('prod-old-price').value;
-            const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
-            const category = document.getElementById('prod-category').value.trim() || 'عام';
-            const desc = document.getElementById('prod-desc').value;
-            const file = document.getElementById('prod-file-img').files[0];
-            const sizes = getSizesFromContainer('add-sizes-list');
-
-            if (!file) return showToast('⚠️ اختر صورة للطبق');
-            
-            const progressContainer = document.getElementById('upload-progress');
-            const progressBar = document.getElementById('upload-bar');
-            const percentSpan = document.getElementById('upload-percent');
-            const btnSubmit = document.getElementById('btn-add-product');
-            progressContainer.classList.remove('hidden');
-            btnSubmit.disabled = true;
-
-            const storageRef = ref(storage, `images/${Date.now()}_${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
-            uploadTask.on('state_changed', (snap) => { 
-                const p = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-                percentSpan.textContent = p + '%';
-                progressBar.style.width = p + '%'; 
-            }, (err) => { 
-                progressContainer.classList.add('hidden');
-                btnSubmit.disabled = false;
-                showToast('❌ فشل الرفع: ' + err.message); 
-            }, async () => {
-                try {
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    await setDoc(doc(collection(db, 'products')), { 
-                        title, price, oldPrice, category, desc, sizes, imageUrl: downloadURL, createdAt: serverTimestamp() 
-                    });
-                    progressContainer.classList.add('hidden');
-                    btnSubmit.disabled = false;
-                    document.getElementById('form-add-product').reset();
-                    document.getElementById('add-sizes-list').innerHTML = '';
-                    showToast('🎉 تم النشر بنجاح!');
-                } catch (dbErr) { 
-                    btnSubmit.disabled = false;
-                    showToast('❌ خطأ: ' + dbErr.message); 
-                }
-            });
-        });
-
-        // TRANSACTIONS
-        function listenTransactions() {
-            onSnapshot(collection(db, 'transactions'), (snapshot) => {
-                cachedTransactions = [];
-                snapshot.forEach(docSnap => cachedTransactions.push({ id: docSnap.id, ...docSnap.data() }));
+                sizesContainer.classList.remove('hidden');
+                currentSelectedSize = p.sizes[0];
                 
-                cachedTransactions.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-
-                renderTransactionsTable();
-                updateFinanceUI();
-                updateStatsUI();
-                updateExpenseBreakdown();
-            });
-        }
-
-        function renderTransactionsTable() {
-            const tbody = document.getElementById('transactions-table-body');
-            if (!cachedTransactions.length) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-gray-500">لا توجد معاملات</td></tr>`; return; }
-            const categoryLabels = { 'chicken': 'دجاج 🍗', 'meat': 'لحوم 🥩', 'vegetables': 'خضروات 🥬',
-                'seafood': 'مأكولات بحرية 🦐', 'dairy': 'ألبان 🧀', 'oil': 'زيوت وبهارات 🌿', 'electricity': 'كهرباء 💡',
-                'water': 'مياه 💧', 'rent': 'إيجار 🏠', 'salaries': 'مرتبات 👨‍🍳', 'marketing': 'تسويق 📢',
-                'maintenance': 'صيانة 🔧', 'other': 'أخرى 📌' };
-            tbody.innerHTML = cachedTransactions.slice(0, 50).map(t => {
-                const isExpense = t.type === 'expense';
-                const color = isExpense ? 'text-rose-400' : 'text-emerald-400';
-                const sign = isExpense ? '-' : '+';
-                const catLabel = categoryLabels[t.category] || t.category || 'أخرى';
-                return `<tr class="transaction-row border-b border-gold-500/5">
-                            <td class="p-3 text-gray-400 text-[11px]">${t.date || '—'}</td>
-                            <td class="p-3"><span class="${isExpense ? 'text-rose-400' : 'text-emerald-400'} font-bold text-[11px]">${isExpense ? 'مصروف 🧾' : 'إيراد 💰'}</span></td>
-                            <td class="p-3"><span class="expense-category-badge bg-gold-500/10 text-gold-300">${catLabel}</span></td>
-                            <td class="p-3 text-gray-300 max-w-[120px] truncate" title="${t.description || ''}">${t.description || '—'}</td>
-                            <td class="p-3 font-bold ${color}">${sign} ${formatCurrency(t.amount)}</td>
-                            <td class="p-3 text-center"><button onclick="window.deleteTransaction('${t.id}')" class="text-red-400/60 hover:text-red-400 transition text-xs"><i class="fa-regular fa-trash-can"></i></button></td>
-                        </tr>`;
-            }).join('');
-        }
-
-        window.exportFinanceToExcel = function() {
-            let csv = 'التاريخ,النوع,التصنيف,الوصف,المبلغ\n';
-            cachedTransactions.forEach(t => {
-                csv += `"${t.date}","${t.type}","${t.category}","${t.description}",${t.amount}\n`;
-            });
-            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `Report_Finance_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-        };
-
-        window.deleteTransaction = async function(id) {
-            if (confirm('حذف هذه المعاملة؟')) { 
-                try { 
-                    await deleteDoc(doc(db, 'transactions', id));
-                    showToast('🗑️ تم الحذف'); 
-                } catch (err) { showToast('❌ خطأ: ' + err.message); } 
-            }
-        };
-
-        window.clearAllTransactions = async function() {
-            if (!confirm('⚠️ مسح كل المعاملات؟')) return;
-            try { 
-                const batch = writeBatch(db);
-                cachedTransactions.forEach(t => batch.delete(doc(db, 'transactions', t.id)));
-                await batch.commit();
-                showToast('🗑️ تم مسح الكل'); 
-            } catch (err) { showToast('❌ خطأ: ' + err.message); }
-        };
-
-        document.getElementById('form-transaction').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const type = document.getElementById('txn-type').value;
-            const category = document.getElementById('txn-category').value;
-            const amount = parseFloat(document.getElementById('txn-amount').value);
-            const date = document.getElementById('txn-date').value;
-            const description = document.getElementById('txn-description').value.trim();
-            if (!amount || amount <= 0) return showToast('⚠️ مبلغ غير صحيح');
-            if (!date) return showToast('⚠️ اختر التاريخ');
-            try {
-                await setDoc(doc(collection(db, 'transactions')), { type, category, amount, date,
-                    description: description || '', createdAt: serverTimestamp() });
-                showToast('✅ تم التسجيل');
-                document.getElementById('form-transaction').reset();
-                document.getElementById('txn-date').value = new Date().toISOString().split('T')[0];
-            } catch (err) { showToast('❌ خطأ: ' + err.message); }
-        });
-
-        function updateFinanceUI() {
-            let totalIncome = 0, totalExpenses = 0;
-            cachedTransactions.forEach(t => { 
-                if (t.type === 'income') totalIncome += (t.amount || 0);
-                else totalExpenses += (t.amount || 0); 
-            });
-            const netProfit = totalIncome - totalExpenses;
-            document.getElementById('finance-total-income').textContent = formatCurrency(totalIncome);
-            document.getElementById('finance-total-expenses').textContent = formatCurrency(totalExpenses);
-            document.getElementById('finance-net-profit').textContent = formatCurrency(netProfit);
-            document.getElementById('finance-txn-count').textContent = cachedTransactions.length;
-            document.getElementById('stat-total-expenses').textContent = formatCurrency(totalExpenses);
-            document.getElementById('stat-net-profit').textContent = formatCurrency(netProfit);
-        }
-
-        function updateExpenseBreakdown() {
-            const container = document.getElementById('expense-breakdown');
-            const expenses = cachedTransactions.filter(t => t.type === 'expense');
-            if (!expenses.length) { container.innerHTML = `<p class="text-gray-400 text-xs">لا توجد مصروفات</p>`; return; }
-            const categoryMap = {};
-            expenses.forEach(t => { 
-                const cat = t.category || 'other';
-                categoryMap[cat] = (categoryMap[cat] || 0) + (t.amount || 0); 
-            });
-            const total = Object.values(categoryMap).reduce((a, b) => a + b, 0);
-            const sorted = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]);
-            const categoryLabels = { 'chicken': 'دجاج 🍗', 'meat': 'لحوم 🥩', 'vegetables': 'خضروات 🥬',
-                'seafood': 'مأكولات بحرية 🦐', 'dairy': 'ألبان 🧀', 'oil': 'زيوت وبهارات 🌿',
-                'electricity': 'كهرباء 💡', 'water': 'مياه 💧', 'rent': 'إيجار 🏠', 'salaries': 'مرتبات 👨‍🍳',
-                'marketing': 'تسويق 📢', 'maintenance': 'صيانة 🔧', 'other': 'أخرى 📌' };
-            container.innerHTML = sorted.map(([cat, amt]) => {
-                const pct = total > 0 ? ((amt / total) * 100).toFixed(1) : 0;
-                const label = categoryLabels[cat] || cat;
-                return `<div class="flex items-center gap-2">
-                            <span class="text-xs text-gray-300 w-24 truncate">${label}</span>
-                            <div class="flex-1 h-2 bg-dark-900 rounded-full overflow-hidden border border-gold-500/10"><div class="h-full bg-gold-500 rounded-full" style="width: ${pct}%"></div></div>
-                            <span class="text-xs text-gold-400 font-bold whitespace-nowrap">${formatCurrency(amt)} (${pct}%)</span>
-                        </div>`;
-            }).join('');
-        }
-
-        function updateStatsUI() {}
-
-        // DAILY NOTES
-        function listenDailyNotes() {
-            onSnapshot(collection(db, 'dailyNotes'), (snapshot) => {
-                cachedDailyNotes = [];
-                snapshot.forEach(docSnap => cachedDailyNotes.push({ id: docSnap.id, ...docSnap.data() }));
-                cachedDailyNotes.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                renderDailyNotes();
-            });
-        }
-
-        function renderDailyNotes() {
-            const container = document.getElementById('daily-notes-list');
-            if (!cachedDailyNotes.length) { container.innerHTML = `<p class="text-gray-400 text-xs">لا توجد ملاحظات</p>`; return; }
-            container.innerHTML = cachedDailyNotes.slice(0, 20).map(n =>
-                `<div class="flex justify-between items-start bg-dark-800/60 p-3 rounded-xl border border-gold-500/10 hover:border-gold-500/30 transition">
-                            <div class="flex-1"><p class="text-sm text-gray-200">${n.note || ''}</p><span class="text-[10px] text-gray-500">${n.date || ''}</span></div>
-                            <button onclick="window.deleteDailyNote('${n.id}')" class="text-red-400/50 hover:text-red-400 transition text-xs ml-2"><i class="fa-regular fa-trash-can"></i></button>
-                        </div>`
-            ).join('');
-        }
-
-        window.deleteDailyNote = async function(id) {
-            if (confirm('حذف الملاحظة؟')) { 
-                try { 
-                    await deleteDoc(doc(db, 'dailyNotes', id));
-                    showToast('🗑️ تم الحذف'); 
-                } catch (err) { showToast('❌ خطأ: ' + err.message); } 
-            }
-        };
-
-        document.getElementById('form-daily-note').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const note = document.getElementById('daily-note-input').value.trim();
-            if (!note) return showToast('⚠️ اكتب ملاحظة');
-            const today = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' });
-            try { 
-                await setDoc(doc(collection(db, 'dailyNotes')), { note, date: today, createdAt: serverTimestamp() });
-                document.getElementById('daily-note-input').value = '';
-                showToast('✅ تم حفظ الملاحظة'); 
-            } catch (err) { showToast('❌ خطأ: ' + err.message); }
-        });
-
-        // BRANDING / SETTINGS
-        async function loadRestaurantSettings() {
-            try {
-                const snap = await getDoc(doc(db, 'restaurants', 'settings'));
-                if (snap.exists()) {
-                    restaurantSettings = snap.data();
-                    document.getElementById('brand-name').value = restaurantSettings.name || '';
-                    document.getElementById('brand-slug').value = restaurantSettings.slug || '';
-                    document.getElementById('brand-logo').value = restaurantSettings.logo || '';
-                    document.getElementById('brand-phone').value = restaurantSettings.phone || '';
-                    document.getElementById('brand-maps-url').value = restaurantSettings.maps_url || '';
-                    document.getElementById('brand-review-url').value = restaurantSettings.review_url || '';
-                    document.getElementById('brand-whatsapp').value = restaurantSettings.whatsapp || '';
-                    document.getElementById('brand-instagram').value = restaurantSettings.instagram || '';
-                    document.getElementById('brand-facebook').value = restaurantSettings.facebook || '';
-                    document.getElementById('brand-header-tagline').value = restaurantSettings.header_tagline || '';
-                    document.getElementById('brand-hero-badge').value = restaurantSettings.hero_badge || '';
-                    document.getElementById('brand-hero-title').value = restaurantSettings.hero_title || '';
-                    document.getElementById('brand-hero-subtitle').value = restaurantSettings.hero_subtitle || '';
-                    document.getElementById('brand-hero-desc').value = restaurantSettings.hero_desc || '';
-                    const currency = restaurantSettings.currency || 'EGP';
-                    document.getElementById('brand-currency').value = currency;
-                    currentCurrency = currency;
-                    currencySymbol = getCurrencySymbol(currency);
-                    updateCurrencyUI();
-                    document.getElementById('preview-menu-link').href = `index.html?res=${restaurantSettings.slug || ''}`;
+                sizesList.innerHTML = p.sizes.map((s, index) => `
+                    <div class="relative">
+                        <input type="radio" id="size-opt-${index}" name="dish-size" class="size-radio hidden" ${index === 0 ? 'checked' : ''} onchange="window.selectModalSize(${index})">
+                        <label for="size-opt-${index}" class="block text-center border border-slate-200 rounded-xl p-2 cursor-pointer transition-all text-xs">
+                            <span class="block font-bold">${s.name}</span>
+                            <span class="block text-[10px] text-amber-600 font-extrabold mt-0.5">${s.price} ج.م</span>
+                        </label>
+                    </div>
+                `).join('');
+                
+                document.getElementById('modal-price').textContent = currentSelectedSize.price + ' ج.م';
+                oldPriceEl.classList.add('hidden');
+            } else {
+                sizesContainer.classList.add('hidden');
+                currentSelectedSize = null;
+                document.getElementById('modal-price').textContent = (p.price || 0) + ' ج.م';
+                
+                if (p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
+                    oldPriceEl.textContent = p.oldPrice + ' ج.م';
+                    oldPriceEl.classList.remove('hidden');
+                } else {
+                    oldPriceEl.classList.add('hidden');
                 }
-            } catch (e) { console.warn(e); }
+            }
+            
+            const imgSrc = (p.imageUrl && typeof p.imageUrl === 'string' && p.imageUrl.startsWith('http')) ? p.imageUrl : DEFAULT_IMAGE;
+            document.getElementById('modal-img-element').src = imgSrc;
+            
+            document.getElementById('modal-add-btn').onclick = () => {
+                window.addToCart(activeModalProduct, currentModalQty, currentSelectedSize);
+                window.closeImgModal();
+                showToast('تمت إضافة الطبق', '🍽️');
+            };
+            document.getElementById('modal-img').classList.remove('hidden');
+        };
+
+        window.selectModalSize = function(index) {
+            if (activeModalProduct && activeModalProduct.sizes && activeModalProduct.sizes[index]) {
+                currentSelectedSize = activeModalProduct.sizes[index];
+                document.getElementById('modal-price').textContent = currentSelectedSize.price + ' ج.م';
+            }
+        };
+
+        window.closeImgModal = function() {
+            document.getElementById('modal-img').classList.add('hidden');
+        };
+
+        window.adjustModalQty = function(delta) {
+            currentModalQty += delta;
+            if (currentModalQty < 1) currentModalQty = 1;
+            document.getElementById('modal-qty').textContent = currentModalQty;
+        };
+
+        window.addToCart = function(product, qty, sizeObj) {
+            const cartItemId = sizeObj ? `${product.id}_${sizeObj.name}` : product.id;
+            const itemTitle = sizeObj ? `${product.title} (${sizeObj.name})` : product.title;
+            const itemPrice = sizeObj ? Number(sizeObj.price) : Number(product.price);
+
+            const existing = cart.find(item => item.cartItemId === cartItemId);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                cart.push({ 
+                    cartItemId: cartItemId, 
+                    id: product.id, 
+                    title: itemTitle, 
+                    price: itemPrice, 
+                    qty: qty 
+                });
+            }
+            updateCartUI();
+        };
+
+        function updateCartUI() {
+            const totalCount = cart.reduce((sum, i) => sum + i.qty, 0);
+            const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+            document.getElementById('cart-count-badge').textContent = totalCount;
+            document.getElementById('cart-total-price').textContent = totalPrice + ' ج.م';
+            document.getElementById('modal-cart-total').textContent = totalPrice + ' ج.م';
+            const btn = document.getElementById('floating-cart-btn');
+            if (totalCount > 0) btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
         }
 
-        document.getElementById('form-branding').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-save-branding');
+        window.openCartModal = function() {
+            const container = document.getElementById('cart-items-container');
+            if (!cart.length) {
+                container.innerHTML = `<p class="text-xs text-center text-slate-400 py-4">السلة فارغة حالياً</p>`;
+            } else {
+                container.innerHTML = cart.map(item =>
+                    `<div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">${item.title}</p>
+                            <p class="text-[10px] text-slate-500">${item.price} ج.م × ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-xs text-slate-900">${item.price * item.qty} ج.م</span>
+                            <button onclick="window.removeFromCart('${item.cartItemId}')" class="text-slate-400 hover:text-red-600 p-1 text-xs transition-colors"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>`
+                ).join('');
+            }
+            const tableVal = document.getElementById('order-table-number').value || 'لم تحدد';
+            document.getElementById('cart-table-num-display').textContent = tableVal;
+            
+            document.getElementById('after-order-review-container').classList.add('hidden');
+            document.getElementById('btn-submit-order').classList.remove('hidden');
+
+            document.getElementById('cart-modal').classList.remove('hidden');
+        };
+
+        window.closeCartModal = function() {
+            document.getElementById('cart-modal').classList.add('hidden');
+        };
+
+        window.removeFromCart = function(cartItemId) {
+            cart = cart.filter(i => i.cartItemId !== cartItemId);
+            updateCartUI();
+            window.openCartModal();
+        };
+
+        window.callWaiter = function() {
+            const table = prompt('رقم طاولتك:');
+            if (!table) return;
+            addDoc(collection(db, 'orders'), {
+                tableNumber: parseInt(table),
+                items: [{ title: '🔔 استدعاء الويتر', qty: 1, price: 0 }],
+                totalPrice: 0,
+                notes: 'استدعاء مباشر',
+                status: 'pending',
+                createdAt: serverTimestamp()
+            }).then(() => showToast('تم إرسال إشعار للويتر', '🔔'))
+            .catch(() => showToast('حدث خطأ', '❌'));
+        };
+
+        window.sendOrderToFirebase = async function() {
+            const tableNumber = document.getElementById('order-table-number').value.trim();
+            const customerName = document.getElementById('order-customer-name').value.trim();
+            const customerPhone = document.getElementById('order-customer-phone').value.trim();
+            const notes = document.getElementById('order-notes').value.trim();
+
+            if (!tableNumber) {
+                showToast('أدخل رقم الطاولة', '⚠️');
+                document.getElementById('order-table-number').focus();
+                return;
+            }
+            if (!cart.length) {
+                showToast('السلة فارغة', '⚠️');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-order');
             btn.disabled = true;
-            const currency = document.getElementById('brand-currency').value;
-            const data = {
-                name: document.getElementById('brand-name').value,
-                slug: document.getElementById('brand-slug').value,
-                logo: document.getElementById('brand-logo').value,
-                phone: document.getElementById('brand-phone').value,
-                maps_url: document.getElementById('brand-maps-url').value,
-                review_url: document.getElementById('brand-review-url').value,
-                whatsapp: document.getElementById('brand-whatsapp').value,
-                instagram: document.getElementById('brand-instagram').value,
-                facebook: document.getElementById('brand-facebook').value,
-                header_tagline: document.getElementById('brand-header-tagline').value,
-                hero_badge: document.getElementById('brand-hero-badge').value,
-                hero_title: document.getElementById('brand-hero-title').value,
-                hero_subtitle: document.getElementById('brand-hero-subtitle').value,
-                hero_desc: document.getElementById('brand-hero-desc').value,
-                currency: currency,
-                updatedAt: serverTimestamp()
-            };
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> جاري الإرسال...`;
+
             try {
-                await setDoc(doc(db, 'restaurants', 'settings'), data, { merge: true });
-                restaurantSettings = data;
-                currentCurrency = currency;
-                currencySymbol = getCurrencySymbol(currency);
-                updateCurrencyUI();
-                showToast('✅ تم حفظ الإعدادات والعملة الجديدة!');
-            } catch (err) { showToast('❌ خطأ: ' + err.message); } finally { btn.disabled = false; }
+                const totalPrice = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+                const orderRef = await addDoc(collection(db, 'orders'), {
+                    customerName: customerName || 'زبون عام',
+                    customerPhone: customerPhone || 'غير مدخل',
+                    tableNumber: parseInt(tableNumber),
+                    items: cart,
+                    totalPrice: totalPrice,
+                    notes: notes || 'بدون ملاحظات',
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+
+                localStorage.setItem('last_order_id', orderRef.id);
+                trackMyActiveOrder();
+
+                showToast('تم إرسال الطلب للمطبخ بنجاح!', '🎉');
+                cart = [];
+                updateCartUI();
+                
+                document.getElementById('btn-submit-order').classList.add('hidden');
+                document.getElementById('after-order-review-container').classList.remove('hidden');
+                
+                document.getElementById('order-table-number').value = '';
+                document.getElementById('order-notes').value = '';
+            } catch (err) {
+                showToast('خطأ: ' + err.message, '❌');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> إرسال الطلب الآن`;
+            }
+        };
+
+        // التشغيل التلقائي المضمون
+        checkTableFromURL();
+        trackMyActiveOrder();
+        listenRestaurant();
+        listenProducts();
+
+        document.getElementById('order-table-number').addEventListener('input', function() {
+            const val = this.value || 'لم تحدد';
+            document.getElementById('cart-table-num-display').textContent = val;
         });
-
-        // INIT
-        document.getElementById('txn-date').value = new Date().toISOString().split('T')[0];
-
-        const originalRender = renderTransactionsTable;
-        renderTransactionsTable = function() {
-            originalRender();
-            const container = document.getElementById('recent-transactions');
-            const recent = cachedTransactions.slice(0, 5);
-            if (!recent.length) { container.innerHTML = `<p class="text-gray-400 text-xs">لا توجد معاملات</p>`; return; }
-            container.innerHTML = recent.map(t => {
-                const isExpense = t.type === 'expense';
-                const sign = isExpense ? '-' : '+';
-                const color = isExpense ? 'text-rose-400' : 'text-emerald-400';
-                return `<div class="flex justify-between items-center border-b border-gold-500/5 py-2"><span class="text-xs text-gray-300">${t.description || t.category || 'معاملة'}</span><span class="text-xs font-bold ${color}">${sign} ${formatCurrency(t.amount)}</span></div>`;
-            }).join('');
-        };
-
-        const originalFinanceUI = updateFinanceUI;
-        updateFinanceUI = function() { 
-            originalFinanceUI();
-            updateExpenseBreakdown(); 
-        };
-
-        switchTab('orders');
-
-        window.formatCurrency = formatCurrency;
-        window.getCurrencySymbol = getCurrencySymbol;
-        window.updateCurrencyUI = updateCurrencyUI;
-
-        console.log('🚀 Dashboard Ready!');
     </script>
 </body>
 </html>
