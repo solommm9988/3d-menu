@@ -314,7 +314,10 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
                         مراقبة الطلبات الحية مباشرة من الطاولات
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="window.testNotificationSound()" class="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-volume-high"></i> تجربة التنبيه الصوتي
+                        </button>
                         <button onclick="window.clearFinishedOrders()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
                             <i class="fa-solid fa-broom"></i> تنظيف المنتهي
                         </button>
@@ -725,6 +728,22 @@
         let restaurantSettings = {};
         let currentCurrency = 'EGP';
 
+        // Web Audio Context للتنبيها
+        let audioCtx = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // تفعيل الصوت عند النقر في أي مكان داخل الصفحة لتجاوز حظر المتصفح
+        window.addEventListener('click', () => initAudioContext(), { once: true });
+        window.addEventListener('keydown', () => initAudioContext(), { once: true });
+
         const CURRENCY_MAP = {
             'AED': { symbol: 'د.إ', code: 'AED' }, 'AFN': { symbol: '؋', code: 'AFN' },
             'ALL': { symbol: 'L', code: 'ALL' }, 'AMD': { symbol: '֏', code: 'AMD' },
@@ -767,20 +786,47 @@
             setTimeout(() => { el.remove(); }, 3500);
         }
 
+        // 🔔 نغمة جرس المطبخ/الأوردر المزدوجة العالية والواضحة
         function playNotificationSound() {
             try {
-                const ctx = new(window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.3);
-            } catch (e) {}
+                initAudioContext();
+                if (!audioCtx) return;
+
+                const now = audioCtx.currentTime;
+
+                // النغمة الأولى (Ding)
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(880, now); // نغمة A5
+                gain1.gain.setValueAtTime(0.5, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.5);
+
+                // النغمة الثانية (Dong) بعد 0.15 ثانية
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(1318.51, now + 0.15); // نغمة E6
+                gain2.gain.setValueAtTime(0.6, now + 0.15);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(now + 0.15);
+                osc2.stop(now + 0.8);
+
+            } catch (e) {
+                console.error("Audio playback error:", e);
+            }
         }
+
+        window.testNotificationSound = function() {
+            playNotificationSound();
+            showToast('🔔 نغمة التنبيه شغالة زي الفل!');
+        };
 
         // ➕ دالة إضافة صف حجم/نوع جديد
         window.addSizeRow = function(containerId, name = '', price = '') {
@@ -811,6 +857,7 @@
         // AUTH
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            initAudioContext();
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
             loginError.classList.add('hidden');
@@ -844,6 +891,7 @@
         };
 
         window.switchTab = function(tabId) {
+            initAudioContext();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
             document.getElementById(`section-${tabId}`).classList.remove('hidden');
@@ -879,8 +927,14 @@
                     if (count > topCount) { topCount = count; topDish = name; }
                 }
                 const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
-                if (cachedOrders.length > knownOrdersCount && knownOrdersCount > 0) { playNotificationSound(); showToast('🔔 وصول طلب جديد!'); }
+                
+                // تشغيل الصوت عند وصول طلب جديد
+                if (cachedOrders.length > knownOrdersCount && knownOrdersCount > 0) { 
+                    playNotificationSound(); 
+                    showToast('🔔 وصول طلب جديد للمطبخ!'); 
+                }
                 knownOrdersCount = cachedOrders.length;
+
                 const badge = document.getElementById('badge-orders-count');
                 if (pendingOrders.length > 0) { badge.textContent = pendingOrders.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
                 document.getElementById('stat-orders-today').textContent = cachedOrders.length;
