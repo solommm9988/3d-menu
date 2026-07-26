@@ -7,7 +7,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -491,7 +491,7 @@
                                 <option value="MRU">🇲🇷 أوقية موريتانية (أ.م)</option>
                                 <option value="SOS">🇸🇴 شلن صومالي (ش.ص)</option>
                                 <option value="DJF">🇩🇯 فرنك جيبوتي (ف.ج)</option>
-                                <option value="KMF">🇰🇲 فرنك قمري (ف.ق)</option>
+                                <option value="KMF">🇰RelativeTo فرنك قمري (ف.ق)</option>
                             </optgroup>
                             <optgroup label="العملات العالمية الكبرى">
                                 <option value="USD">🇺🇸 دولار أمريكي ($)</option>
@@ -563,7 +563,6 @@
                         </div>
                     </div>
 
-                    <!-- Single Base Price -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-dark-900/50 p-3 rounded-2xl border border-gold-500/10">
                         <div>
                             <label class="text-xs font-bold text-gold-400 block mb-1">السعر الأساسي (في حال عدم وجود أحجام)</label>
@@ -576,7 +575,6 @@
                         </div>
                     </div>
 
-                    <!-- Sizes / Variants Input Section -->
                     <div class="bg-dark-900/80 p-4 rounded-2xl border border-gold-500/20 space-y-3">
                         <div class="flex justify-between items-center">
                             <div>
@@ -655,7 +653,7 @@
         </div>
     </div>
 
-    <!-- 🧾 RECEIPT FOR THERMAL PRINTING (الفاتورة الحرارية للطباعة) 🧾 -->
+    <!-- 🧾 RECEIPT FOR THERMAL PRINTING 🧾 -->
     <div id="printable-receipt" style="display: none;">
         <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
             <img id="receipt-logo" src="" style="max-width: 60px; max-height: 60px; margin: 0 auto 5px auto; display: block;" />
@@ -724,6 +722,7 @@
         let cachedOrders = [];
         let restaurantSettings = {};
         let currentCurrency = 'EGP';
+        let currencySymbol = 'ج.م'; // <-- تم تعريف المتغير هنا لمنع الخطأ نهائياً
 
         let audioCtx = null;
 
@@ -1525,7 +1524,6 @@
                 updatedAt: serverTimestamp()
             };
             try {
-                // التصليح المضمون لمسار حفظ الإعدادات والعملة
                 await setDoc(doc(db, 'restaurants', 'settings'), data, { merge: true });
                 restaurantSettings = data;
                 currentCurrency = currency;
