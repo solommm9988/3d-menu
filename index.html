@@ -265,7 +265,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <span id="cart-total-price" class="font-bold text-sm text-amber-400">0 ج.م</span>
+                <span id="cart-total-price" class="font-bold text-sm text-amber-400">0</span>
                 <i class="fa-solid fa-chevron-left text-[10px] text-slate-400"></i>
             </div>
         </button>
@@ -352,8 +352,8 @@
                     <div>
                         <span class="text-[10px] text-slate-400 font-bold block">السعر</span>
                         <div class="flex items-baseline gap-2">
-                            <span id="modal-price" class="font-bold text-lg text-slate-900">0 ج.م</span>
-                            <span id="modal-old-price" class="text-xs text-slate-400 line-through hidden">0 ج.م</span>
+                            <span id="modal-price" class="font-bold text-lg text-slate-900">0</span>
+                            <span id="modal-old-price" class="text-xs text-slate-400 line-through hidden">0</span>
                         </div>
                     </div>
 
@@ -418,7 +418,7 @@
             <div class="p-4 border-t border-slate-100 bg-slate-50 space-y-3">
                 <div class="flex justify-between items-center text-xs">
                     <span class="text-slate-500 font-bold">إجمالي المبلغ</span>
-                    <span id="modal-cart-total" class="font-bold text-base text-slate-900">0 ج.م</span>
+                    <span id="modal-cart-total" class="font-bold text-base text-slate-900">0</span>
                 </div>
                 <button onclick="window.sendOrderToFirebase()" id="btn-submit-order" class="w-full bg-slate-900 hover:bg-slate-800 text-amber-400 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm">
                     <i class="fa-solid fa-paper-plane"></i> إرسال الطلب الآن
@@ -448,6 +448,53 @@
 
         const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
 
+        // خريطة رموز كافة العملات لتنسيق المنيو تلقائياً
+        const CURRENCY_MAP = {
+            'EGP': { symbol: 'ج.م', code: 'EGP' },
+            'SAR': { symbol: 'ر.س', code: 'SAR' },
+            'AED': { symbol: 'د.إ', code: 'AED' },
+            'KWD': { symbol: 'د.ك', code: 'KWD' },
+            'QAR': { symbol: 'ر.ق', code: 'QAR' },
+            'BHD': { symbol: 'د.ب', code: 'BHD' },
+            'OMR': { symbol: 'ر.ع', code: 'OMR' },
+            'JOD': { symbol: 'د.أ', code: 'JOD' },
+            'IQD': { symbol: 'د.ع', code: 'IQD' },
+            'LBP': { symbol: 'ل.ل', code: 'LBP' },
+            'LYD': { symbol: 'د.ل', code: 'LYD' },
+            'DZD': { symbol: 'د.ج', code: 'DZD' },
+            'MAD': { symbol: 'د.م', code: 'MAD' },
+            'TND': { symbol: 'د.ت', code: 'TND' },
+            'SDG': { symbol: 'ج.س', code: 'SDG' },
+            'YER': { symbol: 'ر.ي', code: 'YER' },
+            'SYP': { symbol: 'ل.س', code: 'SYP' },
+            'MRU': { symbol: 'أ.م', code: 'MRU' },
+            'SOS': { symbol: 'ش.ص', code: 'SOS' },
+            'DJF': { symbol: 'ف.ج', code: 'DJF' },
+            'KMF': { symbol: 'ف.ق', code: 'KMF' },
+            'USD': { symbol: '$', code: 'USD' },
+            'EUR': { symbol: '€', code: 'EUR' },
+            'GBP': { symbol: '£', code: 'GBP' },
+            'JPY': { symbol: '¥', code: 'JPY' },
+            'CNY': { symbol: '¥', code: 'CNY' },
+            'CHF': { symbol: 'CHF', code: 'CHF' },
+            'CAD': { symbol: 'CA$', code: 'CAD' },
+            'AUD': { symbol: 'A$', code: 'AUD' },
+            'NZD': { symbol: 'NZ$', code: 'NZD' },
+            'INR': { symbol: '₹', code: 'INR' },
+            'RUB': { symbol: '₽', code: 'RUB' },
+            'TRY': { symbol: '₺', code: 'TRY' },
+            'BRL': { symbol: 'R$', code: 'BRL' },
+            'ZAR': { symbol: 'R', code: 'ZAR' },
+            'KRW': { symbol: '₩', code: 'KRW' },
+            'MXN': { symbol: 'Mex$', code: 'MXN' },
+            'SGD': { symbol: 'S$', code: 'SGD' },
+            'HKD': { symbol: 'HK$', code: 'HKD' },
+            'SEK': { symbol: 'kr', code: 'SEK' },
+            'NOK': { symbol: 'kr', code: 'NOK' },
+            'DKK': { symbol: 'kr', code: 'DKK' }
+        };
+
+        let currentCurrencySymbol = 'ج.م';
         let allProducts = [];
         let filteredProducts = [];
         let cart = [];
@@ -457,6 +504,10 @@
         let activeCategory = 'الكل';
         let searchQuery = '';
         let activeTrackerUnsubscribe = null;
+
+        function getCurrencySymbol(code) {
+            return (CURRENCY_MAP[code] || CURRENCY_MAP['EGP']).symbol;
+        }
 
         function checkTableFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -478,7 +529,6 @@
             el._timer = setTimeout(() => el.classList.remove('show'), 2200);
         }
 
-        // 🔄 متابعة حالة الطلب لايف للزبون المضمونة
         function trackMyActiveOrder() {
             const myOrderId = localStorage.getItem('last_order_id');
             if (!myOrderId) return;
@@ -518,6 +568,14 @@
             onSnapshot(doc(db, 'restaurants', 'settings'), (snap) => {
                 if (snap.exists()) {
                     const d = snap.data();
+
+                    // تحديث رمز العملة تلقائياً في كل واجهات المنيو
+                    if (d.currency) {
+                        currentCurrencySymbol = getCurrencySymbol(d.currency);
+                        renderProducts(filteredProducts);
+                        updateCartUI();
+                    }
+
                     if (d.name) document.getElementById('res-name').textContent = d.name;
                     if (d.logo) document.getElementById('res-logo').src = d.logo;
                     if (d.phone) {
@@ -631,8 +689,8 @@
 
                             <div class="flex items-center justify-between pt-2 mt-1 border-t border-slate-100">
                                 <div>
-                                    ${priceLabel}<span class="font-extrabold text-xs sm:text-sm text-slate-900">${displayPrice} ج.م</span>
-                                    ${hasDiscount ? `<span class="text-[10px] text-slate-400 line-through mr-1">${p.oldPrice} ج.م</span>` : ''}
+                                    ${priceLabel}<span class="font-extrabold text-xs sm:text-sm text-slate-900">${displayPrice} ${currentCurrencySymbol}</span>
+                                    ${hasDiscount ? `<span class="text-[10px] text-slate-400 line-through mr-1">${p.oldPrice} ${currentCurrencySymbol}</span>` : ''}
                                 </div>
                                 <button onclick="window.openImgModal('${p.id}')" class="bg-slate-900 hover:bg-amber-400 hover:text-slate-950 text-white px-2.5 py-1 rounded-lg font-bold text-xs flex items-center gap-1 transition-colors shadow-sm">
                                     <span>${hasSizes ? 'اختر' : 'طلب'}</span>
@@ -679,20 +737,20 @@
                         <input type="radio" id="size-opt-${index}" name="dish-size" class="size-radio hidden" ${index === 0 ? 'checked' : ''} onchange="window.selectModalSize(${index})">
                         <label for="size-opt-${index}" class="block text-center border border-slate-200 rounded-xl p-2 cursor-pointer transition-all text-xs">
                             <span class="block font-bold">${s.name}</span>
-                            <span class="block text-[10px] text-amber-600 font-extrabold mt-0.5">${s.price} ج.م</span>
+                            <span class="block text-[10px] text-amber-600 font-extrabold mt-0.5">${s.price} ${currentCurrencySymbol}</span>
                         </label>
                     </div>
                 `).join('');
                 
-                document.getElementById('modal-price').textContent = currentSelectedSize.price + ' ج.م';
+                document.getElementById('modal-price').textContent = currentSelectedSize.price + ' ' + currentCurrencySymbol;
                 oldPriceEl.classList.add('hidden');
             } else {
                 sizesContainer.classList.add('hidden');
                 currentSelectedSize = null;
-                document.getElementById('modal-price').textContent = (p.price || 0) + ' ج.م';
+                document.getElementById('modal-price').textContent = (p.price || 0) + ' ' + currentCurrencySymbol;
                 
                 if (p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
-                    oldPriceEl.textContent = p.oldPrice + ' ج.م';
+                    oldPriceEl.textContent = p.oldPrice + ' ' + currentCurrencySymbol;
                     oldPriceEl.classList.remove('hidden');
                 } else {
                     oldPriceEl.classList.add('hidden');
@@ -713,7 +771,7 @@
         window.selectModalSize = function(index) {
             if (activeModalProduct && activeModalProduct.sizes && activeModalProduct.sizes[index]) {
                 currentSelectedSize = activeModalProduct.sizes[index];
-                document.getElementById('modal-price').textContent = currentSelectedSize.price + ' ج.م';
+                document.getElementById('modal-price').textContent = currentSelectedSize.price + ' ' + currentCurrencySymbol;
             }
         };
 
@@ -751,8 +809,8 @@
             const totalCount = cart.reduce((sum, i) => sum + i.qty, 0);
             const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
             document.getElementById('cart-count-badge').textContent = totalCount;
-            document.getElementById('cart-total-price').textContent = totalPrice + ' ج.م';
-            document.getElementById('modal-cart-total').textContent = totalPrice + ' ج.م';
+            document.getElementById('cart-total-price').textContent = totalPrice + ' ' + currentCurrencySymbol;
+            document.getElementById('modal-cart-total').textContent = totalPrice + ' ' + currentCurrencySymbol;
             const btn = document.getElementById('floating-cart-btn');
             if (totalCount > 0) btn.classList.remove('hidden');
             else btn.classList.add('hidden');
@@ -767,10 +825,10 @@
                     `<div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                         <div>
                             <p class="text-xs font-bold text-slate-800">${item.title}</p>
-                            <p class="text-[10px] text-slate-500">${item.price} ج.م × ${item.qty}</p>
+                            <p class="text-[10px] text-slate-500">${item.price} ${currentCurrencySymbol} × ${item.qty}</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="font-bold text-xs text-slate-900">${item.price * item.qty} ج.م</span>
+                            <span class="font-bold text-xs text-slate-900">${item.price * item.qty} ${currentCurrencySymbol}</span>
                             <button onclick="window.removeFromCart('${item.cartItemId}')" class="text-slate-400 hover:text-red-600 p-1 text-xs transition-colors"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>`
