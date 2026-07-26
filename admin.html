@@ -717,7 +717,7 @@
         const logoutBtn = document.getElementById('logout-btn');
         const toastContainer = document.getElementById('toast-container');
 
-        let knownOrdersCount = -1; // البدء بـ -1 لتشغيل التنبيه من أول أوردر يصل بعد فتح الصفحة
+        let knownOrdersCount = -1;
         let cachedProducts = [];
         let cachedTransactions = [];
         let cachedDailyNotes = [];
@@ -748,9 +748,40 @@
             'BHD': { symbol: 'د.ب', code: 'BHD' },
             'OMR': { symbol: 'ر.ع', code: 'OMR' },
             'JOD': { symbol: 'د.أ', code: 'JOD' },
+            'IQD': { symbol: 'د.ع', code: 'IQD' },
+            'LBP': { symbol: 'ل.ل', code: 'LBP' },
+            'LYD': { symbol: 'د.ل', code: 'LYD' },
+            'DZD': { symbol: 'د.ج', code: 'DZD' },
+            'MAD': { symbol: 'د.م', code: 'MAD' },
+            'TND': { symbol: 'د.ت', code: 'TND' },
+            'SDG': { symbol: 'ج.س', code: 'SDG' },
+            'YER': { symbol: 'ر.ي', code: 'YER' },
+            'SYP': { symbol: 'ل.س', code: 'SYP' },
+            'MRU': { symbol: 'أ.م', code: 'MRU' },
+            'SOS': { symbol: 'ش.ص', code: 'SOS' },
+            'DJF': { symbol: 'ف.ج', code: 'DJF' },
+            'KMF': { symbol: 'ف.ق', code: 'KMF' },
             'USD': { symbol: '$', code: 'USD' },
             'EUR': { symbol: '€', code: 'EUR' },
-            'GBP': { symbol: '£', code: 'GBP' }
+            'GBP': { symbol: '£', code: 'GBP' },
+            'JPY': { symbol: '¥', code: 'JPY' },
+            'CNY': { symbol: '¥', code: 'CNY' },
+            'CHF': { symbol: 'CHF', code: 'CHF' },
+            'CAD': { symbol: 'CA$', code: 'CAD' },
+            'AUD': { symbol: 'A$', code: 'AUD' },
+            'NZD': { symbol: 'NZ$', code: 'NZD' },
+            'INR': { symbol: '₹', code: 'INR' },
+            'RUB': { symbol: '₽', code: 'RUB' },
+            'TRY': { symbol: '₺', code: 'TRY' },
+            'BRL': { symbol: 'R$', code: 'BRL' },
+            'ZAR': { symbol: 'R', code: 'ZAR' },
+            'KRW': { symbol: '₩', code: 'KRW' },
+            'MXN': { symbol: 'Mex$', code: 'MXN' },
+            'SGD': { symbol: 'S$', code: 'SGD' },
+            'HKD': { symbol: 'HK$', code: 'HKD' },
+            'SEK': { symbol: 'kr', code: 'SEK' },
+            'NOK': { symbol: 'kr', code: 'NOK' },
+            'DKK': { symbol: 'kr', code: 'DKK' }
         };
 
         function formatCurrency(amount, currencyCode = currentCurrency) {
@@ -787,7 +818,6 @@
             setTimeout(() => { el.remove(); }, 3500);
         }
 
-        // 🔔 جرس منبه عالي ومباشر
         function playNotificationSound() {
             try {
                 initAudioContext();
@@ -929,7 +959,6 @@
 
                 const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
                 
-                // تشغيل الصوت بدقة عند وصول طلب جديد (تم إصلاح المشكلة هنا)
                 if (knownOrdersCount !== -1 && cachedOrders.length > knownOrdersCount) { 
                     playNotificationSound(); 
                     showToast('🔔 وصول طلب جديد للمطبخ!'); 
@@ -1008,7 +1037,6 @@
 
                         ${o.notes ? `<p class="text-[11px] text-amber-200/80 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20"><i class="fa-solid fa-comment-dots ml-1"></i> ${o.notes}</p>` : ''}
                         
-                        <!-- أزرار تحديث حالة الطلب السريعة -->
                         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gold-500/10">
                             <button onclick="window.updateOrderStatus('${o.id}', 'preparing')" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 text-xs py-1.5 rounded-xl font-bold transition">جاري التحضير 👨‍🍳</button>
                             <button onclick="window.updateOrderStatus('${o.id}', 'served')" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 text-xs py-1.5 rounded-xl font-bold transition">تم التسليم ✅</button>
@@ -1497,7 +1525,8 @@
                 updatedAt: serverTimestamp()
             };
             try {
-                await setDoc(doc(doc(db, 'restaurants', 'settings')), data, { merge: true });
+                // التصليح المضمون لمسار حفظ الإعدادات والعملة
+                await setDoc(doc(db, 'restaurants', 'settings'), data, { merge: true });
                 restaurantSettings = data;
                 currentCurrency = currency;
                 currencySymbol = getCurrencySymbol(currency);
