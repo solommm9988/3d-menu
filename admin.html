@@ -11,7 +11,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         * {
@@ -265,9 +264,6 @@
                         <i class="fa-solid fa-bell text-gold-400"></i><span>طلبات الطاولات</span>
                         <span id="badge-orders-count" class="mr-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black hidden">0</span>
                     </button>
-                    <button onclick="switchTab('qr-generator')" id="tab-btn-qr-generator" class="nav-tab">
-                        <i class="fa-solid fa-qrcode"></i> إنشاء QR للطاولات
-                    </button>
                     <button onclick="switchTab('stats')" id="tab-btn-stats" class="nav-tab">
                         <i class="fa-solid fa-chart-line"></i> التحليلات والإحصائيات
                     </button>
@@ -330,24 +326,6 @@
                     <div class="col-span-full text-center py-16 text-gray-500">
                         <i class="fa-solid fa-receipt text-3xl text-gold-500 mb-2 block"></i>
                         لا توجد طلبات جديدة حالياً
-                    </div>
-                </div>
-            </section>
-
-            <!-- QR GENERATOR -->
-            <section id="section-qr-generator" class="tab-content hidden max-w-xl">
-                <div class="royal-card p-6 rounded-3xl space-y-4">
-                    <h3 class="font-serif text-lg font-bold text-gold-gradient"><i class="fa-solid fa-qrcode ml-2"></i>إنشاء كود QR للطاولة</h3>
-                    <div>
-                        <label class="text-xs font-bold text-gold-400 block mb-1">رقم الطاولة</label>
-                        <input type="number" id="qr-table-num" class="glass-input" placeholder="مثلاً: 5" value="1" />
-                    </div>
-                    <button onclick="window.generateQRCode()" class="btn-gold w-full py-2.5 rounded-xl font-bold text-xs"><i class="fa-solid fa-bolt ml-1"></i>توليد الكود</button>
-                    
-                    <div id="qr-output-container" class="hidden pt-4 text-center space-y-3 border-t border-gold-500/20">
-                        <div id="qrcode-box" class="inline-block p-4 bg-white rounded-2xl shadow-xl"></div>
-                        <p class="text-xs text-gold-300 font-bold" id="qr-table-text"></p>
-                        <button onclick="window.printQR()" class="btn-gold-outline text-xs py-2 px-6 rounded-xl"><i class="fa-solid fa-print ml-1"></i>طباعة / حفظ الكود</button>
                     </div>
                 </div>
             </section>
@@ -505,19 +483,78 @@
                     <div>
                         <label class="text-xs font-bold text-gold-400 block mb-1"><i class="fa-solid fa-coins ml-1"></i>العملة المستخدمة</label>
                         <select id="brand-currency" class="glass-input" required>
-                            <optgroup label="العملات الرئيسية">
-                                <option value="USD">🇺🇸 دولار أمريكي ($)</option>
-                                <option value="EUR">🇪🇺 يورو (€)</option>
-                                <option value="GBP">🇬🇧 جنيه استرليني (£)</option>
+                            <optgroup label="العملات العربية">
                                 <option value="EGP">🇪🇬 جنيه مصري (ج.م)</option>
                                 <option value="SAR">🇸🇦 ريال سعودي (ر.س)</option>
                                 <option value="AED">🇦🇪 درهم إماراتي (د.إ)</option>
                                 <option value="KWD">🇰🇼 دينار كويتي (د.ك)</option>
-                                <option value="BHD">🇧🇭 دينار بحريني (د.ب)</option>
                                 <option value="QAR">🇶🇦 ريال قطري (ر.ق)</option>
+                                <option value="BHD">🇧🇭 دينار بحريني (د.ب)</option>
                                 <option value="OMR">🇴🇲 ريال عماني (ر.ع)</option>
                                 <option value="JOD">🇯🇴 دينار أردني (د.أ)</option>
+                                <option value="IQD">🇮🇶 دينار عراقي (د.ع)</option>
+                                <option value="LBP">🇱🇧 ليرة لبنانية (ل.ل)</option>
+                                <option value="LYD">🇱🇾 دينار ليبي (د.ل)</option>
+                                <option value="DZD">🇩🇿 دينار جزائري (د.ج)</option>
+                                <option value="MAD">🇲🇦 درهم مغربي (د.م)</option>
+                                <option value="TND">🇹🇳 دينار تونسي (د.ت)</option>
+                                <option value="SDG">🇸🇩 جنيه سوداني (ج.س)</option>
+                                <option value="YER">🇾🇪 ريال يمني (ر.ي)</option>
+                                <option value="SYP">🇸🇾 ليرة سورية (ل.س)</option>
+                                <option value="MRU">🇲🇷 أوقية موريتانية (أ.م)</option>
+                                <option value="SOS">🇸🇴 شلن صومالي (ش.ص)</option>
+                                <option value="DJF">🇩🇯 فرنك جيبوتي (ف.ج)</option>
+                                <option value="KMF">🇰🇲 فرنك قمري (ف.ق)</option>
+                            </optgroup>
+                            <optgroup label="العملات العالمية الكبرى">
+                                <option value="USD">🇺🇸 دولار أمريكي ($)</option>
+                                <option value="EUR">🇪🇺 يورو (€)</option>
+                                <option value="GBP">🇬🇧 جنيه استرليني (£)</option>
+                                <option value="JPY">🇯🇵 ين ياباني (¥)</option>
+                                <option value="CNY">🇨🇳 يوان صيني (¥)</option>
+                                <option value="CHF">🇨🇭 فرنك سويسري (CHF)</option>
+                                <option value="CAD">🇨🇦 دولار كندي (CA$)</option>
+                                <option value="AUD">🇦🇺 دولار أسترالي (A$)</option>
+                                <option value="NZD">🇳🇿 دولار نيوزيلندي (NZ$)</option>
+                                <option value="INR">🇮🇳 روبية هندية (₹)</option>
+                                <option value="RUB">🇷🇺 روبيل روسي (₽)</option>
                                 <option value="TRY">🇹🇷 ليرة تركية (₺)</option>
+                                <option value="BRL">🇧🇷 ريال برازيلي (R$)</option>
+                                <option value="ZAR">🇿🇦 راند جنوب إفريقي (R)</option>
+                                <option value="KRW">🇰🇷 وون كوري (₩)</option>
+                                <option value="MXN">🇲🇽 بيزو مكسيكي (Mex$)</option>
+                                <option value="SGD">🇸🇬 دولار سنغافوري (S$)</option>
+                                <option value="HKD">🇭🇰 دولار هونغ كونغ (HK$)</option>
+                                <option value="SEK">🇸🇪 كرونة سويدية (kr)</option>
+                                <option value="NOK">🇳🇴 كرونة نرويجية (kr)</option>
+                                <option value="DKK">🇩🇰 كرونة دنماركية (kr)</option>
+
+                                <option value="PLN">🇵🇱 زلوتي بولندي (zł)</option>
+                                <option value="THB">🇹🇭 بات تايلاندي (฿)</option>
+                                <option value="IDR">🇮🇩 روبية إندونيسية (Rp)</option>
+                                <option value="MYR">🇲🇾 رينغيت ماليزي (RM)</option>
+                                <option value="PHP">🇵🇭 بيزو الفلبين (₱)</option>
+                                <option value="PKR">🇵🇰 روبية باكستانية (Rs)</option>
+                                <option value="BDT">🇧🇩 تاكا بنغلاديشية (৳)</option>
+                                <option value="VND">🇻🇳 دونغ فيتنامي (₫)</option>
+                                <option value="EGP_A">🇦🇫 أفغاني أفغانستان (؋)</option>
+                                <option value="ARS">🇦🇷 بيزو أرجنتيني ($)</option>
+                                <option value="AZN">🇦🇿 مانات أذربيجاني (₼)</option>
+                                <option value="CLP">🇨🇱 بيزو تشيلي ($)</option>
+                                <option value="COP">🇨🇴 بيزو كولومبي ($)</option>
+                                <option value="CZK">🇨🇿 كرونة تشيكية (Kč)</option>
+                                <option value="GHS">🇬🇭 سيدي غاني (₵)</option>
+                                <option value="HUF">🇭🇺 فورينت مجري (Ft)</option>
+                                <option value="ILS">🇮🇱 شيكل (₪)</option>
+                                <option value="KES">🇰🇪 شلن كيني (KSh)</option>
+                                <option value="KZT">🇰🇿 تينغ كازاخستاني (₸)</option>
+                                <option value="NGN">🇳🇬 نايرا نيجيرية (₦)</option>
+                                <option value="PER">🇵🇪 سول بيروفي (S/)</option>
+                                <option value="RON">🇷🇴 ليو رومانيا (lei)</option>
+
+                                <option value="UAH">🇺🇦 هريفنا أوكرانية (₴)</option>
+                                <option value="UYU">🇺🇾 بيزو أوروغواي ($U)</option>
+                                <option value="UZS">🇺🇿 سوم أوزبكستاني (soʻm)</option>
                             </optgroup>
                         </select>
                         <p class="text-[10px] text-gray-500 mt-1">سيتم تطبيق العملة تلقائياً على جميع الأسعار والإحصائيات في لوحة التحكم والمنيو.</p>
@@ -728,7 +765,7 @@
         let restaurantSettings = {};
         let currentCurrency = 'EGP';
 
-        // Web Audio Context للتنبيها
+        // Web Audio Context للتنبيهات
         let audioCtx = null;
 
         function initAudioContext() {
@@ -740,16 +777,79 @@
             }
         }
 
-        // تفعيل الصوت عند النقر في أي مكان داخل الصفحة لتجاوز حظر المتصفح
+        // تفعيل الصوت عند النقر في أي مكان داخل الصفحة
         window.addEventListener('click', () => initAudioContext(), { once: true });
         window.addEventListener('keydown', () => initAudioContext(), { once: true });
 
+        // خريطة عملات العالم الشاملة
         const CURRENCY_MAP = {
-            'AED': { symbol: 'د.إ', code: 'AED' }, 'AFN': { symbol: '؋', code: 'AFN' },
-            'ALL': { symbol: 'L', code: 'ALL' }, 'AMD': { symbol: '֏', code: 'AMD' },
-            'EGP': { symbol: 'ج.م', code: 'EGP' }, 'SAR': { symbol: 'ر.س', code: 'SAR' },
-            'USD': { symbol: '$', code: 'USD' }, 'EUR': { symbol: '€', code: 'EUR' },
-            'GBP': { symbol: '£', code: 'GBP' }, 'KWD': { symbol: 'د.ك', code: 'KWD' }
+            'EGP': { symbol: 'ج.م', code: 'EGP' },
+            'SAR': { symbol: 'ر.س', code: 'SAR' },
+            'AED': { symbol: 'د.إ', code: 'AED' },
+            'KWD': { symbol: 'د.ك', code: 'KWD' },
+            'QAR': { symbol: 'ر.ق', code: 'QAR' },
+            'BHD': { symbol: 'د.ب', code: 'BHD' },
+            'OMR': { symbol: 'ر.ع', code: 'OMR' },
+            'JOD': { symbol: 'د.أ', code: 'JOD' },
+            'IQD': { symbol: 'د.ع', code: 'IQD' },
+            'LBP': { symbol: 'ل.ل', code: 'LBP' },
+            'LYD': { symbol: 'د.ل', code: 'LYD' },
+            'DZD': { symbol: 'د.ج', code: 'DZD' },
+            'MAD': { symbol: 'د.م', code: 'MAD' },
+            'TND': { symbol: 'د.ت', code: 'TND' },
+            'SDG': { symbol: 'ج.س', code: 'SDG' },
+            'YER': { symbol: 'ر.ي', code: 'YER' },
+            'SYP': { symbol: 'ل.س', code: 'SYP' },
+            'MRU': { symbol: 'أ.م', code: 'MRU' },
+            'SOS': { symbol: 'ش.ص', code: 'SOS' },
+            'DJF': { symbol: 'ف.ج', code: 'DJF' },
+            'KMF': { symbol: 'ف.ق', code: 'KMF' },
+            'USD': { symbol: '$', code: 'USD' },
+            'EUR': { symbol: '€', code: 'EUR' },
+            'GBP': { symbol: '£', code: 'GBP' },
+            'JPY': { symbol: '¥', code: 'JPY' },
+            'CNY': { symbol: '¥', code: 'CNY' },
+            'CHF': { symbol: 'CHF', code: 'CHF' },
+            'CAD': { symbol: 'CA$', code: 'CAD' },
+            'AUD': { symbol: 'A$', code: 'AUD' },
+            'NZD': { symbol: 'NZ$', code: 'NZD' },
+            'INR': { symbol: '₹', code: 'INR' },
+            'RUB': { symbol: '₽', code: 'RUB' },
+            'TRY': { symbol: '₺', code: 'TRY' },
+            'BRL': { symbol: 'R$', code: 'BRL' },
+            'ZAR': { symbol: 'R', code: 'ZAR' },
+            'KRW': { symbol: '₩', code: 'KRW' },
+            'MXN': { symbol: 'Mex$', code: 'MXN' },
+            'SGD': { symbol: 'S$', code: 'SGD' },
+            'HKD': { symbol: 'HK$', code: 'HKD' },
+            'SEK': { symbol: 'kr', code: 'SEK' },
+            'NOK': { symbol: 'kr', code: 'NOK' },
+            'DKK': { symbol: 'kr', code: 'DKK' },
+            'PLN': { symbol: 'zł', code: 'PLN' },
+            'THB': { symbol: '฿', code: 'THB' },
+            'IDR': { symbol: 'Rp', code: 'IDR' },
+            'MYR': { symbol: 'RM', code: 'MYR' },
+            'PHP': { symbol: '₱', code: 'PHP' },
+            'PKR': { symbol: 'Rs', code: 'PKR' },
+            'BDT': { symbol: '৳', code: 'BDT' },
+            'VND': { symbol: '₫', code: 'VND' },
+            'AFN': { symbol: '؋', code: 'AFN' },
+            'ARS': { symbol: '$', code: 'ARS' },
+            'AZN': { symbol: '₼', code: 'AZN' },
+            'CLP': { symbol: '$', code: 'CLP' },
+            'COP': { symbol: '$', code: 'COP' },
+            'CZK': { symbol: 'Kč', code: 'CZK' },
+            'GHS': { symbol: '₵', code: 'GHS' },
+            'HUF': { symbol: 'Ft', code: 'HUF' },
+            'ILS': { symbol: '₪', code: 'ILS' },
+            'KES': { symbol: 'KSh', code: 'KES' },
+            'KZT': { symbol: '₸', code: 'KZT' },
+            'NGN': { symbol: '₦', code: 'NGN' },
+            'PER': { symbol: 'S/', code: 'PER' },
+            'RON': { symbol: 'lei', code: 'RON' },
+            'UAH': { symbol: '₴', code: 'UAH' },
+            'UYU': { symbol: '$U', code: 'UYU' },
+            'UZS': { symbol: 'soʻm', code: 'UZS' }
         };
 
         function formatCurrency(amount, currencyCode = currentCurrency) {
@@ -786,7 +886,7 @@
             setTimeout(() => { el.remove(); }, 3500);
         }
 
-        // 🔔 نغمة جرس المطبخ/الأوردر المزدوجة العالية والواضحة
+        // 🔔 نغمة جرس المطبخ/الأوردر المزدوجة العالية
         function playNotificationSound() {
             try {
                 initAudioContext();
@@ -794,11 +894,10 @@
 
                 const now = audioCtx.currentTime;
 
-                // النغمة الأولى (Ding)
                 const osc1 = audioCtx.createOscillator();
                 const gain1 = audioCtx.createGain();
                 osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(880, now); // نغمة A5
+                osc1.frequency.setValueAtTime(880, now);
                 gain1.gain.setValueAtTime(0.5, now);
                 gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
                 osc1.connect(gain1);
@@ -806,11 +905,10 @@
                 osc1.start(now);
                 osc1.stop(now + 0.5);
 
-                // النغمة الثانية (Dong) بعد 0.15 ثانية
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(1318.51, now + 0.15); // نغمة E6
+                osc2.frequency.setValueAtTime(1318.51, now + 0.15);
                 gain2.gain.setValueAtTime(0.6, now + 0.15);
                 gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
                 osc2.connect(gain2);
@@ -897,7 +995,7 @@
             document.getElementById(`section-${tabId}`).classList.remove('hidden');
             document.getElementById(`tab-btn-${tabId}`).classList.add('active');
             if (window.innerWidth < 768) document.getElementById('sidebar-menu').classList.add('translate-x-full');
-            const titles = { 'orders': 'طلبات الطاولات المباشرة', 'qr-generator': 'إنشاء كود QR للطاولات', 'stats': 'التحليلات والإحصائيات المتقدمة', 'finance': 'المالية والأرباح',
+            const titles = { 'orders': 'طلبات الطاولات المباشرة', 'stats': 'التحليلات والإحصائيات المتقدمة', 'finance': 'المالية والأرباح',
                 'branding': 'إعدادات المطعم والعملة', 'add-dish': 'إضافة طبق جديد', 'dishes-list': 'إدارة الأطباق' };
             document.getElementById('header-title').textContent = titles[tabId] || 'لوحة التحكم';
         };
@@ -928,7 +1026,6 @@
                 }
                 const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
                 
-                // تشغيل الصوت عند وصول طلب جديد
                 if (cachedOrders.length > knownOrdersCount && knownOrdersCount > 0) { 
                     playNotificationSound(); 
                     showToast('🔔 وصول طلب جديد للمطبخ!'); 
@@ -1071,24 +1168,6 @@
             document.getElementById('receipt-total-price').textContent = `الإجمالي: ${formatCurrency(order.totalPrice || 0)}`;
 
             window.print();
-        };
-
-        // QR GENERATOR
-        window.generateQRCode = function() {
-            const tableNum = document.getElementById('qr-table-num').value || '1';
-            const slug = restaurantSettings.slug || 'menu';
-            const url = `${window.location.origin}/index.html?res=${slug}&table=${tableNum}`;
-            const box = document.getElementById('qrcode-box');
-            box.innerHTML = '';
-            new QRCode(box, { text: url, width: 160, height: 160 });
-            document.getElementById('qr-table-text').textContent = `كود طاولة رقم #${tableNum}`;
-            document.getElementById('qr-output-container').classList.remove('hidden');
-        };
-
-        window.printQR = function() {
-            const printWin = window.open('', '', 'width=600,height=600');
-            printWin.document.write(`<div style="text-align:center; padding:30px; font-family:sans-serif;"><h2>طاولة #${document.getElementById('qr-table-num').value}</h2>${document.getElementById('qrcode-box').innerHTML}<p style="margin-top:10px;">امسح الكود واستعرض المنيو</p></div>`);
-            printWin.print();
         };
 
         // PRODUCTS
