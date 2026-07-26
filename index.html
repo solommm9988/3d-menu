@@ -59,7 +59,6 @@
             padding-bottom: 90px;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             height: 4px;
             width: 4px;
@@ -72,14 +71,12 @@
             border-radius: 10px;
         }
 
-        /* App Bar Glass */
         .glass-header {
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Category Filter Buttons */
         .cat-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             background: #ffffff;
@@ -94,7 +91,6 @@
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
         }
 
-        /* Menu Dish Card Design */
         .menu-card {
             background: #ffffff;
             border: 1px solid #f1f5f9;
@@ -106,7 +102,6 @@
             transform: scale(0.99);
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             top: 20px;
@@ -179,20 +174,17 @@
 
     <!-- ═══ SEARCH & BANNER ═══ -->
     <section class="max-w-4xl mx-auto px-4 pt-4 space-y-3">
-        <!-- Delivery Button Banner -->
         <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
             <div class="space-y-0.5">
                 <span id="hero-badge" class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">طلب خارجي أو من الطاولة</span>
                 <h2 id="hero-title" class="font-bold text-sm sm:text-base">اختر وجبتك المفضلة بسهولة</h2>
             </div>
-            <!-- فتح دايالوج الدليفري بالضغط على الزر -->
             <button onclick="window.openDeliveryModal()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap">
                 <i class="fa-solid fa-motorcycle"></i>
                 <span>لطلب دليفري</span>
             </button>
         </div>
 
-        <!-- Search Input -->
         <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
             <input 
@@ -214,7 +206,6 @@
 
     <!-- ═══ MENU DISHES LIST ═══ -->
     <main class="max-w-4xl mx-auto px-4">
-        <!-- Products Grid / List -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="products-grid">
             <div class="col-span-full text-center py-16">
                 <div class="inline-block w-8 h-8 border-2 border-slate-300 border-t-amber-500 rounded-full animate-spin"></div>
@@ -265,8 +256,7 @@
 
     <!-- ═══ DELIVERY / CONTACT MODAL ═══ -->
     <div id="delivery-modal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4">
-        <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl animate-fade-in">
-            <!-- Modal Header -->
+        <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-900 text-white">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center text-sm font-bold">
@@ -280,9 +270,7 @@
                 <button onclick="window.closeDeliveryModal()" class="w-7 h-7 rounded-full bg-white/10 text-slate-300 hover:bg-white/20 flex items-center justify-center text-xs">✕</button>
             </div>
 
-            <!-- Modal Body -->
             <div class="p-5 space-y-3">
-                <!-- Phone Call Button -->
                 <a id="delivery-modal-phone" href="#" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 p-3.5 rounded-2xl font-bold text-xs flex items-center justify-between transition-all border border-slate-200">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-blue-500 text-white flex items-center justify-center text-sm">
@@ -296,7 +284,6 @@
                     <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
                 </a>
 
-                <!-- WhatsApp Button -->
                 <a id="delivery-modal-whatsapp" href="#" target="_blank" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-950 p-3.5 rounded-2xl font-bold text-xs flex items-center justify-between transition-all border border-emerald-200/80">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-base">
@@ -310,14 +297,12 @@
                     <i class="fa-solid fa-chevron-left text-xs text-emerald-600"></i>
                 </a>
 
-                <!-- Social Links Box -->
                 <div class="pt-3 border-t border-slate-100">
                     <span class="text-[11px] text-slate-400 font-bold block mb-2 text-center">صفحاتنا على منصات التواصل</span>
                     <div id="delivery-social-container" class="flex justify-center items-center gap-3 text-lg"></div>
                 </div>
             </div>
 
-            <!-- Footer -->
             <div class="p-3 bg-slate-50 border-t border-slate-100 text-center">
                 <button onclick="window.closeDeliveryModal()" class="w-full py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition-colors">إغلاق</button>
             </div>
@@ -327,24 +312,20 @@
     <!-- ═══ DISH DETAILS MODAL ═══ -->
     <div id="modal-img" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4">
         <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[85vh] shadow-2xl">
-            <!-- Header -->
             <div class="absolute top-3 left-3 z-10">
                 <button onclick="window.closeImgModal()" class="w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black transition-all flex items-center justify-center text-xs">✕</button>
             </div>
 
-            <!-- Dish Image -->
             <div class="relative h-52 bg-slate-100 flex items-center justify-center overflow-hidden">
                 <img id="modal-img-element" src="" alt="طبق" class="w-full h-full object-cover" />
             </div>
 
-            <!-- Dish Information -->
             <div class="p-5 space-y-4 overflow-y-auto">
                 <div>
                     <h3 id="modal-title" class="font-bold text-lg text-slate-900 leading-tight">الطبق</h3>
                     <p id="modal-desc" class="text-xs text-slate-500 mt-1 leading-relaxed">وصف الطبق</p>
                 </div>
 
-                <!-- Sizes / Variants Selector Section -->
                 <div id="modal-sizes-container" class="hidden space-y-2 pt-2 border-t border-slate-100">
                     <label class="text-xs font-bold text-slate-700 block"><i class="fa-solid fa-layer-group ml-1 text-amber-500"></i> اختر الحجم / النوع:</label>
                     <div id="modal-sizes-list" class="grid grid-cols-2 gap-2"></div>
@@ -359,7 +340,6 @@
                         </div>
                     </div>
 
-                    <!-- Quantity Adjuster -->
                     <div class="flex items-center gap-3 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
                         <button onclick="window.adjustModalQty(-1)" class="w-7 h-7 rounded-lg bg-white text-slate-800 shadow-sm flex items-center justify-center font-bold text-sm hover:bg-slate-200 transition-all">−</button>
                         <span id="modal-qty" class="font-bold text-xs w-4 text-center text-slate-800">1</span>
@@ -377,7 +357,6 @@
     <!-- ═══ CART MODAL ═══ -->
     <div id="cart-modal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4">
         <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
-            <!-- Modal Header -->
             <div class="flex items-center justify-between p-4 border-b border-slate-100">
                 <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-receipt text-amber-500"></i> تفاصيل الطلب
@@ -385,27 +364,22 @@
                 <button onclick="window.closeCartModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs">✕</button>
             </div>
 
-            <!-- Modal Content -->
             <div class="p-4 overflow-y-auto space-y-4 flex-1">
-                <!-- Table Number -->
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
                     <label class="text-xs font-bold text-slate-700 block"><i class="fa-solid fa-chair ml-1 text-slate-500"></i> رقم الطاولة</label>
                     <input type="number" id="order-table-number" placeholder="أدخل رقم الطاولة (مثلاً: 5)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" required />
                 </div>
 
-                <!-- Items Selected -->
                 <div>
                     <p class="text-xs font-bold text-slate-500 mb-2">الأطباق المختارة</p>
                     <div id="cart-items-container" class="space-y-2 max-h-48 overflow-y-auto"></div>
                 </div>
 
-                <!-- Notes -->
                 <div>
                     <label class="text-xs font-bold text-slate-500 block mb-1">ملاحظات خاصة</label>
                     <textarea id="order-notes" placeholder="مثل: بدون بصل، صوص إضافي..." class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400" rows="2"></textarea>
                 </div>
 
-                <!-- Post Order Review Box -->
                 <div id="after-order-review-container" class="hidden pt-2 border-t border-slate-100 text-center space-y-2">
                     <p class="text-xs text-emerald-600 font-bold">🎉 تم إرسال طلبك للمطبخ بنجاح!</p>
                     <a id="modal-review-btn" href="#" target="_blank" class="bg-amber-400 text-slate-950 w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm">
@@ -414,7 +388,6 @@
                 </div>
             </div>
 
-            <!-- Modal Footer -->
             <div class="p-4 border-t border-slate-100 bg-slate-50 space-y-3">
                 <div class="flex justify-between items-center text-xs">
                     <span class="text-slate-500 font-bold">إجمالي المبلغ</span>
@@ -456,6 +429,19 @@
         let currentModalQty = 1;
         let activeCategory = 'الكل';
         let searchQuery = '';
+
+        function checkTableFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tableParam = urlParams.get('table');
+            if (tableParam) {
+                const tableInput = document.getElementById('order-table-number');
+                if (tableInput) {
+                    tableInput.value = tableParam;
+                    document.getElementById('cart-table-num-display').textContent = tableParam;
+                }
+            }
+        }
+        window.addEventListener('DOMContentLoaded', checkTableFromURL);
 
         function showToast(msg, emoji = '✨') {
             const el = document.getElementById('toast');
@@ -509,7 +495,6 @@
             });
         }
 
-        // فتح وإغلاق نافذة الدليفري
         window.openDeliveryModal = function() {
             document.getElementById('delivery-modal').classList.remove('hidden');
         };
@@ -569,14 +554,12 @@
 
                 return `
                     <div class="menu-card p-3 flex items-center gap-3 relative">
-                        <!-- Image Container -->
                         <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 cursor-pointer" onclick="window.openImgModal('${p.id}')">
                             <img src="${imgSrc}" alt="${p.title || 'طبق'}" class="w-full h-full object-cover" loading="lazy" />
                             ${hasDiscount ? `<span class="absolute top-1 right-1 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">خصم</span>` : ''}
                             ${hasSizes ? `<span class="absolute top-1 right-1 bg-amber-500 text-slate-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded-md">أنواع</span>` : ''}
                         </div>
 
-                        <!-- Dish Content -->
                         <div class="flex-1 min-w-0 flex flex-col justify-between h-full py-0.5">
                             <div>
                                 <h3 class="font-bold text-xs sm:text-sm text-slate-900 truncate leading-tight cursor-pointer" onclick="window.openImgModal('${p.id}')">${p.title || ''}</h3>
@@ -626,7 +609,7 @@
 
             if (Array.isArray(p.sizes) && p.sizes.length > 0) {
                 sizesContainer.classList.remove('hidden');
-                currentSelectedSize = p.sizes[0]; // اختيار أول حجم كافتراضي
+                currentSelectedSize = p.sizes[0];
                 
                 sizesList.innerHTML = p.sizes.map((s, index) => `
                     <div class="relative">
