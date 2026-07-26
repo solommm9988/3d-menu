@@ -146,8 +146,25 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast">✨ تمت الإضافة!</div>
 
+    <!-- ═══ LIVE ORDER TRACKER CARD (كارت متابعة الطلب للزبون) ═══ -->
+    <div id="live-order-tracker" class="hidden max-w-4xl mx-auto px-4 mt-3">
+        <div class="bg-slate-900 text-white p-3.5 rounded-2xl shadow-lg border border-amber-400/40 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+                <div>
+                    <span class="text-[10px] text-slate-400 font-bold block leading-none">متابعة أوردرك الحالي:</span>
+                    <span id="tracker-status-text" class="text-amber-400 font-extrabold text-xs mt-1 block">⏳ قيد الانتظار بالمطبخ...</span>
+                </div>
+            </div>
+            <button onclick="window.clearOrderTracker()" class="text-slate-400 hover:text-white text-[10px] bg-white/10 px-2.5 py-1 rounded-lg">إخفاء</button>
+        </div>
+    </div>
+
     <!-- ═══ HEADER / APP BAR ═══ -->
-    <header class="sticky top-0 z-50 glass-header border-b border-slate-200/80 px-4 py-3">
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200/80 px-4 py-3">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img id="res-logo" src="https://via.placeholder.com/100?text=👑" class="w-10 h-10 object-cover rounded-xl border border-slate-200 shadow-sm" />
@@ -198,7 +215,7 @@
     </section>
 
     <!-- ═══ CATEGORIES FILTER BAR ═══ -->
-    <nav class="sticky top-[57px] z-40 bg-slate-980/95 backdrop-blur-md py-3 px-4 my-3 border-y border-slate-200/60 bg-slate-50/90">
+    <nav class="sticky top-[57px] z-30 bg-slate-980/95 backdrop-blur-md py-3 px-4 my-3 border-y border-slate-200/60 bg-slate-50/90">
         <div class="max-w-4xl mx-auto flex gap-2 overflow-x-auto no-scrollbar" id="category-filters">
             <button class="cat-btn active px-4 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap" onclick="window.filterCat('الكل', this)">الكل</button>
         </div>
@@ -359,24 +376,34 @@
         <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-100">
                 <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-receipt text-amber-500"></i> تفاصيل الطلب
+                    <i class="fa-solid fa-receipt text-amber-500"></i> تفاصيل وتأكيد الطلب
                 </h3>
                 <button onclick="window.closeCartModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs">✕</button>
             </div>
 
             <div class="p-4 overflow-y-auto space-y-4 flex-1">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
-                    <label class="text-xs font-bold text-slate-700 block"><i class="fa-solid fa-chair ml-1 text-slate-500"></i> رقم الطاولة</label>
-                    <input type="number" id="order-table-number" placeholder="أدخل رقم الطاولة (مثلاً: 5)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" required />
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1"><i class="fa-solid fa-user ml-1 text-slate-500"></i> الاسم (اختياري)</label>
+                        <input type="text" id="order-customer-name" placeholder="اسمك الكريم" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1"><i class="fa-solid fa-phone ml-1 text-slate-500"></i> رقم الهاتف (مهم للطلب)</label>
+                        <input type="tel" id="order-customer-phone" placeholder="رقم الموبايل للمتابعة" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-700 block mb-1"><i class="fa-solid fa-chair ml-1 text-slate-500"></i> رقم الطاولة</label>
+                        <input type="number" id="order-table-number" placeholder="أدخل رقم الطاولة (مثلاً: 5)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" required />
+                    </div>
                 </div>
 
                 <div>
                     <p class="text-xs font-bold text-slate-500 mb-2">الأطباق المختارة</p>
-                    <div id="cart-items-container" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                    <div id="cart-items-container" class="space-y-2 max-h-44 overflow-y-auto"></div>
                 </div>
 
                 <div>
-                    <label class="text-xs font-bold text-slate-500 block mb-1">ملاحظات خاصة</label>
+                    <label class="text-xs font-bold text-slate-500 block mb-1">ملاحظات إضافية للمطبخ</label>
                     <textarea id="order-notes" placeholder="مثل: بدون بصل، صوص إضافي..." class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400" rows="2"></textarea>
                 </div>
 
@@ -429,6 +456,7 @@
         let currentModalQty = 1;
         let activeCategory = 'الكل';
         let searchQuery = '';
+        let activeTrackerUnsubscribe = null;
 
         function checkTableFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -441,7 +469,6 @@
                 }
             }
         }
-        window.addEventListener('DOMContentLoaded', checkTableFromURL);
 
         function showToast(msg, emoji = '✨') {
             const el = document.getElementById('toast');
@@ -450,6 +477,42 @@
             clearTimeout(el._timer);
             el._timer = setTimeout(() => el.classList.remove('show'), 2200);
         }
+
+        // 🔄 متابعة حالة الطلب لايف للزبون المضمونة
+        function trackMyActiveOrder() {
+            const myOrderId = localStorage.getItem('last_order_id');
+            if (!myOrderId) return;
+
+            if (activeTrackerUnsubscribe) activeTrackerUnsubscribe();
+
+            try {
+                activeTrackerUnsubscribe = onSnapshot(doc(db, 'orders', myOrderId), (snap) => {
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        const trackerBox = document.getElementById('live-order-tracker');
+                        const statusText = document.getElementById('tracker-status-text');
+                        trackerBox.classList.remove('hidden');
+
+                        const statusMap = {
+                            'pending': '⏳ قيد الانتظار بالمطبخ...',
+                            'preparing': '👨‍🍳 جاري تحضير وجبتك الآن!',
+                            'served': '✅ تم التقديم / وجبتك جاهزة بالهناء والشفاء!',
+                            'cancelled': '❌ اعتذار: تم إلغاء الطلب من المطعم'
+                        };
+
+                        statusText.textContent = statusMap[data.status] || 'جاري التجهيز...';
+                    }
+                });
+            } catch (e) {
+                console.error("Tracker Error:", e);
+            }
+        }
+
+        window.clearOrderTracker = function() {
+            localStorage.removeItem('last_order_id');
+            document.getElementById('live-order-tracker').classList.add('hidden');
+            if (activeTrackerUnsubscribe) activeTrackerUnsubscribe();
+        };
 
         function listenRestaurant() {
             onSnapshot(doc(db, 'restaurants', 'settings'), (snap) => {
@@ -748,7 +811,10 @@
 
         window.sendOrderToFirebase = async function() {
             const tableNumber = document.getElementById('order-table-number').value.trim();
+            const customerName = document.getElementById('order-customer-name').value.trim();
+            const customerPhone = document.getElementById('order-customer-phone').value.trim();
             const notes = document.getElementById('order-notes').value.trim();
+
             if (!tableNumber) {
                 showToast('أدخل رقم الطاولة', '⚠️');
                 document.getElementById('order-table-number').focus();
@@ -765,7 +831,9 @@
 
             try {
                 const totalPrice = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-                await addDoc(collection(db, 'orders'), {
+                const orderRef = await addDoc(collection(db, 'orders'), {
+                    customerName: customerName || 'زبون عام',
+                    customerPhone: customerPhone || 'غير مدخل',
                     tableNumber: parseInt(tableNumber),
                     items: cart,
                     totalPrice: totalPrice,
@@ -773,7 +841,11 @@
                     status: 'pending',
                     createdAt: serverTimestamp()
                 });
-                showToast('تم إرسال الطلب للمطبخ', '🎉');
+
+                localStorage.setItem('last_order_id', orderRef.id);
+                trackMyActiveOrder();
+
+                showToast('تم إرسال الطلب للمطبخ بنجاح!', '🎉');
                 cart = [];
                 updateCartUI();
                 
@@ -790,6 +862,9 @@
             }
         };
 
+        // التشغيل التلقائي المضمون
+        checkTableFromURL();
+        trackMyActiveOrder();
         listenRestaurant();
         listenProducts();
 
