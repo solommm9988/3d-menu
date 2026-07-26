@@ -189,19 +189,8 @@
         </div>
     </header>
 
-    <!-- ═══ SEARCH & BANNER ═══ -->
-    <section class="max-w-4xl mx-auto px-4 pt-4 space-y-3">
-        <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
-            <div class="space-y-0.5">
-                <span id="hero-badge" class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">طلب خارجي أو من الطاولة</span>
-                <h2 id="hero-title" class="font-bold text-sm sm:text-base">اختر وجبتك المفضلة بسهولة</h2>
-            </div>
-            <button onclick="window.openDeliveryModal()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap">
-                <i class="fa-solid fa-motorcycle"></i>
-                <span>لطلب دليفري</span>
-            </button>
-        </div>
-
+    <!-- ═══ SEARCH BAR ONLY ═══ -->
+    <section class="max-w-4xl mx-auto px-4 pt-4">
         <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
             <input 
@@ -269,61 +258,6 @@
                 <i class="fa-solid fa-chevron-left text-[10px] text-slate-400"></i>
             </div>
         </button>
-    </div>
-
-    <!-- ═══ DELIVERY / CONTACT MODAL ═══ -->
-    <div id="delivery-modal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm p-0 sm:p-4">
-        <div class="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-900 text-white">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center text-sm font-bold">
-                        <i class="fa-solid fa-motorcycle"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm leading-tight text-white">طلب دليفري وتواصل</h3>
-                        <p class="text-[10px] text-slate-400">اختر وسيلة التواصل المناسبة لك</p>
-                    </div>
-                </div>
-                <button onclick="window.closeDeliveryModal()" class="w-7 h-7 rounded-full bg-white/10 text-slate-300 hover:bg-white/20 flex items-center justify-center text-xs">✕</button>
-            </div>
-
-            <div class="p-5 space-y-3">
-                <a id="delivery-modal-phone" href="#" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 p-3.5 rounded-2xl font-bold text-xs flex items-center justify-between transition-all border border-slate-200">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-blue-500 text-white flex items-center justify-center text-sm">
-                            <i class="fa-solid fa-phone"></i>
-                        </div>
-                        <div class="text-right">
-                            <span class="block text-xs font-extrabold">الاتصال الهاتفي المباشر</span>
-                            <span id="delivery-modal-phone-num" class="block text-[11px] text-slate-500 font-normal">--</span>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-left text-xs text-slate-400"></i>
-                </a>
-
-                <a id="delivery-modal-whatsapp" href="#" target="_blank" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-950 p-3.5 rounded-2xl font-bold text-xs flex items-center justify-between transition-all border border-emerald-200/80">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-base">
-                            <i class="fa-brands fa-whatsapp"></i>
-                        </div>
-                        <div class="text-right">
-                            <span class="block text-xs font-extrabold text-emerald-950">الطلب عبر واتساب</span>
-                            <span class="block text-[10px] text-emerald-700 font-normal">مراسلة مباشرة وإرسال القائمة</span>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-left text-xs text-emerald-600"></i>
-                </a>
-
-                <div class="pt-3 border-t border-slate-100">
-                    <span class="text-[11px] text-slate-400 font-bold block mb-2 text-center">صفحاتنا على منصات التواصل</span>
-                    <div id="delivery-social-container" class="flex justify-center items-center gap-3 text-lg"></div>
-                </div>
-            </div>
-
-            <div class="p-3 bg-slate-50 border-t border-slate-100 text-center">
-                <button onclick="window.closeDeliveryModal()" class="w-full py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition-colors">إغلاق</button>
-            </div>
-        </div>
     </div>
 
     <!-- ═══ DISH DETAILS MODAL ═══ -->
@@ -448,7 +382,6 @@
 
         const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
 
-        // خريطة رموز كافة العملات لتنسيق المنيو تلقائياً
         const CURRENCY_MAP = {
             'EGP': { symbol: 'ج.م', code: 'EGP' },
             'SAR': { symbol: 'ر.س', code: 'SAR' },
@@ -569,7 +502,6 @@
                 if (snap.exists()) {
                     const d = snap.data();
 
-                    // تحديث رمز العملة تلقائياً في كل واجهات المنيو
                     if (d.currency) {
                         currentCurrencySymbol = getCurrencySymbol(d.currency);
                         renderProducts(filteredProducts);
@@ -580,16 +512,8 @@
                     if (d.logo) document.getElementById('res-logo').src = d.logo;
                     if (d.phone) {
                         document.getElementById('res-phone-btn').href = 'tel:' + d.phone;
-                        document.getElementById('delivery-modal-phone').href = 'tel:' + d.phone;
-                        document.getElementById('delivery-modal-phone-num').textContent = d.phone;
                     }
                     if (d.header_tagline) document.getElementById('header-tagline').querySelector('span:last-child').textContent = d.header_tagline;
-                    if (d.hero_badge) document.getElementById('hero-badge').textContent = d.hero_badge;
-                    if (d.hero_title) document.getElementById('hero-title').textContent = d.hero_title;
-
-                    if (d.whatsapp) {
-                        document.getElementById('delivery-modal-whatsapp').href = `https://wa.me/${d.whatsapp}?text=${encodeURIComponent('السلام عليكم، أود الطلب من المنيو')}`;
-                    }
 
                     if (d.maps_url) {
                         const btn = document.getElementById('footer-maps-btn');
@@ -604,25 +528,15 @@
                     }
 
                     const sc = document.getElementById('social-links-container');
-                    const deliverySocial = document.getElementById('delivery-social-container');
                     let html = '';
                     if (d.whatsapp) html += `<a href="https://wa.me/${d.whatsapp}" target="_blank" class="hover:text-amber-500 transition-colors p-1"><i class="fa-brands fa-whatsapp"></i></a>`;
                     if (d.instagram) html += `<a href="${d.instagram}" target="_blank" class="hover:text-amber-500 transition-colors p-1"><i class="fa-brands fa-instagram"></i></a>`;
                     if (d.facebook) html += `<a href="${d.facebook}" target="_blank" class="hover:text-amber-500 transition-colors p-1"><i class="fa-brands fa-facebook"></i></a>`;
                     
                     sc.innerHTML = html;
-                    if (deliverySocial) deliverySocial.innerHTML = html || '<span class="text-xs text-slate-400 font-normal">لا توجد روابط مسجلة</span>';
                 }
             });
         }
-
-        window.openDeliveryModal = function() {
-            document.getElementById('delivery-modal').classList.remove('hidden');
-        };
-
-        window.closeDeliveryModal = function() {
-            document.getElementById('delivery-modal').classList.add('hidden');
-        };
 
         function listenProducts() {
             onSnapshot(collection(db, 'products'), (snap) => {
@@ -920,7 +834,6 @@
             }
         };
 
-        // التشغيل التلقائي المضمون
         checkTableFromURL();
         trackMyActiveOrder();
         listenRestaurant();
