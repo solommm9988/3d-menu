@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>👑 لوحة التحكم | 3D SaaS Dashboard</title>
+    <title>👑 لوحة التحكم | SaaS Dashboard</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,6 +11,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         * {
@@ -172,9 +173,26 @@
         .transaction-row:hover {
             background: rgba(212, 175, 55, 0.06);
         }
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
+
+        /* 🖨️ التنسيق المحترف والكامل للطباعة الحرارية */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            #dashboard, #login-overlay, #toast-container, #edit-dish-modal, aside, main, header {
+                display: none !important;
+            }
+            #printable-receipt {
+                display: block !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 80mm !important;
+                color: #000000 !important;
+                background: #ffffff !important;
+                font-family: monospace, 'Tajawal', sans-serif !important;
+                padding: 10px !important;
             }
         }
     </style>
@@ -215,9 +233,9 @@
         <div class="md:hidden flex items-center justify-between p-4 bg-dark-800 border-b border-gold-500/20 sticky top-0 z-40">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg bg-gold-500 text-dark-900 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-cube text-xs"></i>
+                    <i class="fa-solid fa-utensils text-xs"></i>
                 </div>
-                <span class="font-serif font-bold text-gold-gradient">3D Dining SaaS</span>
+                <span class="font-serif font-bold text-gold-gradient">Dining SaaS</span>
             </div>
             <button onclick="window.toggleMobileSidebar()" class="text-gold-400 text-xl p-2 focus:outline-none">
                 <i class="fa-solid fa-bars"></i>
@@ -230,10 +248,10 @@
                 <div class="flex items-center justify-between pb-6 border-b border-gold-500/20">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-gold-600 to-gold-300 flex items-center justify-center text-dark-900 text-lg font-black shadow-lg">
-                            <i class="fa-solid fa-cube"></i>
+                            <i class="fa-solid fa-utensils"></i>
                         </div>
                         <div>
-                            <h2 class="font-serif font-bold text-lg text-gold-gradient">3D Dining</h2>
+                            <h2 class="font-serif font-bold text-lg text-gold-gradient">Royal Dining</h2>
                             <span class="text-[10px] font-bold text-gold-400 uppercase tracking-widest block">Dashboard SaaS</span>
                         </div>
                     </div>
@@ -247,6 +265,9 @@
                         <i class="fa-solid fa-bell text-gold-400"></i><span>طلبات الطاولات</span>
                         <span id="badge-orders-count" class="mr-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black hidden">0</span>
                     </button>
+                    <button onclick="switchTab('qr-generator')" id="tab-btn-qr-generator" class="nav-tab">
+                        <i class="fa-solid fa-qrcode"></i> إنشاء QR للطاولات
+                    </button>
                     <button onclick="switchTab('stats')" id="tab-btn-stats" class="nav-tab">
                         <i class="fa-solid fa-chart-line"></i> التحليلات والإحصائيات
                     </button>
@@ -257,7 +278,7 @@
                         <i class="fa-solid fa-store"></i> الهوية والإعدادات
                     </button>
                     <button onclick="switchTab('add-dish')" id="tab-btn-add-dish" class="nav-tab">
-                        <i class="fa-solid fa-circle-plus"></i> إضافة طبق 3D
+                        <i class="fa-solid fa-circle-plus"></i> إضافة طبق جديد
                     </button>
                     <button onclick="switchTab('dishes-list')" id="tab-btn-dishes-list" class="nav-tab">
                         <i class="fa-solid fa-utensils"></i> إدارة الأطباق
@@ -288,17 +309,42 @@
 
             <!-- ORDERS -->
             <section id="section-orders" class="tab-content space-y-6">
-                <div class="flex items-center justify-between bg-dark-800/80 p-4 rounded-2xl border border-gold-500/20">
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-dark-800/80 p-4 rounded-2xl border border-gold-500/20">
                     <div class="flex items-center gap-2 text-xs md:text-sm text-gray-300">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
                         مراقبة الطلبات الحية مباشرة من الطاولات
                     </div>
-                    <span id="live-status-text" class="text-[11px] font-bold text-gold-400">متصل بالسيرفر...</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.clearFinishedOrders()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-broom"></i> تنظيف المنتهي
+                        </button>
+                        <button onclick="window.clearAllOrders()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                            <i class="fa-regular fa-trash-can"></i> مسح جميع الطلبات
+                        </button>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="orders-container">
                     <div class="col-span-full text-center py-16 text-gray-500">
                         <i class="fa-solid fa-receipt text-3xl text-gold-500 mb-2 block"></i>
                         لا توجد طلبات جديدة حالياً
+                    </div>
+                </div>
+            </section>
+
+            <!-- QR GENERATOR -->
+            <section id="section-qr-generator" class="tab-content hidden max-w-xl">
+                <div class="royal-card p-6 rounded-3xl space-y-4">
+                    <h3 class="font-serif text-lg font-bold text-gold-gradient"><i class="fa-solid fa-qrcode ml-2"></i>إنشاء كود QR للطاولة</h3>
+                    <div>
+                        <label class="text-xs font-bold text-gold-400 block mb-1">رقم الطاولة</label>
+                        <input type="number" id="qr-table-num" class="glass-input" placeholder="مثلاً: 5" value="1" />
+                    </div>
+                    <button onclick="window.generateQRCode()" class="btn-gold w-full py-2.5 rounded-xl font-bold text-xs"><i class="fa-solid fa-bolt ml-1"></i>توليد الكود</button>
+                    
+                    <div id="qr-output-container" class="hidden pt-4 text-center space-y-3 border-t border-gold-500/20">
+                        <div id="qrcode-box" class="inline-block p-4 bg-white rounded-2xl shadow-xl"></div>
+                        <p class="text-xs text-gold-300 font-bold" id="qr-table-text"></p>
+                        <button onclick="window.printQR()" class="btn-gold-outline text-xs py-2 px-6 rounded-xl"><i class="fa-solid fa-print ml-1"></i>طباعة / حفظ الكود</button>
                     </div>
                 </div>
             </section>
@@ -331,8 +377,8 @@
                         <h3 class="text-2xl font-black text-orange-400 mt-1" id="stat-total-dishes">0</h3>
                     </div>
                     <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-indigo-500">
-                        <span class="text-[11px] text-gray-400 font-bold block">نماذج 3D مفعلة</span>
-                        <h3 class="text-2xl font-black text-indigo-400 mt-1" id="stat-3d-models">0</h3>
+                        <span class="text-[11px] text-gray-400 font-bold block">أطباق مصورة</span>
+                        <h3 class="text-2xl font-black text-indigo-400 mt-1" id="stat-img-models">0</h3>
                     </div>
                     <div class="royal-card stat-card p-5 rounded-2xl border-r-4 border-teal-500">
                         <span class="text-[11px] text-gray-400 font-bold block">الطبق الأكثر طلباً</span>
@@ -348,16 +394,6 @@
                         <h3 class="font-serif font-bold text-base text-gold-gradient mb-3"><i class="fa-solid fa-clock ml-2"></i>آخر 5 معاملات</h3>
                         <div id="recent-transactions" class="space-y-2 text-sm"><p class="text-gray-400 text-xs">لا توجد معاملات</p></div>
                     </div>
-                </div>
-                <div class="royal-card p-5 rounded-3xl border border-gold-500/20">
-                    <h3 class="font-serif font-bold text-base text-gold-gradient mb-2"><i class="fa-solid fa-info-circle ml-2"></i>شرح المؤشرات</h3>
-                    <ul class="text-xs text-gray-400 space-y-1 leading-relaxed">
-                        <li><span class="text-gold-400 font-bold">إجمالي الإيرادات:</span> مجموع قيمة الطلبات المكتملة (حالة "تم التقديم ✅").</li>
-                        <li><span class="text-rose-400 font-bold">إجمالي المصروفات:</span> مجموع المصروفات المسجلة يدوياً.</li>
-                        <li><span class="text-cyan-400 font-bold">صافي الربح:</span> الإيرادات - المصروفات.</li>
-                        <li><span class="text-purple-400 font-bold">متوسط قيمة الطلب:</span> متوسط قيمة كل طلب مكتمل.</li>
-                        <li><span class="text-teal-400 font-bold">الطبق الأكثر طلباً:</span> يتم حسابه تلقائياً من الطلبات.</li>
-                    </ul>
                 </div>
             </section>
 
@@ -425,7 +461,10 @@
                 <div class="royal-card rounded-3xl overflow-hidden p-4">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-serif font-bold text-base text-gold-gradient"><i class="fa-solid fa-list-ul ml-2"></i>سجل المعاملات</h3>
-                        <button onclick="window.clearAllTransactions()" class="text-xs text-red-400 hover:text-red-300 transition font-bold"><i class="fa-regular fa-trash-can ml-1"></i>مسح الكل</button>
+                        <div class="flex gap-2">
+                            <button onclick="window.exportFinanceToExcel()" class="btn-gold-outline text-xs py-1 px-3 rounded-lg"><i class="fa-solid fa-file-excel ml-1"></i>تصدير Excel</button>
+                            <button onclick="window.clearAllTransactions()" class="text-xs text-red-400 hover:text-red-300 transition font-bold"><i class="fa-regular fa-trash-can ml-1"></i>مسح الكل</button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-xs md:text-sm">
@@ -446,7 +485,7 @@
                 </div>
             </section>
 
-            <!-- BRANDING (Currency List Expanded) -->
+            <!-- BRANDING -->
             <section id="section-branding" class="tab-content hidden max-w-3xl">
                 <form id="form-branding" class="royal-card p-5 md:p-8 rounded-3xl space-y-4">
                     <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient">إعدادات المطعم والعملة</h3>
@@ -460,9 +499,8 @@
                     </div>
                     <hr class="border-gold-500/10" />
 
-                    <!-- العملات - قائمة شاملة جداً -->
                     <div>
-                        <label class="text-xs font-bold text-gold-400 block mb-1"><i class="fa-solid fa-coins ml-1"></i>العملة المستخدمة <span class="text-gray-400 font-normal text-[10px] mr-1">(أكثر من 150 عملة حول العالم)</span></label>
+                        <label class="text-xs font-bold text-gold-400 block mb-1"><i class="fa-solid fa-coins ml-1"></i>العملة المستخدمة</label>
                         <select id="brand-currency" class="glass-input" required>
                             <optgroup label="العملات الرئيسية">
                                 <option value="USD">🇺🇸 دولار أمريكي ($)</option>
@@ -477,149 +515,6 @@
                                 <option value="OMR">🇴🇲 ريال عماني (ر.ع)</option>
                                 <option value="JOD">🇯🇴 دينار أردني (د.أ)</option>
                                 <option value="TRY">🇹🇷 ليرة تركية (₺)</option>
-                                <option value="CNY">🇨🇳 يوان صيني (¥)</option>
-                                <option value="JPY">🇯🇵 ين ياباني (¥)</option>
-                                <option value="INR">🇮🇳 روبية هندية (₹)</option>
-                                <option value="RUB">🇷🇺 روبل روسي (₽)</option>
-                                <option value="BRL">🇧🇷 ريال برازيلي (R$)</option>
-                                <option value="ZAR">🇿🇦 راند جنوب أفريقي (R)</option>
-                                <option value="AUD">🇦🇺 دولار أسترالي (A$)</option>
-                                <option value="CAD">🇨🇦 دولار كندي (C$)</option>
-                                <option value="CHF">🇨🇭 فرنك سويسري (CHF)</option>
-                            </optgroup>
-                            <optgroup label="آسيا والمحيط الهادئ">
-                                <option value="AFN">🇦🇫 أفغاني (؋)</option>
-                                <option value="BDT">🇧🇩 تاكا بنغلاديشي (৳)</option>
-                                <option value="BTN">🇧🇹 نولتروم بوتاني (Nu.)</option>
-                                <option value="MMK">🇲🇲 كيات ميانماري (K)</option>
-                                <option value="KHR">🇰🇭 رييل كمبودي (៛)</option>
-                                <option value="CNY">🇨🇳 يوان صيني (¥)</option>
-                                <option value="HKD">🇭🇰 دولار هونغ كونغ (HK$)</option>
-                                <option value="IDR">🇮🇩 روبية إندونيسية (Rp)</option>
-                                <option value="JPY">🇯🇵 ين ياباني (¥)</option>
-                                <option value="KZT">🇰🇿 تينغ كازاخستاني (₸)</option>
-                                <option value="KRW">🇰🇷 وون كوري (₩)</option>
-                                <option value="KGS">🇰🇬 سوم قيرغيزستاني (с)</option>
-                                <option value="LAK">🇱🇦 كيب لاوسي (₭)</option>
-                                <option value="MYR">🇲🇾 رينغيت ماليزي (RM)</option>
-                                <option value="MVR">🇲🇻 روفيا مالديفية (Rf)</option>
-                                <option value="MNT">🇲🇳 توغروغ منغولي (₮)</option>
-                                <option value="NPR">🇳🇵 روبية نيبالية (Rs)</option>
-                                <option value="PKR">🇵🇰 روبية باكستانية (Rs)</option>
-                                <option value="PHP">🇵🇭 بيزو فلبيني (₱)</option>
-                                <option value="SGD">🇸🇬 دولار سنغافوري (S$)</option>
-                                <option value="LKR">🇱🇰 روبية سريلانكية (Rs)</option>
-                                <option value="TWD">🇹🇼 دولار تايواني (NT$)</option>
-                                <option value="THB">🇹🇭 بات تايلاندي (฿)</option>
-                                <option value="UZS">🇺🇿 سوم أوزبكستاني (soʻm)</option>
-                                <option value="VND">🇻🇳 دونغ فيتنامي (₫)</option>
-                                <option value="TMT">🇹🇲 منات تركمانستاني (m)</option>
-                                <option value="TJS">🇹🇯 سوموني طاجيكستاني (SM)</option>
-                                <option value="AMD">🇦🇲 درام أرميني (֏)</option>
-                                <option value="AZN">🇦🇿 مانات أذربيجاني (₼)</option>
-                                <option value="GEL">🇬🇪 لاري جورجي (₾)</option>
-                                <option value="ILS">🇮🇱 شيكل إسرائيلي (₪)</option>
-                                <option value="IRR">🇮🇷 ريال إيراني (﷼)</option>
-                                <option value="IQD">🇮🇶 دينار عراقي (د.ع)</option>
-                                <option value="SYP">🇸🇾 ليرة سورية (ل.س)</option>
-                                <option value="LBP">🇱🇧 ليرة لبنانية (ل.ل)</option>
-                                <option value="YER">🇾🇪 ريال يمني (ر.ي)</option>
-                            </optgroup>
-                            <optgroup label="أفريقيا">
-                                <option value="DZD">🇩🇿 دينار جزائري (د.ج)</option>
-                                <option value="AOA">🇦🇴 كوانزا أنغولي (Kz)</option>
-                                <option value="BWP">🇧🇼 بولا بوتسواني (P)</option>
-                                <option value="BIF">🇧🇮 فرنك بوروندي (FBu)</option>
-                                <option value="CVE">🇨🇻 إيسكودو جزر الرأس الأخضر (Esc)</option>
-                                <option value="XAF">🇨🇲 فرنك وسط أفريقي (FCFA)</option>
-                                <option value="XOF">🇧🇫 فرنك غرب أفريقي (CFA)</option>
-                                <option value="KMF">🇰🇲 فرنك قمري (CF)</option>
-                                <option value="CDF">🇨🇩 فرنك كونغولي (FC)</option>
-                                <option value="DJF">🇩🇯 فرنك جيبوتي (Fdj)</option>
-                                <option value="EGP">🇪🇬 جنيه مصري (ج.م)</option>
-                                <option value="ERN">🇪🇷 ناكفا إريتري (Nfk)</option>
-                                <option value="ETB">🇪🇹 بير إثيوبي (Br)</option>
-                                <option value="GMD">🇬🇲 دالاسي غامبي (D)</option>
-                                <option value="GHS">🇬🇭 سيدي غاني (₵)</option>
-                                <option value="GNF">🇬🇳 فرنك غيني (FG)</option>
-                                <option value="KES">🇰🇪 شيلينغ كيني (KSh)</option>
-                                <option value="LSL">🇱🇸 لوتي ليسوتو (L)</option>
-                                <option value="LRD">🇱🇷 دولار ليبيري (L$)</option>
-                                <option value="LYD">🇱🇾 دينار ليبي (د.ل)</option>
-                                <option value="MGA">🇲🇬 أرياري مدغشقري (Ar)</option>
-                                <option value="MWK">🇲🇼 كواشا مالاوي (MK)</option>
-                                <option value="MRU">🇲🇷 أوقية موريتانية (UM)</option>
-                                <option value="MUR">🇲🇺 روبية موريشيوسية (Rs)</option>
-                                <option value="MAD">🇲🇦 درهم مغربي (د.م)</option>
-                                <option value="MZN">🇲🇿 متكال موزمبيقي (MT)</option>
-                                <option value="NAD">🇳🇦 دولار ناميبي (N$)</option>
-                                <option value="NGN">🇳🇬 نيرة نيجيرية (₦)</option>
-                                <option value="RWF">🇷🇼 فرنك رواندي (FRw)</option>
-                                <option value="STN">🇸🇹 دوبرا ساو تومي (Db)</option>
-                                <option value="SLL">🇸🇱 ليون سيراليوني (Le)</option>
-                                <option value="SOS">🇸🇴 شيلينغ صومالي (Sh)</option>
-                                <option value="ZAR">🇿🇦 راند جنوب أفريقي (R)</option>
-                                <option value="SSP">🇸🇸 جنيه جنوب سوداني (£)</option>
-                                <option value="SDG">🇸🇩 جنيه سوداني (ج.س)</option>
-                                <option value="SZL">🇸🇿 ليلانغيني سوازيلندي (L)</option>
-                                <option value="TZS">🇹🇿 شيلينغ تنزاني (TSh)</option>
-                                <option value="TND">🇹🇳 دينار تونسي (د.ت)</option>
-                                <option value="UGX">🇺🇬 شيلينغ أوغندي (USh)</option>
-                                <option value="ZMW">🇿🇲 كواشا زامبي (ZK)</option>
-                                <option value="ZWL">🇿🇼 دولار زيمبابوي (Z$)</option>
-                            </optgroup>
-                            <optgroup label="أوروبا">
-                                <option value="ALL">🇦🇱 ليك ألباني (L)</option>
-                                <option value="BAM">🇧🇦 مارك بوسني (KM)</option>
-                                <option value="BGN">🇧🇬 ليف بلغاري (лв)</option>
-                                <option value="HRK">🇭🇷 كونا كرواتي (kn)</option>
-                                <option value="CZK">🇨🇿 كرونة تشيكية (Kč)</option>
-                                <option value="DKK">🇩🇰 كرونة دنماركية (kr)</option>
-                                <option value="EUR">🇪🇺 يورو (€)</option>
-                                <option value="HUF">🇭🇺 فورنت مجري (Ft)</option>
-                                <option value="ISK">🇮🇸 كرونة آيسلندية (kr)</option>
-                                <option value="GBP">🇬🇧 جنيه استرليني (£)</option>
-                                <option value="MDL">🇲🇩 ليو مولدوفي (L)</option>
-                                <option value="NOK">🇳🇴 كرونة نرويجية (kr)</option>
-                                <option value="PLN">🇵🇱 زلوتي بولندي (zł)</option>
-                                <option value="RON">🇷🇴 ليو روماني (lei)</option>
-                                <option value="RUB">🇷🇺 روبل روسي (₽)</option>
-                                <option value="RSD">🇷🇸 دينار صربي (din.)</option>
-                                <option value="SEK">🇸🇪 كرونة سويدية (kr)</option>
-                                <option value="CHF">🇨🇭 فرنك سويسري (CHF)</option>
-                                <option value="UAH">🇺🇦 هريفنيا أوكرانية (₴)</option>
-                                <option value="TRY">🇹🇷 ليرة تركية (₺)</option>
-                            </optgroup>
-                            <optgroup label="الأمريكتان">
-                                <option value="ARS">🇦🇷 بيزو أرجنتيني ($)</option>
-                                <option value="BOB">🇧🇴 بوليفيانو بوليفي (Bs)</option>
-                                <option value="BRL">🇧🇷 ريال برازيلي (R$)</option>
-                                <option value="CAD">🇨🇦 دولار كندي (C$)</option>
-                                <option value="CLP">🇨🇱 بيزو تشيلي ($)</option>
-                                <option value="COP">🇨🇴 بيزو كولومبي ($)</option>
-                                <option value="CRC">🇨🇷 كولون كوستاريكي (₡)</option>
-                                <option value="CUP">🇨🇺 بيزو كوبي ($)</option>
-                                <option value="DOP">🇩🇴 بيزو دومينيكاني (RD$)</option>
-                                <option value="USD">🇺🇸 دولار أمريكي ($)</option>
-                                <option value="GTQ">🇬🇹 كيتزال غواتيمالي (Q)</option>
-                                <option value="HNL">🇭🇳 لمبيرة هندوراسية (L)</option>
-                                <option value="MXN">🇲🇽 بيزو مكسيكي ($)</option>
-                                <option value="NIO">🇳🇨 كوردوبا نيكاراغوية (C$)</option>
-                                <option value="PAB">🇵🇦 بالبوا بنمي (B/.)</option>
-                                <option value="PYG">🇵🇾 غواراني باراغواي (₲)</option>
-                                <option value="PEN">🇵🇪 سول بيروفي (S/)</option>
-                                <option value="UYU">🇺🇾 بيزو أوروغواي ($)</option>
-                                <option value="VES">🇻🇪 بوليفار فنزويلي (Bs.S)</option>
-                            </optgroup>
-                            <optgroup label="أوقيانوسيا">
-                                <option value="AUD">🇦🇺 دولار أسترالي (A$)</option>
-                                <option value="FJD">🇫🇯 دولار فيجي (FJ$)</option>
-                                <option value="NZD">🇳🇿 دولار نيوزيلندي (NZ$)</option>
-                                <option value="PGK">🇵🇬 كينا بابوا غينيا الجديدة (K)</option>
-                                <option value="SBD">🇸🇧 دولار جزر سليمان (SI$)</option>
-                                <option value="TOP">🇹🇴 بانغا تونغا (T$)</option>
-                                <option value="VUV">🇻🇺 فاتو فانواتو (VT)</option>
-                                <option value="WST">🇼🇸 تالا ساموا (WS$)</option>
                             </optgroup>
                         </select>
                         <p class="text-[10px] text-gray-500 mt-1">سيتم تطبيق العملة تلقائياً على جميع الأسعار والإحصائيات في لوحة التحكم والمنيو.</p>
@@ -640,11 +535,11 @@
                     </div>
                     <hr class="border-gold-500/10" />
                     <h4 class="text-xs font-bold text-gold-300"><i class="fa-solid fa-paintbrush ml-1"></i> محتوى الهيرو</h4>
-                    <div><input type="text" id="brand-header-tagline" class="glass-input" placeholder="منيو تفاعلي ثلاثي الأبعاد" /></div>
+                    <div><input type="text" id="brand-header-tagline" class="glass-input" placeholder="منيو تفاعلي فاخر" /></div>
                     <div><input type="text" id="brand-hero-badge" class="glass-input" placeholder="تجربة طعام فاخرة" /></div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div><input type="text" id="brand-hero-title" class="glass-input" placeholder="أشهى الأطباق" /></div>
-                        <div><input type="text" id="brand-hero-subtitle" class="glass-input" placeholder="بنماذج ثلاثية الأبعاد" /></div>
+                        <div><input type="text" id="brand-hero-subtitle" class="glass-input" placeholder="مجهزة خصيصاً لك" /></div>
                     </div>
                     <div><textarea id="brand-hero-desc" class="glass-input" rows="2" placeholder="استمتع بتجربة تصفح فريدة..."></textarea></div>
 
@@ -656,18 +551,58 @@
             <section id="section-add-dish" class="tab-content hidden max-w-2xl">
                 <form id="form-add-product" class="royal-card p-5 md:p-8 rounded-3xl space-y-4">
                     <h3 class="font-serif text-lg md:text-xl font-bold text-gold-gradient">إضافة طبق جديد</h3>
+                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <input type="text" id="prod-title" placeholder="اسم الطبق" class="glass-input" required />
-                        <div><input type="number" id="prod-price" placeholder="السعر" class="glass-input" required step="0.01" min="0" /><span id="prod-currency-label" class="text-[10px] text-gold-400 block mt-1">ج.م</span></div>
+                        <div>
+                            <label class="text-xs font-bold text-gold-400 block mb-1">اسم الطبق</label>
+                            <input type="text" id="prod-title" placeholder="اسم الطبق (مثل: قهوة / برجر)" class="glass-input" required />
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label>
+                            <input type="text" id="prod-category" class="glass-input" placeholder="مشروبات، برجر، حلويات..." required />
+                        </div>
                     </div>
-                    <div><label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label><input type="text" id="prod-category" class="glass-input" placeholder="برجر، بيتزا..." required /></div>
-                    <div><label class="text-xs font-bold text-gold-400 block mb-1">ملف 3D (.glb)</label><input type="file" id="prod-file-3d" accept=".glb,.gltf" class="glass-input text-xs p-2" required /></div>
-                    <textarea id="prod-desc" placeholder="وصف الطبق..." class="glass-input p-3" rows="3" required></textarea>
+
+                    <!-- Single Base Price -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-dark-900/50 p-3 rounded-2xl border border-gold-500/10">
+                        <div>
+                            <label class="text-xs font-bold text-gold-400 block mb-1">السعر الأساسي (في حال عدم وجود أحجام)</label>
+                            <input type="number" id="prod-price" placeholder="السعر" class="glass-input" step="0.01" min="0" />
+                            <span id="prod-currency-label" class="text-[10px] text-gold-400 block mt-1">ج.م</span>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gold-400 block mb-1">السعر القديم (خصم)</label>
+                            <input type="number" id="prod-old-price" placeholder="اختياري" class="glass-input" step="0.01" min="0" />
+                        </div>
+                    </div>
+
+                    <!-- Sizes / Variants Input Section -->
+                    <div class="bg-dark-900/80 p-4 rounded-2xl border border-gold-500/20 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <label class="text-xs font-bold text-gold-300 block"><i class="fa-solid fa-list-ol ml-1"></i>الأحجام أو الأنواع (اختياري)</label>
+                                <span class="text-[10px] text-gray-400">مثال: (صغير - 20) ، (كبير - 35) ، (دبل - 80)</span>
+                            </div>
+                            <button type="button" onclick="window.addSizeRow('add-sizes-list')" class="bg-gold-500/20 hover:bg-gold-500/40 text-gold-300 text-xs px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-[10px]"></i> إضافة حجم
+                            </button>
+                        </div>
+                        <div id="add-sizes-list" class="space-y-2"></div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-gold-400 block mb-1">صورة الطبق (JPG, PNG, WEBP)</label>
+                        <input type="file" id="prod-file-img" accept="image/*" class="glass-input text-xs p-2" required />
+                    </div>
+
+                    <textarea id="prod-desc" placeholder="وصف الطبق والمكونات..." class="glass-input p-3" rows="3" required></textarea>
+
                     <div id="upload-progress" class="hidden space-y-1">
                         <div class="flex justify-between text-xs text-gold-400 font-bold"><span>جاري الرفع...</span><span id="upload-percent">0%</span></div>
                         <div class="w-full h-2 bg-dark-900 rounded-full overflow-hidden border border-gold-500/20"><div id="upload-bar" class="h-full bg-gold-500 w-0 transition-all"></div></div>
                     </div>
-                    <button type="submit" id="btn-add-product" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold">رفع ونشر</button>
+                    
+                    <button type="submit" id="btn-add-product" class="btn-gold w-full py-3 rounded-xl text-xs md:text-sm font-bold">رفع ونشر الطبق</button>
                 </form>
             </section>
 
@@ -676,7 +611,7 @@
                 <div class="royal-card rounded-3xl overflow-x-auto p-4">
                     <table class="w-full text-right text-xs md:text-sm">
                         <thead class="bg-dark-800 text-gold-400 text-[11px] font-bold border-b border-gold-500/20">
-                            <tr><th class="p-3">3D</th><th class="p-3">الاسم</th><th class="p-3">التصنيف</th><th class="p-3">السعر</th><th class="p-3 text-center">التحكم</th></tr>
+                            <tr><th class="p-3">الصورة</th><th class="p-3">الاسم</th><th class="p-3">التصنيف</th><th class="p-3">السعر / الأحجام</th><th class="p-3 text-center">التحكم</th></tr>
                         </thead>
                         <tbody id="dishes-table-body"></tbody>
                     </table>
@@ -687,7 +622,7 @@
 
     <!-- EDIT MODAL -->
     <div id="edit-dish-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="royal-card w-full max-w-lg p-5 rounded-3xl border border-gold-500/30 space-y-3">
+        <div class="royal-card w-full max-w-lg p-5 rounded-3xl border border-gold-500/30 space-y-3 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-gold-500/20 pb-3">
                 <h3 class="font-serif font-bold text-base text-gold-gradient"><i class="fa-solid fa-pen-to-square ml-1"></i>تعديل الطبق</h3>
                 <button onclick="window.closeEditModal()" class="text-gray-400 hover:text-white">✕</button>
@@ -695,15 +630,60 @@
             <form id="form-edit-product" class="space-y-3">
                 <input type="hidden" id="edit-prod-id" />
                 <div><label class="text-xs font-bold text-gold-400 block mb-1">الاسم</label><input type="text" id="edit-prod-title" class="glass-input" required /></div>
+                
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-xs font-bold text-gold-400 block mb-1">السعر</label><input type="number" id="edit-prod-price" class="glass-input" required step="0.01" min="0" /></div>
-                    <div><label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label><input type="text" id="edit-prod-category" class="glass-input" required /></div>
+                    <div><label class="text-xs font-bold text-gold-400 block mb-1">السعر الحالي</label><input type="number" id="edit-prod-price" class="glass-input" step="0.01" min="0" /></div>
+                    <div><label class="text-xs font-bold text-gold-400 block mb-1">السعر القديم</label><input type="number" id="edit-prod-old-price" class="glass-input" step="0.01" min="0" /></div>
                 </div>
+
+                <!-- Edit Sizes Section -->
+                <div class="bg-dark-900/80 p-3 rounded-2xl border border-gold-500/20 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-bold text-gold-300 block">الأحجام أو الأنواع المتاحة</label>
+                        <button type="button" onclick="window.addSizeRow('edit-sizes-list')" class="bg-gold-500/20 hover:bg-gold-500/40 text-gold-300 text-[11px] px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[9px]"></i> إضافة
+                        </button>
+                    </div>
+                    <div id="edit-sizes-list" class="space-y-2"></div>
+                </div>
+
+                <div><label class="text-xs font-bold text-gold-400 block mb-1">التصنيف</label><input type="text" id="edit-prod-category" class="glass-input" required /></div>
                 <div><label class="text-xs font-bold text-gold-400 block mb-1">الوصف</label><textarea id="edit-prod-desc" class="glass-input" rows="2" required></textarea></div>
-                <div><label class="text-xs font-bold text-gold-400 block mb-1">تحديث الـ 3D (اختياري)</label><input type="file" id="edit-prod-file-3d" accept=".glb,.gltf" class="glass-input text-xs" /></div>
+                <div><label class="text-xs font-bold text-gold-400 block mb-1">تحديث الصورة (اختياري)</label><input type="file" id="edit-prod-file-img" accept="image/*" class="glass-input text-xs" /></div>
                 <div id="edit-upload-progress" class="hidden text-xs text-gold-400 font-bold">جاري الرفع: <span id="edit-upload-percent">0%</span></div>
                 <button type="submit" id="btn-save-edit" class="btn-gold w-full py-2.5 rounded-xl font-bold text-xs md:text-sm mt-2">حفظ التغييرات</button>
             </form>
+        </div>
+    </div>
+
+    <!-- 🧾 RECEIPT FOR THERMAL PRINTING (الفاتورة الحرارية للطباعة) 🧾 -->
+    <div id="printable-receipt" style="display: none;">
+        <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
+            <img id="receipt-logo" src="" style="max-width: 60px; max-height: 60px; margin: 0 auto 5px auto; display: block;" />
+            <h2 id="receipt-res-name" style="font-size: 16px; font-weight: bold; margin: 0;"></h2>
+            <p id="receipt-phone" style="font-size: 11px; margin: 2px 0;"></p>
+            <p id="receipt-date" style="font-size: 10px; color: #333; margin-top: 2px;"></p>
+            <h3 id="receipt-table-num" style="font-size: 18px; font-weight: bold; margin-top: 6px; border: 1px solid #000; padding: 2px 6px; display: inline-block;"></h3>
+        </div>
+
+        <table style="width: 100%; text-align: right; border-collapse: collapse; margin-bottom: 8px;">
+            <thead>
+                <tr style="border-bottom: 1px solid #000; font-size: 11px;">
+                    <th style="padding: 3px 0;">الصنف</th>
+                    <th style="padding: 3px 0; text-align: center;">العدد</th>
+                    <th style="padding: 3px 0; text-align: left;">السعر</th>
+                </tr>
+            </thead>
+            <tbody id="receipt-items-list"></tbody>
+        </table>
+
+        <div id="receipt-notes-box" style="display: none; border-top: 1px solid #000; padding-top: 4px; margin-bottom: 6px; font-size: 11px;">
+            <strong>ملاحظات:</strong> <span id="receipt-notes"></span>
+        </div>
+
+        <div style="border-top: 2px dashed #000; padding-top: 6px; text-align: center;">
+            <p id="receipt-total-price" style="font-size: 15px; font-weight: bold; margin: 0;"></p>
+            <p style="font-size: 10px; margin-top: 6px;">*** شكراً لزيارتكم ***</p>
         </div>
     </div>
 
@@ -741,89 +721,16 @@
         let cachedProducts = [];
         let cachedTransactions = [];
         let cachedDailyNotes = [];
+        let cachedOrders = [];
+        let restaurantSettings = {};
         let currentCurrency = 'EGP';
-        let currencySymbol = 'ج.م';
 
-        // ─── خريطة العملات الموسعة (أكثر من 150 عملة) ───
         const CURRENCY_MAP = {
             'AED': { symbol: 'د.إ', code: 'AED' }, 'AFN': { symbol: '؋', code: 'AFN' },
             'ALL': { symbol: 'L', code: 'ALL' }, 'AMD': { symbol: '֏', code: 'AMD' },
-            'ANG': { symbol: 'ƒ', code: 'ANG' }, 'AOA': { symbol: 'Kz', code: 'AOA' },
-            'ARS': { symbol: '$', code: 'ARS' }, 'AUD': { symbol: 'A$', code: 'AUD' },
-            'AWG': { symbol: 'ƒ', code: 'AWG' }, 'AZN': { symbol: '₼', code: 'AZN' },
-            'BAM': { symbol: 'KM', code: 'BAM' }, 'BBD': { symbol: 'Bds$', code: 'BBD' },
-            'BDT': { symbol: '৳', code: 'BDT' }, 'BGN': { symbol: 'лв', code: 'BGN' },
-            'BHD': { symbol: 'د.ب', code: 'BHD' }, 'BIF': { symbol: 'FBu', code: 'BIF' },
-            'BMD': { symbol: '$', code: 'BMD' }, 'BND': { symbol: 'B$', code: 'BND' },
-            'BOB': { symbol: 'Bs', code: 'BOB' }, 'BRL': { symbol: 'R$', code: 'BRL' },
-            'BSD': { symbol: '$', code: 'BSD' }, 'BTN': { symbol: 'Nu.', code: 'BTN' },
-            'BWP': { symbol: 'P', code: 'BWP' }, 'BYN': { symbol: 'Br', code: 'BYN' },
-            'BZD': { symbol: 'BZ$', code: 'BZD' }, 'CAD': { symbol: 'C$', code: 'CAD' },
-            'CDF': { symbol: 'FC', code: 'CDF' }, 'CHF': { symbol: 'CHF', code: 'CHF' },
-            'CLP': { symbol: '$', code: 'CLP' }, 'CNY': { symbol: '¥', code: 'CNY' },
-            'COP': { symbol: '$', code: 'COP' }, 'CRC': { symbol: '₡', code: 'CRC' },
-            'CUP': { symbol: '$', code: 'CUP' }, 'CVE': { symbol: 'Esc', code: 'CVE' },
-            'CZK': { symbol: 'Kč', code: 'CZK' }, 'DJF': { symbol: 'Fdj', code: 'DJF' },
-            'DKK': { symbol: 'kr', code: 'DKK' }, 'DOP': { symbol: 'RD$', code: 'DOP' },
-            'DZD': { symbol: 'د.ج', code: 'DZD' }, 'EGP': { symbol: 'ج.م', code: 'EGP' },
-            'ERN': { symbol: 'Nfk', code: 'ERN' }, 'ETB': { symbol: 'Br', code: 'ETB' },
-            'EUR': { symbol: '€', code: 'EUR' }, 'FJD': { symbol: 'FJ$', code: 'FJD' },
-            'FKP': { symbol: '£', code: 'FKP' }, 'GBP': { symbol: '£', code: 'GBP' },
-            'GEL': { symbol: '₾', code: 'GEL' }, 'GHS': { symbol: '₵', code: 'GHS' },
-            'GIP': { symbol: '£', code: 'GIP' }, 'GMD': { symbol: 'D', code: 'GMD' },
-            'GNF': { symbol: 'FG', code: 'GNF' }, 'GTQ': { symbol: 'Q', code: 'GTQ' },
-            'GYD': { symbol: '$', code: 'GYD' }, 'HKD': { symbol: 'HK$', code: 'HKD' },
-            'HNL': { symbol: 'L', code: 'HNL' }, 'HRK': { symbol: 'kn', code: 'HRK' },
-            'HTG': { symbol: 'G', code: 'HTG' }, 'HUF': { symbol: 'Ft', code: 'HUF' },
-            'IDR': { symbol: 'Rp', code: 'IDR' }, 'ILS': { symbol: '₪', code: 'ILS' },
-            'INR': { symbol: '₹', code: 'INR' }, 'IQD': { symbol: 'د.ع', code: 'IQD' },
-            'IRR': { symbol: '﷼', code: 'IRR' }, 'ISK': { symbol: 'kr', code: 'ISK' },
-            'JMD': { symbol: 'J$', code: 'JMD' }, 'JOD': { symbol: 'د.أ', code: 'JOD' },
-            'JPY': { symbol: '¥', code: 'JPY' }, 'KES': { symbol: 'KSh', code: 'KES' },
-            'KGS': { symbol: 'с', code: 'KGS' }, 'KHR': { symbol: '៛', code: 'KHR' },
-            'KMF': { symbol: 'CF', code: 'KMF' }, 'KPW': { symbol: '₩', code: 'KPW' },
-            'KRW': { symbol: '₩', code: 'KRW' }, 'KWD': { symbol: 'د.ك', code: 'KWD' },
-            'KYD': { symbol: '$', code: 'KYD' }, 'KZT': { symbol: '₸', code: 'KZT' },
-            'LAK': { symbol: '₭', code: 'LAK' }, 'LBP': { symbol: 'ل.ل', code: 'LBP' },
-            'LKR': { symbol: 'Rs', code: 'LKR' }, 'LRD': { symbol: 'L$', code: 'LRD' },
-            'LSL': { symbol: 'L', code: 'LSL' }, 'LYD': { symbol: 'د.ل', code: 'LYD' },
-            'MAD': { symbol: 'د.م', code: 'MAD' }, 'MDL': { symbol: 'L', code: 'MDL' },
-            'MGA': { symbol: 'Ar', code: 'MGA' }, 'MKD': { symbol: 'ден', code: 'MKD' },
-            'MMK': { symbol: 'K', code: 'MMK' }, 'MNT': { symbol: '₮', code: 'MNT' },
-            'MOP': { symbol: 'MOP$', code: 'MOP' }, 'MRU': { symbol: 'UM', code: 'MRU' },
-            'MUR': { symbol: 'Rs', code: 'MUR' }, 'MVR': { symbol: 'Rf', code: 'MVR' },
-            'MWK': { symbol: 'MK', code: 'MWK' }, 'MXN': { symbol: '$', code: 'MXN' },
-            'MYR': { symbol: 'RM', code: 'MYR' }, 'MZN': { symbol: 'MT', code: 'MZN' },
-            'NAD': { symbol: 'N$', code: 'NAD' }, 'NGN': { symbol: '₦', code: 'NGN' },
-            'NIO': { symbol: 'C$', code: 'NIO' }, 'NOK': { symbol: 'kr', code: 'NOK' },
-            'NPR': { symbol: 'Rs', code: 'NPR' }, 'NZD': { symbol: 'NZ$', code: 'NZD' },
-            'OMR': { symbol: 'ر.ع', code: 'OMR' }, 'PAB': { symbol: 'B/.', code: 'PAB' },
-            'PEN': { symbol: 'S/', code: 'PEN' }, 'PGK': { symbol: 'K', code: 'PGK' },
-            'PHP': { symbol: '₱', code: 'PHP' }, 'PKR': { symbol: 'Rs', code: 'PKR' },
-            'PLN': { symbol: 'zł', code: 'PLN' }, 'PYG': { symbol: '₲', code: 'PYG' },
-            'QAR': { symbol: 'ر.ق', code: 'QAR' }, 'RON': { symbol: 'lei', code: 'RON' },
-            'RSD': { symbol: 'din.', code: 'RSD' }, 'RUB': { symbol: '₽', code: 'RUB' },
-            'RWF': { symbol: 'FRw', code: 'RWF' }, 'SAR': { symbol: 'ر.س', code: 'SAR' },
-            'SBD': { symbol: 'SI$', code: 'SBD' }, 'SCR': { symbol: '₨', code: 'SCR' },
-            'SDG': { symbol: 'ج.س', code: 'SDG' }, 'SEK': { symbol: 'kr', code: 'SEK' },
-            'SGD': { symbol: 'S$', code: 'SGD' }, 'SHP': { symbol: '£', code: 'SHP' },
-            'SLL': { symbol: 'Le', code: 'SLL' }, 'SOS': { symbol: 'Sh', code: 'SOS' },
-            'SRD': { symbol: '$', code: 'SRD' }, 'SSP': { symbol: '£', code: 'SSP' },
-            'STN': { symbol: 'Db', code: 'STN' }, 'SYP': { symbol: 'ل.س', code: 'SYP' },
-            'SZL': { symbol: 'L', code: 'SZL' }, 'THB': { symbol: '฿', code: 'THB' },
-            'TJS': { symbol: 'SM', code: 'TJS' }, 'TMT': { symbol: 'm', code: 'TMT' },
-            'TND': { symbol: 'د.ت', code: 'TND' }, 'TOP': { symbol: 'T$', code: 'TOP' },
-            'TRY': { symbol: '₺', code: 'TRY' }, 'TTD': { symbol: 'TT$', code: 'TTD' },
-            'TWD': { symbol: 'NT$', code: 'TWD' }, 'TZS': { symbol: 'TSh', code: 'TZS' },
-            'UAH': { symbol: '₴', code: 'UAH' }, 'UGX': { symbol: 'USh', code: 'UGX' },
-            'USD': { symbol: '$', code: 'USD' }, 'UYU': { symbol: '$', code: 'UYU' },
-            'UZS': { symbol: 'soʻm', code: 'UZS' }, 'VES': { symbol: 'Bs.S', code: 'VES' },
-            'VND': { symbol: '₫', code: 'VND' }, 'VUV': { symbol: 'VT', code: 'VUV' },
-            'WST': { symbol: 'WS$', code: 'WST' }, 'XAF': { symbol: 'FCFA', code: 'XAF' },
-            'XCD': { symbol: 'EC$', code: 'XCD' }, 'XOF': { symbol: 'CFA', code: 'XOF' },
-            'XPF': { symbol: '₣', code: 'XPF' }, 'YER': { symbol: 'ر.ي', code: 'YER' },
-            'ZAR': { symbol: 'R', code: 'ZAR' }, 'ZMW': { symbol: 'ZK', code: 'ZMW' },
-            'ZWL': { symbol: 'Z$', code: 'ZWL' }
+            'EGP': { symbol: 'ج.م', code: 'EGP' }, 'SAR': { symbol: 'ر.س', code: 'SAR' },
+            'USD': { symbol: '$', code: 'USD' }, 'EUR': { symbol: '€', code: 'EUR' },
+            'GBP': { symbol: '£', code: 'GBP' }, 'KWD': { symbol: 'د.ك', code: 'KWD' }
         };
 
         function formatCurrency(amount, currencyCode = currentCurrency) {
@@ -875,6 +782,32 @@
             } catch (e) {}
         }
 
+        // ➕ دالة إضافة صف حجم/نوع جديد
+        window.addSizeRow = function(containerId, name = '', price = '') {
+            const container = document.getElementById(containerId);
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-2 size-input-row';
+            row.innerHTML = `
+                <input type="text" placeholder="اسم الحجم (مثلاً: صغير / لارج)" value="${name}" class="glass-input text-xs py-2 size-name-input" required />
+                <input type="number" placeholder="السعر" value="${price}" step="0.01" min="0" class="glass-input text-xs py-2 w-28 size-price-input" required />
+                <button type="button" onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
+            `;
+            container.appendChild(row);
+        };
+
+        function getSizesFromContainer(containerId) {
+            const rows = document.querySelectorAll(`#${containerId} .size-input-row`);
+            const sizes = [];
+            rows.forEach(r => {
+                const name = r.querySelector('.size-name-input').value.trim();
+                const price = parseFloat(r.querySelector('.size-price-input').value);
+                if (name && !isNaN(price)) {
+                    sizes.push({ name, price });
+                }
+            });
+            return sizes;
+        }
+
         // AUTH
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -916,22 +849,22 @@
             document.getElementById(`section-${tabId}`).classList.remove('hidden');
             document.getElementById(`tab-btn-${tabId}`).classList.add('active');
             if (window.innerWidth < 768) document.getElementById('sidebar-menu').classList.add('translate-x-full');
-            const titles = { 'orders': 'طلبات الطاولات المباشرة', 'stats': 'التحليلات والإحصائيات المتقدمة', 'finance': 'المالية والأرباح',
-                'branding': 'إعدادات المطعم والعملة', 'add-dish': 'إضافة طبق 3D جديد', 'dishes-list': 'إدارة الأطباق' };
+            const titles = { 'orders': 'طلبات الطاولات المباشرة', 'qr-generator': 'إنشاء كود QR للطاولات', 'stats': 'التحليلات والإحصائيات المتقدمة', 'finance': 'المالية والأرباح',
+                'branding': 'إعدادات المطعم والعملة', 'add-dish': 'إضافة طبق جديد', 'dishes-list': 'إدارة الأطباق' };
             document.getElementById('header-title').textContent = titles[tabId] || 'لوحة التحكم';
         };
 
-        // ORDERS
+        // ORDERS & PRINTING LOGIC
         function listenLiveOrders() {
             const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
             onSnapshot(q, (snapshot) => {
-                const orders = [];
+                cachedOrders = [];
                 let totalRevenue = 0;
                 const dishCountMap = {};
                 snapshot.forEach(docSnap => {
                     const data = docSnap.data();
                     const order = { id: docSnap.id, ...data };
-                    orders.push(order);
+                    cachedOrders.push(order);
                     if (data.status === 'served') {
                         totalRevenue += (data.totalPrice || 0);
                         (data.items || []).forEach(item => {
@@ -943,23 +876,19 @@
                 let topDish = '—';
                 let topCount = 0;
                 for (const [name, count] of Object.entries(dishCountMap)) {
-                    if (count > topCount) { topCount = count;
-                        topDish = name; }
+                    if (count > topCount) { topCount = count; topDish = name; }
                 }
-                const pendingOrders = orders.filter(o => o.status === 'pending');
-                if (orders.length > knownOrdersCount && knownOrdersCount > 0) { playNotificationSound();
-                    showToast('🔔 وصول طلب جديد!'); }
-                knownOrdersCount = orders.length;
+                const pendingOrders = cachedOrders.filter(o => o.status === 'pending');
+                if (cachedOrders.length > knownOrdersCount && knownOrdersCount > 0) { playNotificationSound(); showToast('🔔 وصول طلب جديد!'); }
+                knownOrdersCount = cachedOrders.length;
                 const badge = document.getElementById('badge-orders-count');
-                if (pendingOrders.length > 0) { badge.textContent = pendingOrders.length;
-                    badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
-                document.getElementById('stat-orders-today').textContent = orders.length;
+                if (pendingOrders.length > 0) { badge.textContent = pendingOrders.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+                document.getElementById('stat-orders-today').textContent = cachedOrders.length;
                 document.getElementById('stat-total-revenue').textContent = formatCurrency(totalRevenue);
                 document.getElementById('stat-top-dish').textContent = topDish;
-                const avgOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
+                const avgOrder = cachedOrders.length > 0 ? totalRevenue / cachedOrders.length : 0;
                 document.getElementById('stat-avg-order').textContent = formatCurrency(avgOrder);
-                window._orderStats = { totalRevenue, ordersCount: orders.length, avgOrder, topDish };
-                renderOrdersCards(orders);
+                renderOrdersCards(cachedOrders);
                 updateStatsUI();
                 updateFinanceUI();
             });
@@ -968,8 +897,7 @@
         function renderOrdersCards(orders) {
             const container = document.getElementById('orders-container');
             if (!orders.length) {
-                container.innerHTML =
-                    `<div class="col-span-full text-center py-16 text-gray-500">لا توجد طلبات سابقة أو حالية</div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-16 text-gray-500">لا توجد طلبات سابقة أو حالية</div>`;
                 return;
             }
             container.innerHTML = orders.map(o => {
@@ -983,7 +911,18 @@
                     `<div class="flex justify-between items-center text-xs py-1 border-b border-gold-500/10"><span class="text-gray-200 font-bold">${item.title} <span class="text-gold-400">×${item.qty}</span></span><span class="text-gold-400 font-mono">${formatCurrency(item.price * item.qty)}</span></div>`
                     ).join('');
                 return `<div class="royal-card p-5 rounded-3xl space-y-4 border border-gold-500/20 relative">
-                            <div class="flex justify-between items-start"><div><span class="text-[10px] text-gray-400 block font-bold">طاولة</span><h3 class="font-serif font-black text-3xl text-gold-gradient">#${o.tableNumber || '?'}</h3></div><span class="px-3 py-1 rounded-full text-[10px] font-black border ${statusColors[o.status] || statusColors['pending']}">${statusTitles[o.status] || 'جديد'}</span></div>
+                            <div class="flex justify-between items-start">
+                                <div><span class="text-[10px] text-gray-400 block font-bold">طاولة</span><h3 class="font-serif font-black text-3xl text-gold-gradient">#${o.tableNumber || '?'}</h3></div>
+                                <div class="flex flex-col items-end gap-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black border ${statusColors[o.status] || statusColors['pending']}">${statusTitles[o.status] || 'جديد'}</span>
+                                        <button onclick="window.deleteSingleOrder('${o.id}')" title="حذف الطلب" class="text-rose-400/70 hover:text-rose-400 p-1 transition text-xs">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                    <button onclick="window.printOrderReceipt('${o.id}')" class="btn-gold-outline text-[10px] py-1 px-2.5 rounded-lg mt-1"><i class="fa-solid fa-print ml-1"></i>طباعة فاتورة</button>
+                                </div>
+                            </div>
                             <div class="bg-dark-900/80 p-3 rounded-2xl border border-gold-500/10 space-y-1"><p class="text-[10px] text-gold-400 font-bold mb-1">الوجبات:</p>${itemsListHtml}<div class="flex justify-between items-center pt-2 font-bold text-sm"><span class="text-gray-300">الإجمالي:</span><span class="text-gold-gradient font-serif font-black">${formatCurrency(o.totalPrice || 0)}</span></div></div>
                             ${o.notes ? `<p class="text-[11px] text-amber-200/80 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20"><i class="fa-solid fa-comment-dots ml-1"></i> ${o.notes}</p>` : ''}
                             <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gold-500/10"><button onclick="window.updateOrderStatus('${o.id}', 'preparing')" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 text-xs py-1.5 rounded-xl font-bold transition">تحضير 👨‍🍳</button><button onclick="window.updateOrderStatus('${o.id}', 'served')" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 text-xs py-1.5 rounded-xl font-bold transition">تم التقديم ✅</button></div>
@@ -996,13 +935,115 @@
                 showToast('✅ تم التحديث'); } catch (err) { showToast('❌ خطأ: ' + err.message); }
         };
 
+        window.deleteSingleOrder = async function(orderId) {
+            if (!confirm('هل أنت تأكد من حذف هذا الطلب؟')) return;
+            try {
+                await deleteDoc(doc(db, 'orders', orderId));
+                showToast('🗑️ تم حذف الطلب بنجاح');
+            } catch (err) {
+                showToast('❌ خطأ في الحذف: ' + err.message);
+            }
+        };
+
+        window.clearAllOrders = async function() {
+            if (!cachedOrders.length) return showToast('⚠️ لا توجد طلبات لمسحها');
+            if (!confirm('⚠️ هل أنت متأكد من مسح جميع الطلبات نهائياً من النظام؟')) return;
+
+            try {
+                const batch = writeBatch(db);
+                cachedOrders.forEach(order => {
+                    batch.delete(doc(db, 'orders', order.id));
+                });
+                await batch.commit();
+                showToast('🗑️ تم مسح كافة الطلبات بنجاح');
+            } catch (err) {
+                showToast('❌ خطأ: ' + err.message);
+            }
+        };
+
+        window.clearFinishedOrders = async function() {
+            const finishedOrders = cachedOrders.filter(o => o.status === 'served' || o.status === 'cancelled');
+            if (!finishedOrders.length) return showToast('⚠️ لا توجد طلبات منتهية أو ملغاة');
+            if (!confirm(`هل تريد مسح (${finishedOrders.length}) طلب منتهي أو ملغى؟`)) return;
+
+            try {
+                const batch = writeBatch(db);
+                finishedOrders.forEach(order => {
+                    batch.delete(doc(db, 'orders', order.id));
+                });
+                await batch.commit();
+                showToast('🧹 تم تنظيف الطلبات المنتهية');
+            } catch (err) {
+                showToast('❌ خطأ: ' + err.message);
+            }
+        };
+
+        window.printOrderReceipt = function(orderId) {
+            const order = cachedOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const logoImg = document.getElementById('receipt-logo');
+            if (restaurantSettings.logo) {
+                logoImg.src = restaurantSettings.logo;
+                logoImg.style.display = 'block';
+            } else {
+                logoImg.style.display = 'none';
+            }
+
+            document.getElementById('receipt-res-name').textContent = restaurantSettings.name || 'Royal Dining';
+            document.getElementById('receipt-phone').textContent = restaurantSettings.phone ? `هاتف: ${restaurantSettings.phone}` : '';
+            
+            const orderDate = order.createdAt ? new Date(order.createdAt.seconds * 1000) : new Date();
+            document.getElementById('receipt-date').textContent = orderDate.toLocaleString('ar-EG');
+            document.getElementById('receipt-table-num').textContent = `طاولة #${order.tableNumber || '1'}`;
+
+            const itemsHtml = (order.items || []).map(i => `
+                <tr style="border-bottom: 1px solid #ddd; font-size: 11px;">
+                    <td style="padding: 4px 0;">${i.title}</td>
+                    <td style="padding: 4px 0; text-align: center;">${i.qty}</td>
+                    <td style="padding: 4px 0; text-align: left;">${i.price * i.qty} ${getCurrencySymbol(currentCurrency)}</td>
+                </tr>
+            `).join('');
+            document.getElementById('receipt-items-list').innerHTML = itemsHtml;
+
+            const notesBox = document.getElementById('receipt-notes-box');
+            if (order.notes && order.notes !== 'بدون ملاحظات') {
+                document.getElementById('receipt-notes').textContent = order.notes;
+                notesBox.style.display = 'block';
+            } else {
+                notesBox.style.display = 'none';
+            }
+
+            document.getElementById('receipt-total-price').textContent = `الإجمالي: ${formatCurrency(order.totalPrice || 0)}`;
+
+            window.print();
+        };
+
+        // QR GENERATOR
+        window.generateQRCode = function() {
+            const tableNum = document.getElementById('qr-table-num').value || '1';
+            const slug = restaurantSettings.slug || 'menu';
+            const url = `${window.location.origin}/index.html?res=${slug}&table=${tableNum}`;
+            const box = document.getElementById('qrcode-box');
+            box.innerHTML = '';
+            new QRCode(box, { text: url, width: 160, height: 160 });
+            document.getElementById('qr-table-text').textContent = `كود طاولة رقم #${tableNum}`;
+            document.getElementById('qr-output-container').classList.remove('hidden');
+        };
+
+        window.printQR = function() {
+            const printWin = window.open('', '', 'width=600,height=600');
+            printWin.document.write(`<div style="text-align:center; padding:30px; font-family:sans-serif;"><h2>طاولة #${document.getElementById('qr-table-num').value}</h2>${document.getElementById('qrcode-box').innerHTML}<p style="margin-top:10px;">امسح الكود واستعرض المنيو</p></div>`);
+            printWin.print();
+        };
+
         // PRODUCTS
         function listenProducts() {
             onSnapshot(collection(db, 'products'), (snapshot) => {
                 cachedProducts = [];
                 snapshot.forEach(docSnap => cachedProducts.push({ id: docSnap.id, ...docSnap.data() }));
                 document.getElementById('stat-total-dishes').textContent = cachedProducts.length;
-                document.getElementById('stat-3d-models').textContent = cachedProducts.filter(p => p.modelUrl).length;
+                document.getElementById('stat-img-models').textContent = cachedProducts.filter(p => p.imageUrl).length;
                 renderDishesTable();
                 updateStatsUI();
             });
@@ -1010,20 +1051,27 @@
 
         function renderDishesTable() {
             const tbody = document.getElementById('dishes-table-body');
-            if (!cachedProducts.length) { tbody.innerHTML =
-                    `<tr><td colspan="5" class="text-center py-6 text-gray-500">لا توجد أطباق</td></tr>`; return; }
-            tbody.innerHTML = cachedProducts.map(p =>
-                `<tr class="border-b border-gold-500/10 hover:bg-gold-500/5">
-                            <td class="p-3"><i class="fa-solid fa-cube text-gold-400"></i></td>
-                            <td class="p-3 font-bold text-white">${p.title || ''}</td>
-                            <td class="p-3 text-xs"><span class="bg-gold-500/10 px-2.5 py-1 rounded-full text-gold-300 font-bold">${p.category || 'عام'}</span></td>
-                            <td class="p-3 font-bold text-gold-gradient">${formatCurrency(p.price || 0)}</td>
-                            <td class="p-3 text-center flex items-center justify-center gap-2">
-                                <button onclick="window.openEditModal('${p.id}')" class="bg-gold-500/20 text-gold-300 hover:bg-gold-500/40 px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
-                                <button onclick="window.deleteProduct('${p.id}')" class="text-red-400 hover:text-red-500 p-1"><i class="fa-regular fa-trash-can"></i></button>
-                            </td>
-                        </tr>`
-            ).join('');
+            if (!cachedProducts.length) { tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-500">لا توجد أطباق</td></tr>`; return; }
+            tbody.innerHTML = cachedProducts.map(p => {
+                let priceDisplay = formatCurrency(p.price || 0);
+                if (Array.isArray(p.sizes) && p.sizes.length > 0) {
+                    priceDisplay = p.sizes.map(s => `<span class="bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 rounded text-[10px] ml-1 block sm:inline-block">${s.name}: ${s.price} ${getCurrencySymbol(currentCurrency)}</span>`).join('');
+                }
+                return `
+                    <tr class="border-b border-gold-500/10 hover:bg-gold-500/5">
+                        <td class="p-3">
+                            <img src="${p.imageUrl || 'https://via.placeholder.com/50'}" alt="${p.title || 'طبق'}" class="w-10 h-10 object-cover rounded-lg border border-gold-500/20" />
+                        </td>
+                        <td class="p-3 font-bold text-white">${p.title || ''}</td>
+                        <td class="p-3 text-xs"><span class="bg-gold-500/10 px-2.5 py-1 rounded-full text-gold-300 font-bold">${p.category || 'عام'}</span></td>
+                        <td class="p-3 font-bold text-gold-gradient">${priceDisplay}</td>
+                        <td class="p-3 text-center flex items-center justify-center gap-2">
+                            <button onclick="window.openEditModal('${p.id}')" class="bg-gold-500/20 text-gold-300 hover:bg-gold-500/40 px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                            <button onclick="window.deleteProduct('${p.id}')" class="text-red-400 hover:text-red-500 p-1"><i class="fa-regular fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         window.openEditModal = function(id) {
@@ -1031,89 +1079,127 @@
             if (!p) return;
             document.getElementById('edit-prod-id').value = p.id;
             document.getElementById('edit-prod-title').value = p.title || '';
-            document.getElementById('edit-prod-price').value = p.price || 0;
+            document.getElementById('edit-prod-price').value = p.price || '';
+            document.getElementById('edit-prod-old-price').value = p.oldPrice || '';
             document.getElementById('edit-prod-category').value = p.category || '';
             document.getElementById('edit-prod-desc').value = p.desc || '';
+            
+            const editSizesList = document.getElementById('edit-sizes-list');
+            editSizesList.innerHTML = '';
+            if (Array.isArray(p.sizes) && p.sizes.length > 0) {
+                p.sizes.forEach(s => window.addSizeRow('edit-sizes-list', s.name, s.price));
+            }
+
             document.getElementById('edit-dish-modal').classList.remove('hidden');
         };
+
         window.closeEditModal = function() { document.getElementById('edit-dish-modal').classList.add('hidden'); };
+
         window.deleteProduct = async function(id) {
-            if (confirm('حذف هذا الطبق؟')) { try { await deleteDoc(doc(db, 'products', id));
-                    showToast('🗑️ تم الحذف'); } catch (err) { showToast('❌ خطأ: ' + err.message); } }
+            if (confirm('حذف هذا الطبق؟')) { 
+                try { 
+                    await deleteDoc(doc(db, 'products', id));
+                    showToast('🗑️ تم الحذف'); 
+                } catch (err) { showToast('❌ خطأ: ' + err.message); } 
+            }
         };
 
         document.getElementById('form-edit-product').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-prod-id').value;
             const title = document.getElementById('edit-prod-title').value;
-            const price = parseFloat(document.getElementById('edit-prod-price').value);
+            const priceVal = document.getElementById('edit-prod-price').value;
+            const price = priceVal ? parseFloat(priceVal) : 0;
+            const oldPriceVal = document.getElementById('edit-prod-old-price').value;
+            const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
             const category = document.getElementById('edit-prod-category').value;
             const desc = document.getElementById('edit-prod-desc').value;
-            const file = document.getElementById('edit-prod-file-3d').files[0];
+            const file = document.getElementById('edit-prod-file-img').files[0];
+            const sizes = getSizesFromContainer('edit-sizes-list');
+
             const btnSave = document.getElementById('btn-save-edit');
             btnSave.disabled = true;
             try {
-                let updateData = { title, price, category, desc };
+                let updateData = { title, price, oldPrice, category, desc, sizes };
                 if (file) {
                     document.getElementById('edit-upload-progress').classList.remove('hidden');
-                    const storageRef = ref(storage, `models/${Date.now()}_${file.name}`);
+                    const storageRef = ref(storage, `images/${Date.now()}_${file.name}`);
                     const uploadTask = uploadBytesResumable(storageRef, file);
                     await new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed', (snap) => { document.getElementById('edit-upload-percent')
-                                .textContent = Math.round((snap.bytesTransferred / snap.totalBytes) * 100) + '%'; },
-                            reject, async () => { updateData.modelUrl = await getDownloadURL(uploadTask.snapshot
-                                    .ref);
-                                resolve(); });
+                        uploadTask.on('state_changed', (snap) => { 
+                            document.getElementById('edit-upload-percent').textContent = Math.round((snap.bytesTransferred / snap.totalBytes) * 100) + '%'; 
+                        }, reject, async () => { 
+                            updateData.imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            resolve(); 
+                        });
                     });
                 }
                 await updateDoc(doc(db, 'products', id), updateData);
-                showToast('✅ تم التعديل');
+                showToast('✅ تم التعديل بنجاح');
                 window.closeEditModal();
-            } catch (err) { showToast('❌ خطأ: ' + err.message); } finally { btnSave.disabled = false;
-                document.getElementById('edit-upload-progress').classList.add('hidden'); }
+            } catch (err) { showToast('❌ خطأ: ' + err.message); } finally { 
+                btnSave.disabled = false;
+                document.getElementById('edit-upload-progress').classList.add('hidden'); 
+            }
         });
 
         document.getElementById('form-add-product').addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('prod-title').value;
-            const price = parseFloat(document.getElementById('prod-price').value);
+            const priceVal = document.getElementById('prod-price').value;
+            const price = priceVal ? parseFloat(priceVal) : 0;
+            const oldPriceVal = document.getElementById('prod-old-price').value;
+            const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
             const category = document.getElementById('prod-category').value.trim() || 'عام';
             const desc = document.getElementById('prod-desc').value;
-            const file = document.getElementById('prod-file-3d').files[0];
-            if (!file) return showToast('⚠️ اختر ملف .glb');
+            const file = document.getElementById('prod-file-img').files[0];
+            const sizes = getSizesFromContainer('add-sizes-list');
+
+            if (!file) return showToast('⚠️ اختر صورة للطبق');
+            
             const progressContainer = document.getElementById('upload-progress');
             const progressBar = document.getElementById('upload-bar');
             const percentSpan = document.getElementById('upload-percent');
             const btnSubmit = document.getElementById('btn-add-product');
             progressContainer.classList.remove('hidden');
             btnSubmit.disabled = true;
-            const storageRef = ref(storage, `models/${Date.now()}_${file.name}`);
+
+            const storageRef = ref(storage, `images/${Date.now()}_${file.name}`);
             const uploadTask = uploadBytesResumable(storageRef, file);
-            uploadTask.on('state_changed', (snap) => { const p = Math.round((snap.bytesTransferred / snap.totalBytes) *
-                    100);
+            uploadTask.on('state_changed', (snap) => { 
+                const p = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
                 percentSpan.textContent = p + '%';
-                progressBar.style.width = p + '%'; }, (err) => { progressContainer.classList.add('hidden');
+                progressBar.style.width = p + '%'; 
+            }, (err) => { 
+                progressContainer.classList.add('hidden');
                 btnSubmit.disabled = false;
-                showToast('❌ فشل الرفع: ' + err.message); }, async () => {
+                showToast('❌ فشل الرفع: ' + err.message); 
+            }, async () => {
                 try {
                     const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    await setDoc(doc(collection(db, 'products')), { title, price, category, desc,
-                        modelUrl: downloadURL, createdAt: serverTimestamp() });
+                    await setDoc(doc(collection(db, 'products')), { 
+                        title, price, oldPrice, category, desc, sizes, imageUrl: downloadURL, createdAt: serverTimestamp() 
+                    });
                     progressContainer.classList.add('hidden');
                     btnSubmit.disabled = false;
                     document.getElementById('form-add-product').reset();
+                    document.getElementById('add-sizes-list').innerHTML = '';
                     showToast('🎉 تم النشر بنجاح!');
-                } catch (dbErr) { btnSubmit.disabled = false;
-                    showToast('❌ خطأ: ' + dbErr.message); }
+                } catch (dbErr) { 
+                    btnSubmit.disabled = false;
+                    showToast('❌ خطأ: ' + dbErr.message); 
+                }
             });
         });
 
         // TRANSACTIONS
         function listenTransactions() {
-            const q = query(collection(db, 'transactions'), orderBy('date', 'desc'));
-            onSnapshot(q, (snapshot) => {
+            onSnapshot(collection(db, 'transactions'), (snapshot) => {
                 cachedTransactions = [];
                 snapshot.forEach(docSnap => cachedTransactions.push({ id: docSnap.id, ...docSnap.data() }));
+                
+                cachedTransactions.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
                 renderTransactionsTable();
                 updateFinanceUI();
                 updateStatsUI();
@@ -1123,8 +1209,7 @@
 
         function renderTransactionsTable() {
             const tbody = document.getElementById('transactions-table-body');
-            if (!cachedTransactions.length) { tbody.innerHTML =
-                    `<tr><td colspan="6" class="text-center py-6 text-gray-500">لا توجد معاملات</td></tr>`; return; }
+            if (!cachedTransactions.length) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-gray-500">لا توجد معاملات</td></tr>`; return; }
             const categoryLabels = { 'chicken': 'دجاج 🍗', 'meat': 'لحوم 🥩', 'vegetables': 'خضروات 🥬',
                 'seafood': 'مأكولات بحرية 🦐', 'dairy': 'ألبان 🧀', 'oil': 'زيوت وبهارات 🌿', 'electricity': 'كهرباء 💡',
                 'water': 'مياه 💧', 'rent': 'إيجار 🏠', 'salaries': 'مرتبات 👨‍🍳', 'marketing': 'تسويق 📢',
@@ -1145,16 +1230,35 @@
             }).join('');
         }
 
-        window.deleteTransaction = async function(id) {
-            if (confirm('حذف هذه المعاملة؟')) { try { await deleteDoc(doc(db, 'transactions', id));
-                    showToast('🗑️ تم الحذف'); } catch (err) { showToast('❌ خطأ: ' + err.message); } }
+        window.exportFinanceToExcel = function() {
+            let csv = 'التاريخ,النوع,التصنيف,الوصف,المبلغ\n';
+            cachedTransactions.forEach(t => {
+                csv += `"${t.date}","${t.type}","${t.category}","${t.description}",${t.amount}\n`;
+            });
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Report_Finance_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
         };
+
+        window.deleteTransaction = async function(id) {
+            if (confirm('حذف هذه المعاملة؟')) { 
+                try { 
+                    await deleteDoc(doc(db, 'transactions', id));
+                    showToast('🗑️ تم الحذف'); 
+                } catch (err) { showToast('❌ خطأ: ' + err.message); } 
+            }
+        };
+
         window.clearAllTransactions = async function() {
             if (!confirm('⚠️ مسح كل المعاملات؟')) return;
-            try { const batch = writeBatch(db);
+            try { 
+                const batch = writeBatch(db);
                 cachedTransactions.forEach(t => batch.delete(doc(db, 'transactions', t.id)));
                 await batch.commit();
-                showToast('🗑️ تم مسح الكل'); } catch (err) { showToast('❌ خطأ: ' + err.message); }
+                showToast('🗑️ تم مسح الكل'); 
+            } catch (err) { showToast('❌ خطأ: ' + err.message); }
         };
 
         document.getElementById('form-transaction').addEventListener('submit', async (e) => {
@@ -1171,15 +1275,16 @@
                     description: description || '', createdAt: serverTimestamp() });
                 showToast('✅ تم التسجيل');
                 document.getElementById('form-transaction').reset();
-                document.getElementById('txn-date').value = '';
+                document.getElementById('txn-date').value = new Date().toISOString().split('T')[0];
             } catch (err) { showToast('❌ خطأ: ' + err.message); }
         });
 
         function updateFinanceUI() {
-            let totalIncome = 0,
-                totalExpenses = 0;
-            cachedTransactions.forEach(t => { if (t.type === 'income') totalIncome += (t.amount || 0);
-                else totalExpenses += (t.amount || 0); });
+            let totalIncome = 0, totalExpenses = 0;
+            cachedTransactions.forEach(t => { 
+                if (t.type === 'income') totalIncome += (t.amount || 0);
+                else totalExpenses += (t.amount || 0); 
+            });
             const netProfit = totalIncome - totalExpenses;
             document.getElementById('finance-total-income').textContent = formatCurrency(totalIncome);
             document.getElementById('finance-total-expenses').textContent = formatCurrency(totalExpenses);
@@ -1192,11 +1297,12 @@
         function updateExpenseBreakdown() {
             const container = document.getElementById('expense-breakdown');
             const expenses = cachedTransactions.filter(t => t.type === 'expense');
-            if (!expenses.length) { container.innerHTML =
-                `<p class="text-gray-400 text-xs">لا توجد مصروفات</p>`; return; }
+            if (!expenses.length) { container.innerHTML = `<p class="text-gray-400 text-xs">لا توجد مصروفات</p>`; return; }
             const categoryMap = {};
-            expenses.forEach(t => { const cat = t.category || 'other';
-                categoryMap[cat] = (categoryMap[cat] || 0) + (t.amount || 0); });
+            expenses.forEach(t => { 
+                const cat = t.category || 'other';
+                categoryMap[cat] = (categoryMap[cat] || 0) + (t.amount || 0); 
+            });
             const total = Object.values(categoryMap).reduce((a, b) => a + b, 0);
             const sorted = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]);
             const categoryLabels = { 'chicken': 'دجاج 🍗', 'meat': 'لحوم 🥩', 'vegetables': 'خضروات 🥬',
@@ -1218,18 +1324,17 @@
 
         // DAILY NOTES
         function listenDailyNotes() {
-            const q = query(collection(db, 'dailyNotes'), orderBy('createdAt', 'desc'));
-            onSnapshot(q, (snapshot) => {
+            onSnapshot(collection(db, 'dailyNotes'), (snapshot) => {
                 cachedDailyNotes = [];
                 snapshot.forEach(docSnap => cachedDailyNotes.push({ id: docSnap.id, ...docSnap.data() }));
+                cachedDailyNotes.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 renderDailyNotes();
             });
         }
 
         function renderDailyNotes() {
             const container = document.getElementById('daily-notes-list');
-            if (!cachedDailyNotes.length) { container.innerHTML =
-                `<p class="text-gray-400 text-xs">لا توجد ملاحظات</p>`; return; }
+            if (!cachedDailyNotes.length) { container.innerHTML = `<p class="text-gray-400 text-xs">لا توجد ملاحظات</p>`; return; }
             container.innerHTML = cachedDailyNotes.slice(0, 20).map(n =>
                 `<div class="flex justify-between items-start bg-dark-800/60 p-3 rounded-xl border border-gold-500/10 hover:border-gold-500/30 transition">
                             <div class="flex-1"><p class="text-sm text-gray-200">${n.note || ''}</p><span class="text-[10px] text-gray-500">${n.date || ''}</span></div>
@@ -1237,19 +1342,26 @@
                         </div>`
             ).join('');
         }
+
         window.deleteDailyNote = async function(id) {
-            if (confirm('حذف الملاحظة؟')) { try { await deleteDoc(doc(db, 'dailyNotes', id));
-                    showToast('🗑️ تم الحذف'); } catch (err) { showToast('❌ خطأ: ' + err.message); } }
+            if (confirm('حذف الملاحظة؟')) { 
+                try { 
+                    await deleteDoc(doc(db, 'dailyNotes', id));
+                    showToast('🗑️ تم الحذف'); 
+                } catch (err) { showToast('❌ خطأ: ' + err.message); } 
+            }
         };
+
         document.getElementById('form-daily-note').addEventListener('submit', async (e) => {
             e.preventDefault();
             const note = document.getElementById('daily-note-input').value.trim();
             if (!note) return showToast('⚠️ اكتب ملاحظة');
-            const today = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric',
-                weekday: 'short' });
-            try { await setDoc(doc(collection(db, 'dailyNotes')), { note, date: today, createdAt: serverTimestamp() });
+            const today = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' });
+            try { 
+                await setDoc(doc(collection(db, 'dailyNotes')), { note, date: today, createdAt: serverTimestamp() });
                 document.getElementById('daily-note-input').value = '';
-                showToast('✅ تم حفظ الملاحظة'); } catch (err) { showToast('❌ خطأ: ' + err.message); }
+                showToast('✅ تم حفظ الملاحظة'); 
+            } catch (err) { showToast('❌ خطأ: ' + err.message); }
         });
 
         // BRANDING / SETTINGS
@@ -1257,27 +1369,27 @@
             try {
                 const snap = await getDoc(doc(db, 'restaurants', 'settings'));
                 if (snap.exists()) {
-                    const data = snap.data();
-                    document.getElementById('brand-name').value = data.name || '';
-                    document.getElementById('brand-slug').value = data.slug || '';
-                    document.getElementById('brand-logo').value = data.logo || '';
-                    document.getElementById('brand-phone').value = data.phone || '';
-                    document.getElementById('brand-maps-url').value = data.maps_url || '';
-                    document.getElementById('brand-review-url').value = data.review_url || '';
-                    document.getElementById('brand-whatsapp').value = data.whatsapp || '';
-                    document.getElementById('brand-instagram').value = data.instagram || '';
-                    document.getElementById('brand-facebook').value = data.facebook || '';
-                    document.getElementById('brand-header-tagline').value = data.header_tagline || '';
-                    document.getElementById('brand-hero-badge').value = data.hero_badge || '';
-                    document.getElementById('brand-hero-title').value = data.hero_title || '';
-                    document.getElementById('brand-hero-subtitle').value = data.hero_subtitle || '';
-                    document.getElementById('brand-hero-desc').value = data.hero_desc || '';
-                    const currency = data.currency || 'EGP';
+                    restaurantSettings = snap.data();
+                    document.getElementById('brand-name').value = restaurantSettings.name || '';
+                    document.getElementById('brand-slug').value = restaurantSettings.slug || '';
+                    document.getElementById('brand-logo').value = restaurantSettings.logo || '';
+                    document.getElementById('brand-phone').value = restaurantSettings.phone || '';
+                    document.getElementById('brand-maps-url').value = restaurantSettings.maps_url || '';
+                    document.getElementById('brand-review-url').value = restaurantSettings.review_url || '';
+                    document.getElementById('brand-whatsapp').value = restaurantSettings.whatsapp || '';
+                    document.getElementById('brand-instagram').value = restaurantSettings.instagram || '';
+                    document.getElementById('brand-facebook').value = restaurantSettings.facebook || '';
+                    document.getElementById('brand-header-tagline').value = restaurantSettings.header_tagline || '';
+                    document.getElementById('brand-hero-badge').value = restaurantSettings.hero_badge || '';
+                    document.getElementById('brand-hero-title').value = restaurantSettings.hero_title || '';
+                    document.getElementById('brand-hero-subtitle').value = restaurantSettings.hero_subtitle || '';
+                    document.getElementById('brand-hero-desc').value = restaurantSettings.hero_desc || '';
+                    const currency = restaurantSettings.currency || 'EGP';
                     document.getElementById('brand-currency').value = currency;
                     currentCurrency = currency;
                     currencySymbol = getCurrencySymbol(currency);
                     updateCurrencyUI();
-                    document.getElementById('preview-menu-link').href = `index.html?res=${data.slug || ''}`;
+                    document.getElementById('preview-menu-link').href = `index.html?res=${restaurantSettings.slug || ''}`;
                 }
             } catch (e) { console.warn(e); }
         }
@@ -1307,6 +1419,7 @@
             };
             try {
                 await setDoc(doc(db, 'restaurants', 'settings'), data, { merge: true });
+                restaurantSettings = data;
                 currentCurrency = currency;
                 currencySymbol = getCurrencySymbol(currency);
                 updateCurrencyUI();
@@ -1317,14 +1430,12 @@
         // INIT
         document.getElementById('txn-date').value = new Date().toISOString().split('T')[0];
 
-        // Override recent transactions in stats tab
         const originalRender = renderTransactionsTable;
         renderTransactionsTable = function() {
             originalRender();
             const container = document.getElementById('recent-transactions');
             const recent = cachedTransactions.slice(0, 5);
-            if (!recent.length) { container.innerHTML =
-                `<p class="text-gray-400 text-xs">لا توجد معاملات</p>`; return; }
+            if (!recent.length) { container.innerHTML = `<p class="text-gray-400 text-xs">لا توجد معاملات</p>`; return; }
             container.innerHTML = recent.map(t => {
                 const isExpense = t.type === 'expense';
                 const sign = isExpense ? '-' : '+';
@@ -1334,8 +1445,10 @@
         };
 
         const originalFinanceUI = updateFinanceUI;
-        updateFinanceUI = function() { originalFinanceUI();
-            updateExpenseBreakdown(); };
+        updateFinanceUI = function() { 
+            originalFinanceUI();
+            updateExpenseBreakdown(); 
+        };
 
         switchTab('orders');
 
@@ -1343,7 +1456,7 @@
         window.getCurrencySymbol = getCurrencySymbol;
         window.updateCurrencyUI = updateCurrencyUI;
 
-        console.log('🚀 3D Dining Dashboard with 150+ Currencies loaded!');
+        console.log('🚀 Dashboard Ready!');
     </script>
 </body>
 </html>
