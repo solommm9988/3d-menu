@@ -140,39 +140,41 @@
             font-weight: 800;
         }
 
-        /* 🎬 أنيميشن الظهور الفريد للوجبة عند فتح الكاميرا */
-        @keyframes arPopAppear {
+        /* 🎬 أنيميشن الظهور الفاخر جداً والسينمائي للوجبة */
+        @keyframes arSnapAppear {
             0% {
                 opacity: 0;
-                transform: scale(0.1) rotateY(-180deg) translateY(80px);
-                filter: drop-shadow(0 0 0px rgba(243, 185, 56, 0));
+                transform: scale(0.05) translateY(120px);
+                filter: drop-shadow(0 0 50px rgba(243, 185, 56, 1)) brightness(1.8);
             }
-            60% {
+            55% {
                 opacity: 1;
-                transform: scale(1.15) rotateY(20deg) translateY(-10px);
-                filter: drop-shadow(0 20px 30px rgba(243, 185, 56, 0.8));
+                transform: scale(1.08) translateY(-12px);
+                filter: drop-shadow(0 30px 45px rgba(243, 185, 56, 0.8)) brightness(1.2);
             }
-            80% {
-                transform: scale(0.95) rotateY(-5deg) translateY(5px);
+            75% {
+                transform: scale(0.96) translateY(4px);
             }
             100% {
                 opacity: 1;
-                transform: scale(1) rotateY(0deg) translateY(0px);
-                filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.65));
+                transform: scale(1) translateY(0px);
+                filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.6));
+            }
+        }
+
+        /* نبض هادئ يدي إحساس بالحياة والواقعية للوجبة */
+        @keyframes arSubtlePulse {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+            }
+            50% {
+                transform: translateY(-6px) scale(1.015);
             }
         }
 
         .ar-appear-animation {
-            animation: arPopAppear 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        /* حاوية الأبعاد الثلاثية لتمكين التدوير الحر */
-        .ar-3d-scene {
-            perspective: 1000px;
-        }
-        .ar-3d-object {
-            transform-style: preserve-3d;
-            transition: transform 0.05s linear;
+            animation: arSnapAppear 0.95s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                       arSubtlePulse 3.5s ease-in-out 0.95s infinite;
         }
     </style>
 </head>
@@ -306,13 +308,13 @@
         </button>
     </div>
 
-    <!-- ═══ AR CAMERA OVERLAY MODAL (شاشة كاميرا التدوير التفاعلية) ═══ -->
+    <!-- ═══ AR CAMERA OVERLAY MODAL (شاشة العرض الواقعي بحجم الصورة الطبيعي) ═══ -->
     <div id="ar-modal" class="fixed inset-0 z-50 hidden bg-black flex flex-col justify-between overflow-hidden select-none">
         <!-- AR Header -->
         <div class="absolute top-0 left-0 right-0 z-20 p-4 flex justify-between items-center bg-gradient-to-b from-black/80 via-black/40 to-transparent text-white">
             <div>
-                <h3 id="ar-dish-title" class="font-bold text-sm text-amber-400">عرض الوجبة بالواقع</h3>
-                <p class="text-[10px] text-slate-300">اسحب بإصبعك على الوجبة لتدويرها 360 درجة</p>
+                <h3 id="ar-dish-title" class="font-bold text-sm text-amber-400">معاينة الوجبة على الطاولة</h3>
+                <p class="text-[10px] text-slate-300">الوجبة معروضة بحجمها وبأبعادها الطبيعية</p>
             </div>
             <button onclick="window.closeARModal()" class="w-9 h-9 rounded-full bg-white/20 text-white backdrop-blur-md flex items-center justify-center text-sm font-bold border border-white/20">✕</button>
         </div>
@@ -320,19 +322,12 @@
         <!-- Live Camera Feed -->
         <video id="ar-camera-feed" autoplay playsinline class="w-full h-full object-cover absolute inset-0 z-0"></video>
 
-        <!-- Interactive 3D Orbit Viewport (بحجم وسط موحد) -->
-        <div id="ar-viewport" class="relative z-10 w-full h-full flex items-center justify-center ar-3d-scene touch-none cursor-grab active:cursor-grabbing">
-            <div id="ar-image-wrapper" class="ar-3d-object ar-appear-animation flex items-center justify-center">
-                <!-- الحجم ثابت على 240px (وسط) -->
-                <img id="ar-dish-image" src="" alt="AR Dish" class="w-60 h-60 object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.7)] pointer-events-none" />
+        <!-- Viewport المعاينة بالظهور الأنيميشن الفاخر والقياس الطبيعي للصورة -->
+        <div class="relative z-10 w-full h-full flex items-center justify-center p-4">
+            <div id="ar-image-wrapper" class="ar-appear-animation flex items-center justify-center max-w-full max-h-[80vh]">
+                <!-- الصورة بحجمها الأصلي الطبيعي المرفوع مع حماية عدم تجاوز حدود الشاشة -->
+                <img id="ar-dish-image" src="" alt="AR Dish" class="w-auto h-auto max-w-full max-h-[75vh] object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.65)]" />
             </div>
-        </div>
-
-        <!-- AR Hint Footer -->
-        <div class="absolute bottom-6 left-0 right-0 z-20 flex justify-center items-center pointer-events-none">
-            <span class="bg-black/60 text-amber-300 border border-amber-400/30 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-2">
-                <i class="fa-solid fa-arrows-rotate animate-spin text-amber-400"></i> حرك إصبعك لتدوير الوجبة
-            </span>
         </div>
     </div>
 
@@ -523,13 +518,8 @@
         let searchQuery = '';
         let activeTrackerUnsubscribe = null;
 
-        // متغيرات الكاميرا والتدوير 360°
+        // متغير الكاميرا
         let currentStream = null;
-        let rotX = 0;
-        let rotY = 0;
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
 
         function checkTableFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -735,7 +725,7 @@
             applyFilters();
         };
 
-        // ════════ AR SCAN / CAMERA CONTROLS (التدوير بحرية أنيميشن) ════════
+        // ════════ AR SCAN / CAMERA CONTROLS (ظهور أنيميشن فاخر بدون تدوير) ════════
         window.openARView = async function(id) {
             const p = allProducts.find(item => item.id === id);
             if (!p) return;
@@ -747,13 +737,8 @@
             
             const arModal = document.getElementById('ar-modal');
             const imgWrapper = document.getElementById('ar-image-wrapper');
-            
-            // تصفير زوايا التدوير
-            rotX = 0;
-            rotY = 0;
-            imgWrapper.style.transform = `rotateX(0deg) rotateY(0deg)`;
 
-            // إعادة تشغيل أنيميشن الظهور الفريد
+            // إعادت مشغل أنيميشن الظهور الفريد بمرونة وديناميكية
             imgWrapper.classList.remove('ar-appear-animation');
             void imgWrapper.offsetWidth; // Trigger Reflow
             imgWrapper.classList.add('ar-appear-animation');
@@ -770,7 +755,7 @@
                     currentStream = await navigator.mediaDevices.getUserMedia({ video: true });
                     document.getElementById('ar-camera-feed').srcObject = currentStream;
                 } catch (e) {
-                    showToast('يرجى السماح بصلاحية الكاميرا', '❌');
+                    showToast('يرجى السماح بصلاحية استخدام الكاميرا', '❌');
                     window.closeARModal();
                 }
             }
@@ -783,56 +768,6 @@
                 currentStream = null;
             }
         };
-
-        // أحداث التدوير بالإصبع أو الماوس (Rotate 360°)
-        const arViewport = document.getElementById('ar-viewport');
-        const arImgWrapper = document.getElementById('ar-image-wrapper');
-
-        function handleDragStart(x, y) {
-            isDragging = true;
-            startX = x;
-            startY = y;
-            arImgWrapper.classList.remove('ar-appear-animation'); // إيقاف الأنيميشن عند سحب الوجبة
-        }
-
-        function handleDragMove(x, y) {
-            if (!isDragging) return;
-            const deltaX = x - startX;
-            const deltaY = y - startY;
-
-            rotY += deltaX * 0.8;
-            rotX -= deltaY * 0.8;
-
-            // تحديد أقصى زاوية عمودية لحفظ منظر الوجبة طبيعي
-            rotX = Math.max(-45, Math.min(45, rotX));
-
-            arImgWrapper.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-
-            startX = x;
-            startY = y;
-        }
-
-        function handleDragEnd() {
-            isDragging = false;
-        }
-
-        // Touch Events (للجوال)
-        arViewport.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 1) {
-                handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        });
-        arViewport.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 1) {
-                handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        });
-        arViewport.addEventListener('touchend', handleDragEnd);
-
-        // Mouse Events (للكمبيوتر)
-        arViewport.addEventListener('mousedown', (e) => handleDragStart(e.clientX, e.clientY));
-        window.addEventListener('mousemove', (e) => handleDragMove(e.clientX, e.clientY));
-        window.addEventListener('mouseup', handleDragEnd);
 
         // ════════ DISH MODAL & CART CONTROLS ════════
         window.openImgModal = function(id) {
