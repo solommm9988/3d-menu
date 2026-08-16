@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 
@@ -25,6 +26,15 @@
           fontFamily: {
             sans: ['Plus Jakarta Sans', 'sans-serif'],
             brand: ['Cinzel', 'serif']
+          },
+          keyframes: {
+            popIn: {
+              '0%': { opacity: '0', transform: 'scale(0.8) translateY(20px)' },
+              '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+            }
+          },
+          animation: {
+            'pop-in': 'popIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards'
           }
         }
       }
@@ -61,7 +71,7 @@
     }
 
     .glass-luxury {
-      background: rgba(14, 17, 26, 0.65);
+      background: rgba(14, 17, 26, 0.75);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(212, 175, 55, 0.28);
@@ -78,13 +88,22 @@
       font-weight: 900;
       box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
     }
+    .scan-btn {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      color: #F7E7A9;
+    }
+    .scan-btn:hover {
+      background: rgba(212, 175, 55, 0.22);
+      border-color: #D4AF37;
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
 </head>
 
 <body x-data="clientApp()" x-init="initApp()" class="w-full relative pb-36">
 
-  <!-- 4K Background Video (Original Setting) -->
+  <!-- 4K Background Video -->
   <div class="video-bg-container">
     <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-steak-on-a-wooden-board-42512-large.mp4" type="video/mp4">
@@ -133,36 +152,6 @@
        @touchstart="handleTouchStart($event)"
        @touchend="handleTouchEnd($event)">
 
-    <!-- Sticky Header Bar -->
-    <header class="w-full py-2 px-3 rounded-2xl glass-luxury sticky top-2 z-40 mb-3 flex items-center justify-between shadow-2xl">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 rounded-xl overflow-hidden border border-brand-gold/40 flex-shrink-0 bg-black/40 flex items-center justify-center">
-          <template x-if="settings.logo_url">
-            <img :src="settings.logo_url" alt="Logo" class="w-full h-full object-cover">
-          </template>
-          <template x-if="!settings.logo_url">
-            <div class="w-full h-full gold-btn flex items-center justify-center text-black text-sm">
-              <i class="fa-solid fa-crown"></i>
-            </div>
-          </template>
-        </div>
-        <div class="min-w-0">
-          <h2 class="font-brand text-xs font-black gold-gradient-text truncate leading-tight uppercase" x-text="settings.restaurant_name"></h2>
-          <span class="text-[9px] text-gray-400 font-semibold block truncate" x-text="settings.tagline"></span>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-1.5 flex-shrink-0">
-        <button @click="infoModalOpen = true" class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-300">
-          <i class="fa-solid fa-location-dot text-xs text-rose-400"></i>
-        </button>
-        <button @click="waiterModalOpen = true" class="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1">
-          <i class="fa-solid fa-bell text-xs"></i>
-          <span>Waiter</span>
-        </button>
-      </div>
-    </header>
-
     <!-- Live Order Tracker -->
     <template x-if="activeOrder">
       <div class="mb-4 p-3.5 rounded-2xl glass-luxury border-brand-gold/50 shadow-2xl">
@@ -197,7 +186,7 @@
     </div>
 
     <!-- Category Swipe Tabs -->
-    <div class="sticky top-14 z-30 mb-4 py-1">
+    <div class="sticky top-2 z-30 mb-4 py-1">
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar p-1 glass-luxury rounded-2xl border-brand-gold/30">
         <template x-for="cat in categories" :key="cat.id">
           <button @click="activeCategory = cat.id" :class="activeCategory === cat.id ? 'gold-btn' : 'text-gray-200'" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition">
@@ -211,12 +200,12 @@
       </div>
     </div>
 
-    <!-- Horizontal Dishes List (Image on Left, Details on Right) -->
+    <!-- Horizontal Dishes List (Image 2D + Scan Button + Order Button) -->
     <div class="space-y-3">
       <template x-for="dish in filteredDishes" :key="dish.id">
         <div class="glass-luxury rounded-2xl p-3 flex gap-3.5 items-center border border-white/15 group">
           
-          <!-- Dish Image (Left) -->
+          <!-- Standard 2D Dish Image -->
           <div class="relative w-28 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-black/40">
             <img :src="dish.image" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
             <template x-if="dish.badge">
@@ -224,20 +213,29 @@
             </template>
           </div>
 
-          <!-- Dish Info & Actions (Right) -->
+          <!-- Dish Info, Price & Action Buttons (Scan + Add) -->
           <div class="flex-1 min-w-0 flex flex-col justify-between h-28 py-0.5">
             <div>
               <h3 class="font-bold text-white text-sm truncate" x-text="dish.title"></h3>
               <p class="text-gray-300 text-[11px] line-clamp-2 leading-tight mt-1" x-text="dish.description"></p>
             </div>
 
-            <div class="flex justify-between items-center pt-1">
-              <span class="font-black text-brand-gold text-sm" x-text="dish.price + ' ' + (settings.currency || '')"></span>
+            <div class="flex justify-between items-center pt-1 gap-1.5">
+              <span class="font-black text-brand-gold text-sm truncate" x-text="dish.price + ' ' + (settings.currency || '')"></span>
               
-              <button @click="openCustomModal(dish)" class="px-3.5 py-1.5 rounded-xl gold-btn text-[11px] flex items-center gap-1.5 active:scale-95 transition">
-                <i class="fa-solid fa-plus text-[10px]"></i>
-                <span x-text="dish.variants && dish.variants.length > 0 ? 'Options' : 'Add'"></span>
-              </button>
+              <div class="flex items-center gap-1.5">
+                <!-- Scan Button to Open 3D AR Camera -->
+                <button @click="open3DViewer(dish)" class="px-2.5 py-1.5 rounded-xl scan-btn text-[11px] font-bold flex items-center gap-1 active:scale-95 transition" title="View 3D Live Augmented Reality">
+                  <i class="fa-solid fa-expand text-[10px] text-brand-gold"></i>
+                  <span>Scan</span>
+                </button>
+
+                <!-- Add/Options Order Button -->
+                <button @click="openCustomModal(dish)" class="px-3 py-1.5 rounded-xl gold-btn text-[11px] flex items-center gap-1 active:scale-95 transition">
+                  <i class="fa-solid fa-plus text-[10px]"></i>
+                  <span x-text="dish.variants && dish.variants.length > 0 ? 'Options' : 'Add'"></span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -251,7 +249,7 @@
         <span class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Quick Services</span>
       </div>
       <div class="grid grid-cols-3 gap-2 w-full">
-        <button @click="waiterModalOpen = true" class="py-2.5 rounded-xl glass-luxury text-xs font-bold text-gray-200 flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button @click="callWaiter('Request Bill (Cash/Card)')" class="py-2.5 rounded-xl glass-luxury text-xs font-bold text-gray-200 flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="fa-solid fa-receipt text-emerald-400 text-sm"></i>
           <span>Bill</span>
         </button>
@@ -266,6 +264,62 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- 3D Scan & AR Experience Modal -->
+  <div x-show="arModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/92 backdrop-blur-xl flex flex-col items-center justify-between p-4">
+    <!-- Header -->
+    <div class="w-full max-w-lg flex justify-between items-center py-2 border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-brand-gold/20 flex items-center justify-center text-brand-gold text-xs">
+          <i class="fa-solid fa-cube"></i>
+        </div>
+        <div>
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider" x-text="arDish ? arDish.title : '3D Dish Scan'"></h3>
+          <span class="text-[10px] text-gray-400">Touch & rotate to explore 360° details</span>
+        </div>
+      </div>
+      <button @click="arModalOpen = false" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-white/20 transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- 3D Model Viewer Canvas with Entrance Animation -->
+    <div class="w-full max-w-lg flex-1 flex items-center justify-center relative my-3 animate-pop-in">
+      <template x-if="arModalOpen && arDish">
+        <model-viewer 
+          :src="arDish.model_glb || 'https://modelviewer.dev/shared-assets/models/Astronaut.glb'" 
+          :ios-src="arDish.model_usdz || ''"
+          :alt="arDish.title"
+          ar 
+          ar-modes="webxr scene-viewer quick-look" 
+          camera-controls 
+          auto-rotate 
+          shadow-intensity="2"
+          exposure="1.15"
+          interaction-prompt="auto"
+          class="w-full h-full min-h-[52vh] rounded-3xl bg-radial from-white/5 to-transparent">
+          
+          <!-- AR Launch Button (Opens Smartphone Camera onto Table) -->
+          <button slot="ar-button" class="absolute bottom-5 inset-x-8 py-3.5 rounded-2xl gold-btn text-xs font-black flex items-center justify-center gap-2 shadow-2xl active:scale-95 transition">
+            <i class="fa-solid fa-camera text-sm"></i>
+            <span>Project onto Table (AR Camera)</span>
+          </button>
+        </model-viewer>
+      </template>
+    </div>
+
+    <!-- Dish Details & Quick Add Action -->
+    <div class="w-full max-w-lg glass-luxury p-3.5 rounded-2xl flex items-center justify-between">
+      <div>
+        <span class="text-[10px] text-gray-400 block">Dish Price</span>
+        <span class="text-sm font-black text-brand-gold" x-text="arDish ? (arDish.price + ' ' + (settings.currency || '')) : ''"></span>
+      </div>
+      <button @click="openCustomModal(arDish); arModalOpen = false" class="px-5 py-2.5 rounded-xl gold-btn text-xs font-black flex items-center gap-1.5">
+        <i class="fa-solid fa-cart-plus text-xs"></i>
+        <span>Order Dish</span>
+      </button>
+    </div>
   </div>
 
   <!-- Customization Modal (Sizes & Variants) -->
@@ -333,7 +387,7 @@
     </div>
   </div>
 
-  <!-- Checkout Modal (Mandatory Fields) -->
+  <!-- Checkout Modal -->
   <div x-show="cartOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end justify-center p-0">
     <div @click.away="cartOpen = false" class="glass-luxury w-full max-w-lg rounded-t-3xl p-5 max-h-[90vh] flex flex-col justify-between border-brand-gold/30">
       <div>
@@ -506,6 +560,10 @@
         customQty: 1,
         touchStartX: 0,
         touchEndX: 0,
+        
+        // 3D AR Scan State
+        arModalOpen: false,
+        arDish: null,
 
         async initApp() {
           const params = new URLSearchParams(window.location.search);
@@ -567,6 +625,11 @@
             const matchesSearch = d.title.toLowerCase().includes(this.searchQuery.toLowerCase());
             return matchesCat && matchesSearch;
           });
+        },
+
+        open3DViewer(dish) {
+          this.arDish = dish;
+          this.arModalOpen = true;
         },
 
         openCustomModal(dish) {
