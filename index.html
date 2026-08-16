@@ -28,13 +28,20 @@
             brand: ['Cinzel', 'serif']
           },
           keyframes: {
-            popIn: {
-              '0%': { opacity: '0', transform: 'scale(0.8) translateY(20px)' },
-              '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+            dropIn3D: {
+              '0%': { opacity: '0', transform: 'scale(0.3) translateY(-80px)' },
+              '70%': { opacity: '1', transform: 'scale(1.08) translateY(10px)' },
+              '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
+            },
+            scannerBeam: {
+              '0%': { top: '0%' },
+              '50%': { top: '90%' },
+              '100%': { top: '0%' }
             }
           },
           animation: {
-            'pop-in': 'popIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            'drop-in': 'dropIn3D 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+            'scan-line': 'scannerBeam 2.5s ease-in-out infinite'
           }
         }
       }
@@ -89,13 +96,16 @@
       box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
     }
     .scan-btn {
-      background: rgba(212, 175, 55, 0.12);
-      border: 1px solid rgba(212, 175, 55, 0.45);
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px solid rgba(212, 175, 55, 0.5);
       color: #F7E7A9;
     }
-    .scan-btn:hover {
-      background: rgba(212, 175, 55, 0.22);
-      border-color: #D4AF37;
+    .scan-btn:active {
+      background: rgba(212, 175, 55, 0.35);
+    }
+    model-viewer {
+      --poster-color: transparent;
+      background-color: transparent;
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
@@ -103,7 +113,7 @@
 
 <body x-data="clientApp()" x-init="initApp()" class="w-full relative pb-36">
 
-  <!-- 4K Background Video -->
+  <!-- Background Video -->
   <div class="video-bg-container">
     <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-steak-on-a-wooden-board-42512-large.mp4" type="video/mp4">
@@ -200,12 +210,12 @@
       </div>
     </div>
 
-    <!-- Horizontal Dishes List (Image 2D + Scan Button + Order Button) -->
+    <!-- Horizontal Dishes List -->
     <div class="space-y-3">
       <template x-for="dish in filteredDishes" :key="dish.id">
         <div class="glass-luxury rounded-2xl p-3 flex gap-3.5 items-center border border-white/15 group">
           
-          <!-- Standard 2D Dish Image -->
+          <!-- Dish 2D Image -->
           <div class="relative w-28 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-black/40">
             <img :src="dish.image" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
             <template x-if="dish.badge">
@@ -213,7 +223,7 @@
             </template>
           </div>
 
-          <!-- Dish Info, Price & Action Buttons (Scan + Add) -->
+          <!-- Dish Info, Scan Button & Add Button -->
           <div class="flex-1 min-w-0 flex flex-col justify-between h-28 py-0.5">
             <div>
               <h3 class="font-bold text-white text-sm truncate" x-text="dish.title"></h3>
@@ -224,13 +234,13 @@
               <span class="font-black text-brand-gold text-sm truncate" x-text="dish.price + ' ' + (settings.currency || '')"></span>
               
               <div class="flex items-center gap-1.5">
-                <!-- Scan Button to Open 3D AR Camera -->
-                <button @click="open3DViewer(dish)" class="px-2.5 py-1.5 rounded-xl scan-btn text-[11px] font-bold flex items-center gap-1 active:scale-95 transition" title="View 3D Live Augmented Reality">
-                  <i class="fa-solid fa-expand text-[10px] text-brand-gold"></i>
+                <!-- Scan Button -> Launches Live Device Camera AR -->
+                <button @click="startLiveCameraScan(dish)" class="px-2.5 py-1.5 rounded-xl scan-btn text-[11px] font-bold flex items-center gap-1 active:scale-95 transition">
+                  <i class="fa-solid fa-camera text-[11px] text-brand-gold"></i>
                   <span>Scan</span>
                 </button>
 
-                <!-- Add/Options Order Button -->
+                <!-- Add/Options Button -->
                 <button @click="openCustomModal(dish)" class="px-3 py-1.5 rounded-xl gold-btn text-[11px] flex items-center gap-1 active:scale-95 transition">
                   <i class="fa-solid fa-plus text-[10px]"></i>
                   <span x-text="dish.variants && dish.variants.length > 0 ? 'Options' : 'Add'"></span>
@@ -243,7 +253,7 @@
       </template>
     </div>
 
-    <!-- Bottom Action Footer (Bill, Location, Review) -->
+    <!-- Bottom Services Footer -->
     <div class="mt-8 pt-6 border-t border-white/10 space-y-3">
       <div class="text-center">
         <span class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Quick Services</span>
@@ -266,60 +276,64 @@
 
   </div>
 
-  <!-- 3D Scan & AR Experience Modal -->
-  <div x-show="arModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/92 backdrop-blur-xl flex flex-col items-center justify-between p-4">
-    <!-- Header -->
-    <div class="w-full max-w-lg flex justify-between items-center py-2 border-b border-white/10">
-      <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-brand-gold/20 flex items-center justify-center text-brand-gold text-xs">
-          <i class="fa-solid fa-cube"></i>
-        </div>
-        <div>
-          <h3 class="text-xs font-bold text-white uppercase tracking-wider" x-text="arDish ? arDish.title : '3D Dish Scan'"></h3>
-          <span class="text-[10px] text-gray-400">Touch & rotate to explore 360° details</span>
-        </div>
+  <!-- REAL LIVE CAMERA AR MODAL -->
+  <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black flex flex-col justify-between overflow-hidden">
+    
+    <!-- Real Device Video Stream -->
+    <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0"></video>
+    
+    <!-- Dark Vignette Grid for Better 3D Visibility -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none z-10"></div>
+    <div class="absolute inset-x-4 top-16 bottom-28 border border-brand-gold/30 rounded-3xl pointer-events-none z-10">
+      <div class="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-brand-gold to-transparent shadow-lg shadow-brand-gold animate-scan-line"></div>
+    </div>
+
+    <!-- Top Overlay Bar -->
+    <div class="relative z-20 w-full max-w-lg mx-auto p-4 flex justify-between items-center">
+      <div class="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-brand-gold/40">
+        <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+        <span class="text-xs font-bold text-white uppercase tracking-wider">Live Table Camera</span>
       </div>
-      <button @click="arModalOpen = false" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-white/20 transition">
+
+      <button @click="closeLiveCameraScan()" class="w-10 h-10 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white text-base active:scale-90 transition">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
 
-    <!-- 3D Model Viewer Canvas with Entrance Animation -->
-    <div class="w-full max-w-lg flex-1 flex items-center justify-center relative my-3 animate-pop-in">
-      <template x-if="arModalOpen && arDish">
-        <model-viewer 
-          :src="arDish.model_glb || 'https://modelviewer.dev/shared-assets/models/Astronaut.glb'" 
-          :ios-src="arDish.model_usdz || ''"
-          :alt="arDish.title"
-          ar 
-          ar-modes="webxr scene-viewer quick-look" 
-          camera-controls 
-          auto-rotate 
-          shadow-intensity="2"
-          exposure="1.15"
-          interaction-prompt="auto"
-          class="w-full h-full min-h-[52vh] rounded-3xl bg-radial from-white/5 to-transparent">
-          
-          <!-- AR Launch Button (Opens Smartphone Camera onto Table) -->
-          <button slot="ar-button" class="absolute bottom-5 inset-x-8 py-3.5 rounded-2xl gold-btn text-xs font-black flex items-center justify-center gap-2 shadow-2xl active:scale-95 transition">
-            <i class="fa-solid fa-camera text-sm"></i>
-            <span>Project onto Table (AR Camera)</span>
-          </button>
-        </model-viewer>
+    <!-- 3D Model Floating Live over Camera Feed -->
+    <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center p-2">
+      <template x-if="cameraScanOpen && scanDish">
+        <div class="w-full h-full flex items-center justify-center animate-drop-in">
+          <model-viewer 
+            :src="scanDish.model_glb || 'https://modelviewer.dev/shared-assets/models/Astronaut.glb'" 
+            :alt="scanDish.title"
+            camera-controls 
+            auto-rotate 
+            shadow-intensity="2.2"
+            shadow-softness="0.8"
+            exposure="1.3"
+            interaction-prompt="none"
+            class="w-full h-full min-h-[50vh]">
+          </model-viewer>
+        </div>
       </template>
     </div>
 
-    <!-- Dish Details & Quick Add Action -->
-    <div class="w-full max-w-lg glass-luxury p-3.5 rounded-2xl flex items-center justify-between">
-      <div>
-        <span class="text-[10px] text-gray-400 block">Dish Price</span>
-        <span class="text-sm font-black text-brand-gold" x-text="arDish ? (arDish.price + ' ' + (settings.currency || '')) : ''"></span>
+    <!-- Bottom Controls & Order Action -->
+    <div class="relative z-20 w-full max-w-lg mx-auto p-4">
+      <div class="glass-luxury p-3.5 rounded-3xl flex items-center justify-between border border-brand-gold/40">
+        <div>
+          <h4 class="text-xs font-black text-white" x-text="scanDish ? scanDish.title : ''"></h4>
+          <span class="text-xs font-bold text-brand-gold" x-text="scanDish ? (scanDish.price + ' ' + (settings.currency || '')) : ''"></span>
+          <p class="text-[9px] text-gray-300">Drag to rotate • Pinch to zoom</p>
+        </div>
+        <button @click="openCustomModal(scanDish); closeLiveCameraScan()" class="px-5 py-2.5 rounded-2xl gold-btn text-xs font-black flex items-center gap-1.5 active:scale-95 transition">
+          <i class="fa-solid fa-cart-plus"></i>
+          <span>Order Now</span>
+        </button>
       </div>
-      <button @click="openCustomModal(arDish); arModalOpen = false" class="px-5 py-2.5 rounded-xl gold-btn text-xs font-black flex items-center gap-1.5">
-        <i class="fa-solid fa-cart-plus text-xs"></i>
-        <span>Order Dish</span>
-      </button>
     </div>
+
   </div>
 
   <!-- Customization Modal (Sizes & Variants) -->
@@ -561,9 +575,10 @@
         touchStartX: 0,
         touchEndX: 0,
         
-        // 3D AR Scan State
-        arModalOpen: false,
-        arDish: null,
+        // Real Live Camera Scan State
+        cameraScanOpen: false,
+        scanDish: null,
+        cameraStream: null,
 
         async initApp() {
           const params = new URLSearchParams(window.location.search);
@@ -627,9 +642,35 @@
           });
         },
 
-        open3DViewer(dish) {
-          this.arDish = dish;
-          this.arModalOpen = true;
+        async startLiveCameraScan(dish) {
+          this.scanDish = dish;
+          this.cameraScanOpen = true;
+
+          try {
+            // Request Rear/Back Camera
+            const stream = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: { ideal: 'environment' } },
+              audio: false
+            });
+            this.cameraStream = stream;
+            this.$nextTick(() => {
+              const video = document.getElementById('ar-camera-feed');
+              if (video) {
+                video.srcObject = stream;
+              }
+            });
+          } catch (err) {
+            console.warn("Camera permission denied or not available, showing interactive 3D studio instead.");
+          }
+        },
+
+        closeLiveCameraScan() {
+          if (this.cameraStream) {
+            this.cameraStream.getTracks().forEach(track => track.stop());
+            this.cameraStream = null;
+          }
+          this.cameraScanOpen = false;
+          this.scanDish = null;
         },
 
         openCustomModal(dish) {
