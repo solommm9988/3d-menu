@@ -9,7 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -32,9 +32,23 @@
   </script>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050608; color: #F3F4F6; overflow-x: hidden; width: 100%; min-height: 100vh; scroll-behavior: smooth; }
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent; 
+    }
     
+    html, body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #050608;
+      color: #F3F4F6;
+      overflow-x: hidden;
+      width: 100%;
+      min-height: 100vh;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y; /* Smooth native vertical scrolling */
+    }
+
+    /* Hardware-Accelerated 4K Video Background */
     .video-bg-container {
       position: fixed;
       inset: 0;
@@ -42,31 +56,34 @@
       height: 100vh;
       z-index: -2;
       overflow: hidden;
+      pointer-events: none;
+      transform: translateZ(0);
+      will-change: transform;
     }
     .video-bg-container video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: brightness(0.55) contrast(1.18) saturate(1.3);
-      transform: scale(1.02);
+      filter: brightness(0.5) contrast(1.15) saturate(1.25);
     }
 
     .overlay-vignette {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(5,6,8,0.15) 0%, rgba(5,6,8,0.65) 75%, #050608 100%),
-                  linear-gradient(to bottom, rgba(5,6,8,0.4) 0%, transparent 40%, rgba(5,6,8,0.85) 100%);
+      background: radial-gradient(circle at center, rgba(5,6,8,0.2) 0%, rgba(5,6,8,0.7) 75%, #050608 100%),
+                  linear-gradient(to bottom, rgba(5,6,8,0.3) 0%, transparent 40%, rgba(5,6,8,0.9) 100%);
       z-index: -1;
       pointer-events: none;
     }
 
+    /* Ultra-lightweight high-performance card styling */
     .glass-luxury {
-      background: rgba(14, 17, 26, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(212, 175, 55, 0.28);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+      background: rgba(14, 17, 26, 0.82);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transform: translateZ(0);
     }
+    
     .gold-gradient-text {
       background: linear-gradient(135deg, #FFFFFF 0%, #F7E7A9 45%, #D4AF37 100%);
       -webkit-background-clip: text;
@@ -76,7 +93,8 @@
       background: linear-gradient(135deg, #E6C65B 0%, #D4AF37 50%, #AA820A 100%);
       color: #050608;
       font-weight: 900;
-      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      transform: translateZ(0);
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
@@ -93,12 +111,12 @@
   <div class="overlay-vignette"></div>
 
   <!-- Hero Section -->
-  <section class="min-h-[52vh] flex flex-col justify-between items-center text-center px-4 pt-6 pb-4 relative z-10">
+  <section class="min-h-[50vh] flex flex-col justify-between items-center text-center px-4 pt-6 pb-4 relative z-10">
     <div class="w-full max-w-md flex justify-between items-center">
-      <span class="px-3.5 py-1 rounded-full bg-black/40 border border-brand-gold/40 text-[11px] font-bold text-brand-goldLight backdrop-blur-md">
+      <span class="px-3.5 py-1 rounded-full bg-black/50 border border-brand-gold/40 text-[11px] font-bold text-brand-goldLight">
         <i class="fa-solid fa-crown text-[10px] mr-1"></i> Fine Dining Experience
       </span>
-      <button @click="waiterModalOpen = true" class="px-3.5 py-1.5 rounded-2xl bg-amber-500/25 border border-amber-500/50 text-amber-300 text-xs font-black flex items-center gap-1.5 backdrop-blur-md active:scale-95 transition">
+      <button @click="waiterModalOpen = true" class="px-3.5 py-1.5 rounded-2xl bg-amber-500/25 border border-amber-500/50 text-amber-300 text-xs font-black flex items-center gap-1.5 active:scale-95 transition">
         <i class="fa-solid fa-bell text-xs"></i>
         <span>Call Waiter</span>
       </button>
@@ -106,12 +124,12 @@
 
     <!-- Center Brand Identity -->
     <div class="space-y-3 my-auto py-4">
-      <div class="w-24 h-24 rounded-3xl overflow-hidden mx-auto border-2 border-brand-gold/50 shadow-2xl shadow-brand-gold/30 bg-black/50 p-1 flex items-center justify-center">
+      <div class="w-20 h-20 rounded-3xl overflow-hidden mx-auto border-2 border-brand-gold/50 shadow-2xl bg-black/60 p-1 flex items-center justify-center">
         <template x-if="settings.logo_url">
           <img :src="settings.logo_url" alt="Logo" class="w-full h-full object-cover rounded-2xl">
         </template>
         <template x-if="!settings.logo_url">
-          <div class="w-full h-full rounded-2xl gold-btn flex items-center justify-center text-black text-3xl">
+          <div class="w-full h-full rounded-2xl gold-btn flex items-center justify-center text-black text-2xl">
             <i class="fa-solid fa-crown"></i>
           </div>
         </template>
@@ -129,19 +147,17 @@
   </section>
 
   <!-- Main Menu Area -->
-  <div id="menu-content" class="w-full max-w-lg mx-auto px-3.5 pt-2"
-       @touchstart="handleTouchStart($event)"
-       @touchend="handleTouchEnd($event)">
+  <div id="menu-content" class="w-full max-w-lg mx-auto px-3.5 pt-2">
 
     <!-- Sticky Header Bar -->
     <header class="w-full py-2 px-3 rounded-2xl glass-luxury sticky top-2 z-40 mb-3 flex items-center justify-between shadow-2xl">
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 rounded-xl overflow-hidden border border-brand-gold/40 flex-shrink-0 bg-black/40 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-xl overflow-hidden border border-brand-gold/40 flex-shrink-0 bg-black/40 flex items-center justify-center">
           <template x-if="settings.logo_url">
             <img :src="settings.logo_url" alt="Logo" class="w-full h-full object-cover">
           </template>
           <template x-if="!settings.logo_url">
-            <div class="w-full h-full gold-btn flex items-center justify-center text-black text-sm">
+            <div class="w-full h-full gold-btn flex items-center justify-center text-black text-xs">
               <i class="fa-solid fa-crown"></i>
             </div>
           </template>
@@ -209,9 +225,11 @@
       <input type="text" x-model="searchQuery" placeholder="Search your favorite dish..." class="w-full py-2.5 px-4 rounded-xl glass-luxury text-xs text-white placeholder-gray-400 focus:outline-none focus:border-brand-gold">
     </div>
 
-    <!-- Category Swipe Tabs -->
-    <div class="sticky top-14 z-30 mb-4 py-1">
-      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar p-1 glass-luxury rounded-2xl border-brand-gold/30">
+    <!-- Category Swipe Tabs (Hardware accelerated horizontal carousel) -->
+    <div class="sticky top-14 z-30 mb-4 py-1"
+         @touchstart="handleTouchStart($event)"
+         @touchend="handleTouchEnd($event)">
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar p-1.5 glass-luxury rounded-2xl border-brand-gold/30">
         <template x-for="cat in categories" :key="cat.id">
           <button @click="activeCategory = cat.id" :class="activeCategory === cat.id ? 'gold-btn' : 'text-gray-200'" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition">
             <span x-html="cat.icon || '<i class=\'fa-solid fa-utensils\'></i>'"></span>
@@ -219,17 +237,17 @@
           </button>
         </template>
       </div>
-      <div class="text-[9px] text-gray-400 text-center mt-1 flex items-center justify-center gap-1">
-        <i class="fa-solid fa-arrows-left-right text-brand-gold"></i> Swipe left or right to switch categories
+      <div class="text-[9px] text-gray-400 text-center mt-1.5 flex items-center justify-center gap-1">
+        <i class="fa-solid fa-arrows-left-right text-brand-gold"></i> Swipe horizontally on categories to navigate
       </div>
     </div>
 
-    <!-- Dishes Grid -->
+    <!-- Dishes Grid with Lazy Loading -->
     <div class="grid grid-cols-1 gap-4">
       <template x-for="dish in filteredDishes" :key="dish.id">
         <div class="glass-luxury rounded-3xl overflow-hidden border border-white/15 flex flex-col justify-between group">
-          <div class="relative h-48 w-full overflow-hidden">
-            <img :src="dish.image" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+          <div class="relative h-48 w-full overflow-hidden bg-black/40">
+            <img :src="dish.image" loading="lazy" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-[#050608]/90 via-transparent to-black/20"></div>
             <template x-if="dish.badge">
               <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-black gold-btn" x-text="dish.badge"></span>
@@ -254,7 +272,7 @@
   </div>
 
   <!-- Customization Modal -->
-  <div x-show="customModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end justify-center p-0">
+  <div x-show="customModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end justify-center p-0">
     <div @click.away="customModalOpen = false" class="glass-luxury w-full max-w-lg rounded-t-3xl p-5 max-h-[85vh] flex flex-col justify-between border-brand-gold/30">
       <template x-if="selectedDish">
         <div>
@@ -319,7 +337,7 @@
   </div>
 
   <!-- Checkout Modal -->
-  <div x-show="cartOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end justify-center p-0">
+  <div x-show="cartOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end justify-center p-0">
     <div @click.away="cartOpen = false" class="glass-luxury w-full max-w-lg rounded-t-3xl p-5 max-h-[90vh] flex flex-col justify-between border-brand-gold/30">
       <div>
         <div class="flex justify-between items-center pb-3 border-b border-white/10 mb-3">
@@ -369,7 +387,7 @@
   </div>
 
   <!-- Waiter Modal -->
-  <div x-show="waiterModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+  <div x-show="waiterModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
     <div @click.away="waiterModalOpen = false" class="glass-luxury w-full max-w-xs rounded-3xl p-5 border-brand-gold/30 space-y-3 text-center">
       <h3 class="font-bold text-white text-sm">Call Waiter</h3>
       <div>
@@ -386,7 +404,7 @@
   </div>
 
   <!-- Info Modal -->
-  <div x-show="infoModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+  <div x-show="infoModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
     <div @click.away="infoModalOpen = false" class="glass-luxury w-full max-w-sm rounded-3xl p-5 border-brand-gold/30 space-y-4">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
         <h3 class="font-bold text-white text-sm">Location & Contacts</h3>
@@ -420,7 +438,7 @@
   </div>
 
   <!-- Review Modal -->
-  <div x-show="reviewModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+  <div x-show="reviewModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
     <div @click.away="reviewModalOpen = false" class="glass-luxury w-full max-w-xs rounded-3xl p-5 border-brand-gold/30 space-y-3.5 text-center">
       <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 text-2xl flex items-center justify-center mx-auto border border-emerald-500/40">
         <i class="fa-solid fa-check"></i>
@@ -513,7 +531,7 @@
 
         handleSwipe() {
           const diff = this.touchEndX - this.touchStartX;
-          if (Math.abs(diff) < 50) return;
+          if (Math.abs(diff) < 40) return;
 
           const currentIndex = this.categories.findIndex(c => c.id === this.activeCategory);
           if (currentIndex === -1) return;
