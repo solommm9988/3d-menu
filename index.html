@@ -82,9 +82,9 @@
   </style>
 </head>
 
-<body x-data="clientApp()" x-init="initApp()" class="w-full relative pb-32">
+<body x-data="clientApp()" x-init="initApp()" class="w-full relative pb-36">
 
-  <!-- 4K Background Video -->
+  <!-- 4K Background Video (Original Setting) -->
   <div class="video-bg-container">
     <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80">
       <source src="https://assets.mixkit.co/videos/preview/mixkit-top-view-of-a-steak-on-a-wooden-board-42512-large.mp4" type="video/mp4">
@@ -163,19 +163,6 @@
       </div>
     </header>
 
-    <!-- Quick Action Pills -->
-    <div class="grid grid-cols-3 gap-2 mb-3 w-full">
-      <button @click="waiterModalOpen = true" class="py-2 rounded-xl glass-luxury text-[11px] font-bold text-gray-200 flex items-center justify-center gap-1.5 active:scale-95 transition">
-        <i class="fa-solid fa-receipt text-emerald-400"></i> Bill
-      </button>
-      <button @click="infoModalOpen = true" class="py-2 rounded-xl glass-luxury text-[11px] font-bold text-gray-200 flex items-center justify-center gap-1.5 active:scale-95 transition">
-        <i class="fa-solid fa-location-dot text-rose-400"></i> Location
-      </button>
-      <button @click="reviewModalOpen = true" class="py-2 rounded-xl glass-luxury text-[11px] font-bold text-gray-200 flex items-center justify-center gap-1.5 active:scale-95 transition">
-        <i class="fa-solid fa-star text-amber-400"></i> Review
-      </button>
-    </div>
-
     <!-- Live Order Tracker -->
     <template x-if="activeOrder">
       <div class="mb-4 p-3.5 rounded-2xl glass-luxury border-brand-gold/50 shadow-2xl">
@@ -224,36 +211,64 @@
       </div>
     </div>
 
-    <!-- Dishes Grid -->
-    <div class="grid grid-cols-1 gap-4">
+    <!-- Horizontal Dishes List (Image on Left, Details on Right) -->
+    <div class="space-y-3">
       <template x-for="dish in filteredDishes" :key="dish.id">
-        <div class="glass-luxury rounded-3xl overflow-hidden border border-white/15 flex flex-col justify-between group">
-          <div class="relative h-48 w-full overflow-hidden">
-            <img :src="dish.image" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#050608]/90 via-transparent to-black/20"></div>
+        <div class="glass-luxury rounded-2xl p-3 flex gap-3.5 items-center border border-white/15 group">
+          
+          <!-- Dish Image (Left) -->
+          <div class="relative w-28 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-black/40">
+            <img :src="dish.image" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
             <template x-if="dish.badge">
-              <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-black gold-btn" x-text="dish.badge"></span>
+              <span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full text-[9px] font-black gold-btn" x-text="dish.badge"></span>
             </template>
           </div>
-          <div class="p-4">
-            <div class="flex justify-between items-center mb-1.5">
-              <h3 class="font-bold text-white text-base" x-text="dish.title"></h3>
-              <span class="font-black text-brand-gold text-base" x-text="dish.price + ' ' + (settings.currency || '')"></span>
+
+          <!-- Dish Info & Actions (Right) -->
+          <div class="flex-1 min-w-0 flex flex-col justify-between h-28 py-0.5">
+            <div>
+              <h3 class="font-bold text-white text-sm truncate" x-text="dish.title"></h3>
+              <p class="text-gray-300 text-[11px] line-clamp-2 leading-tight mt-1" x-text="dish.description"></p>
             </div>
-            <p class="text-gray-300 text-xs line-clamp-2 leading-relaxed mb-3.5" x-text="dish.description"></p>
-            
-            <button @click="openCustomModal(dish)" class="w-full py-2.5 rounded-xl gold-btn text-xs flex items-center justify-center gap-2">
-              <i class="fa-solid fa-sliders"></i>
-              <span x-text="dish.variants && dish.variants.length > 0 ? 'Select Size & Add' : 'Add to Order'"></span>
-            </button>
+
+            <div class="flex justify-between items-center pt-1">
+              <span class="font-black text-brand-gold text-sm" x-text="dish.price + ' ' + (settings.currency || '')"></span>
+              
+              <button @click="openCustomModal(dish)" class="px-3.5 py-1.5 rounded-xl gold-btn text-[11px] flex items-center gap-1.5 active:scale-95 transition">
+                <i class="fa-solid fa-plus text-[10px]"></i>
+                <span x-text="dish.variants && dish.variants.length > 0 ? 'Options' : 'Add'"></span>
+              </button>
+            </div>
           </div>
+
         </div>
       </template>
     </div>
 
+    <!-- Bottom Action Footer (Bill, Location, Review) -->
+    <div class="mt-8 pt-6 border-t border-white/10 space-y-3">
+      <div class="text-center">
+        <span class="text-[10px] uppercase tracking-widest text-brand-gold font-bold">Quick Services</span>
+      </div>
+      <div class="grid grid-cols-3 gap-2 w-full">
+        <button @click="waiterModalOpen = true" class="py-2.5 rounded-xl glass-luxury text-xs font-bold text-gray-200 flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+          <i class="fa-solid fa-receipt text-emerald-400 text-sm"></i>
+          <span>Bill</span>
+        </button>
+        <button @click="infoModalOpen = true" class="py-2.5 rounded-xl glass-luxury text-xs font-bold text-gray-200 flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+          <i class="fa-solid fa-location-dot text-rose-400 text-sm"></i>
+          <span>Location</span>
+        </button>
+        <button @click="reviewModalOpen = true" class="py-2.5 rounded-xl glass-luxury text-xs font-bold text-gray-200 flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+          <i class="fa-solid fa-star text-amber-400 text-sm"></i>
+          <span>Review</span>
+        </button>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Customization Modal -->
+  <!-- Customization Modal (Sizes & Variants) -->
   <div x-show="customModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end justify-center p-0">
     <div @click.away="customModalOpen = false" class="glass-luxury w-full max-w-lg rounded-t-3xl p-5 max-h-[85vh] flex flex-col justify-between border-brand-gold/30">
       <template x-if="selectedDish">
@@ -318,7 +333,7 @@
     </div>
   </div>
 
-  <!-- Checkout Modal -->
+  <!-- Checkout Modal (Mandatory Fields) -->
   <div x-show="cartOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end justify-center p-0">
     <div @click.away="cartOpen = false" class="glass-luxury w-full max-w-lg rounded-t-3xl p-5 max-h-[90vh] flex flex-col justify-between border-brand-gold/30">
       <div>
