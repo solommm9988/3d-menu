@@ -28,10 +28,14 @@
             brand: ['Cinzel', 'serif']
           },
           keyframes: {
-            dropIn3D: {
-              '0%': { opacity: '0', transform: 'scale(0.3) translateY(-80px)' },
-              '70%': { opacity: '1', transform: 'scale(1.08) translateY(10px)' },
-              '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
+            materialize: {
+              '0%': { opacity: '0', transform: 'scale(0.01) translateY(40px)', filter: 'blur(20px) brightness(2.5)' },
+              '60%': { opacity: '0.8', transform: 'scale(1.1) translateY(-10px)', filter: 'blur(4px) brightness(1.6)' },
+              '100%': { opacity: '1', transform: 'scale(1) translateY(0)', filter: 'blur(0px) brightness(1)' }
+            },
+            shockwave: {
+              '0%': { transform: 'scale(0.2)', opacity: '1', borderWidth: '4px' },
+              '100%': { transform: 'scale(2.4)', opacity: '0', borderWidth: '1px' }
             },
             scannerBeam: {
               '0%': { top: '0%' },
@@ -40,8 +44,9 @@
             }
           },
           animation: {
-            'drop-in': 'dropIn3D 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
-            'scan-line': 'scannerBeam 2.5s ease-in-out infinite'
+            'materialize': 'materialize 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'shockwave': 'shockwave 1.4s ease-out forwards',
+            'scan-line': 'scannerBeam 2s ease-in-out infinite'
           }
         }
       }
@@ -234,7 +239,7 @@
               <span class="font-black text-brand-gold text-sm truncate" x-text="dish.price + ' ' + (settings.currency || '')"></span>
               
               <div class="flex items-center gap-1.5">
-                <!-- Scan Button -> Launches Live Device Camera AR -->
+                <!-- Scan Button -> Launches Live Device Camera AR with Materialize Animation -->
                 <button @click="startLiveCameraScan(dish)" class="px-2.5 py-1.5 rounded-xl scan-btn text-[11px] font-bold flex items-center gap-1 active:scale-95 transition">
                   <i class="fa-solid fa-camera text-[11px] text-brand-gold"></i>
                   <span>Scan</span>
@@ -276,13 +281,13 @@
 
   </div>
 
-  <!-- REAL LIVE CAMERA AR MODAL -->
+  <!-- REAL LIVE CAMERA AR MODAL WITH MATERIALIZE FROM VOID ANIMATION -->
   <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black flex flex-col justify-between overflow-hidden">
     
     <!-- Real Device Video Stream -->
     <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0"></video>
     
-    <!-- Dark Vignette Grid for Better 3D Visibility -->
+    <!-- Camera Overlay Scanner Frame -->
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none z-10"></div>
     <div class="absolute inset-x-4 top-16 bottom-28 border border-brand-gold/30 rounded-3xl pointer-events-none z-10">
       <div class="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-brand-gold to-transparent shadow-lg shadow-brand-gold animate-scan-line"></div>
@@ -300,23 +305,44 @@
       </button>
     </div>
 
-    <!-- 3D Model Floating Live over Camera Feed -->
+    <!-- 3D Model Area (Spawns From Void After Surface Scan Delay) -->
     <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center p-2">
-      <template x-if="cameraScanOpen && scanDish">
-        <div class="w-full h-full flex items-center justify-center animate-drop-in">
-          <model-viewer 
-            :src="scanDish.model_glb || 'https://modelviewer.dev/shared-assets/models/Astronaut.glb'" 
-            :alt="scanDish.title"
-            camera-controls 
-            auto-rotate 
-            shadow-intensity="2.2"
-            shadow-softness="0.8"
-            exposure="1.3"
-            interaction-prompt="none"
-            class="w-full h-full min-h-[50vh]">
-          </model-viewer>
+      
+      <!-- Surface Detection Scanner Animation (Initial Void State) -->
+      <div x-show="!isModelSpawned" class="flex flex-col items-center justify-center gap-3">
+        <div class="w-20 h-20 rounded-full border-2 border-brand-gold/80 border-dashed animate-spin flex items-center justify-center">
+          <i class="fa-solid fa-crosshairs text-brand-gold text-2xl"></i>
+        </div>
+        <span class="text-xs font-bold text-brand-goldLight tracking-widest uppercase bg-black/60 px-4 py-1.5 rounded-full backdrop-blur-md border border-brand-gold/30 animate-pulse">
+          Scanning Surface...
+        </span>
+      </div>
+
+      <!-- Shockwave Pulse & 3D Model Materialization -->
+      <template x-if="cameraScanOpen && scanDish && isModelSpawned">
+        <div class="relative w-full h-full flex items-center justify-center">
+          
+          <!-- Golden Shockwave Ring -->
+          <div class="absolute w-44 h-44 rounded-full border-brand-gold animate-shockwave pointer-events-none"></div>
+          
+          <!-- Floating Materialized 3D Model -->
+          <div class="w-full h-full flex items-center justify-center animate-materialize">
+            <model-viewer 
+              :src="scanDish.model_glb || 'https://modelviewer.dev/shared-assets/models/Astronaut.glb'" 
+              :alt="scanDish.title"
+              camera-controls 
+              auto-rotate 
+              shadow-intensity="2.2"
+              shadow-softness="0.8"
+              exposure="1.3"
+              interaction-prompt="none"
+              class="w-full h-full min-h-[50vh]">
+            </model-viewer>
+          </div>
+
         </div>
       </template>
+
     </div>
 
     <!-- Bottom Controls & Order Action -->
@@ -575,10 +601,11 @@
         touchStartX: 0,
         touchEndX: 0,
         
-        // Real Live Camera Scan State
+        // Real Live Camera Scan & Materialization State
         cameraScanOpen: false,
         scanDish: null,
         cameraStream: null,
+        isModelSpawned: false,
 
         async initApp() {
           const params = new URLSearchParams(window.location.search);
@@ -644,10 +671,10 @@
 
         async startLiveCameraScan(dish) {
           this.scanDish = dish;
+          this.isModelSpawned = false; // Start in void state
           this.cameraScanOpen = true;
 
           try {
-            // Request Rear/Back Camera
             const stream = await navigator.mediaDevices.getUserMedia({
               video: { facingMode: { ideal: 'environment' } },
               audio: false
@@ -655,12 +682,19 @@
             this.cameraStream = stream;
             this.$nextTick(() => {
               const video = document.getElementById('ar-camera-feed');
-              if (video) {
-                video.srcObject = stream;
-              }
+              if (video) video.srcObject = stream;
             });
+
+            // Materialize the 3D model after 1.5 seconds of surface scanning
+            setTimeout(() => {
+              this.isModelSpawned = true;
+            }, 1500);
+
           } catch (err) {
-            console.warn("Camera permission denied or not available, showing interactive 3D studio instead.");
+            console.warn("Camera permission denied, proceeding with 3D animation.");
+            setTimeout(() => {
+              this.isModelSpawned = true;
+            }, 1000);
           }
         },
 
@@ -671,6 +705,7 @@
           }
           this.cameraScanOpen = false;
           this.scanDish = null;
+          this.isModelSpawned = false;
         },
 
         openCustomModal(dish) {
