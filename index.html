@@ -9,8 +9,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   
-  <!-- المكتبة الرسمية لعرض وتدوير المجسمات 3D في المتصفح -->
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  <!-- Three.js + Loaders + Meshopt Decoder for guaranteed 3D Rendering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/meshoptimizer@0.20.0/meshopt_decoder.js"></script>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
@@ -32,8 +35,8 @@
           },
           keyframes: {
             materialize: {
-              '0%': { opacity: '0', transform: 'scale(0.2) translateY(20px)' },
-              '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
+              '0%': { opacity: '0', transform: 'scale(0.3)' },
+              '100%': { opacity: '1', transform: 'scale(1)' }
             },
             scannerBeam: {
               '0%': { top: '0%' },
@@ -42,7 +45,7 @@
             }
           },
           animation: {
-            'materialize': 'materialize 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'materialize': 'materialize 0.5s ease-out forwards',
             'scan-line': 'scannerBeam 1.2s ease-in-out 3 forwards'
           }
         }
@@ -104,13 +107,6 @@
     }
     .scan-btn:active {
       background: rgba(212, 175, 55, 0.35);
-    }
-    model-viewer {
-      --poster-color: transparent;
-      background-color: transparent;
-      width: 100%;
-      height: 100%;
-      display: block;
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
   </style>
@@ -279,13 +275,13 @@
 
   </div>
 
-  <!-- REAL LIVE CAMERA AR MODAL -->
+  <!-- REAL LIVE CAMERA AR MODAL (THREE.JS CANVAS) -->
   <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black flex flex-col justify-between overflow-hidden">
     
     <!-- Real Device Video Stream -->
     <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0"></video>
     
-    <!-- Camera Overlay Scanner Frame (Disappears after 3.6s scan) -->
+    <!-- Camera Overlay Scanner Frame (Disappears after 3 scans) -->
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none z-10"></div>
     <div x-show="!isModelSpawned" class="absolute inset-x-4 top-16 bottom-28 border border-brand-gold/30 rounded-3xl pointer-events-none z-10">
       <div class="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-brand-gold to-transparent shadow-lg shadow-brand-gold animate-scan-line"></div>
@@ -303,7 +299,7 @@
       </button>
     </div>
 
-    <!-- 3D Model Area -->
+    <!-- 3D Model Canvas Container -->
     <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center p-2">
       
       <!-- Surface Detection Scanner Animation -->
@@ -316,18 +312,8 @@
         </span>
       </div>
 
-      <!-- Single Persistent 3D Model Viewer Instance (Direct Binding) -->
-      <div x-show="isModelSpawned" class="w-full h-full flex items-center justify-center animate-materialize">
-        <model-viewer 
-          id="main-ar-viewer"
-          src=""
-          alt="3D Dish Model"
-          camera-controls 
-          auto-rotate 
-          shadow-intensity="1.5"
-          exposure="1.2"
-          class="w-full h-full min-h-[50vh]">
-        </model-viewer>
+      <!-- WebGL 3D Canvas -->
+      <div id="three-canvas-container" class="w-full h-full min-h-[50vh] flex items-center justify-center" :class="isModelSpawned ? 'animate-materialize opacity-100' : 'opacity-0'">
       </div>
 
     </div>
@@ -550,6 +536,9 @@
     const SUPABASE_KEY = "sb_publishable_ldXj3mZJTKdgqnVcmQ6CVA_KJcIgFCd";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // Three.js Global Scene References
+    let threeScene, threeCamera, threeRenderer, threeControls, currentLoadedMesh = null, threeAnimId = null;
+
     function clientApp() {
       return {
         tableNumber: '',
@@ -665,14 +654,7 @@
           this.isModelSpawned = false;
           this.cameraScanOpen = true;
 
-          // مباشرة تعيين الرابط لـ model-viewer
-          this.$nextTick(() => {
-            const viewer = document.getElementById('main-ar-viewer');
-            if (viewer) {
-              viewer.src = dish.model_glb;
-            }
-          });
-
+          // 1. تشغيل الكاميرا الحقيقية
           try {
             const stream = await navigator.mediaDevices.getUserMedia({
               video: { facingMode: { ideal: 'environment' } },
@@ -687,10 +669,95 @@
             console.warn("Camera fallback applied.");
           }
 
-          // إظهار المجسم بعد ثانية ونصف
+          // 2. تجهيز مسرح Three.js وتحميل الموديل وفك ضغطه
+          this.$nextTick(() => {
+            this.initThreeJSCanvas(dish.model_glb);
+          });
+
+          // 3. ظهور الموديل بعد 1.5 ثانية (بعد انتهاء خط المسح)
           setTimeout(() => {
             this.isModelSpawned = true;
           }, 1500);
+        },
+
+        initThreeJSCanvas(modelUrl) {
+          const container = document.getElementById('three-canvas-container');
+          if (!container) return;
+          container.innerHTML = ''; // تنظيف أي كانفاس سابق
+
+          const width = container.clientWidth || window.innerWidth;
+          const height = container.clientHeight || (window.innerHeight * 0.55);
+
+          // Scene & Transparent Background
+          threeScene = new THREE.Scene();
+
+          // Camera
+          threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+          threeCamera.position.set(0, 1.2, 3);
+
+          // Renderer with alpha for transparent overlay
+          threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          threeRenderer.setSize(width, height);
+          threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          threeRenderer.outputEncoding = THREE.sRGBEncoding;
+          container.appendChild(threeRenderer.domElement);
+
+          // Controls
+          threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
+          threeControls.enableDamping = true;
+          threeControls.dampingFactor = 0.05;
+          threeControls.autoRotate = true;
+          threeControls.autoRotateSpeed = 2.0;
+
+          // Lights for realistic food rendering
+          const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
+          threeScene.add(ambientLight);
+
+          const dirLight1 = new THREE.DirectionalLight(0xfffaed, 2.5);
+          dirLight1.position.set(5, 10, 7);
+          threeScene.add(dirLight1);
+
+          const dirLight2 = new THREE.DirectionalLight(0xd4af37, 1.2);
+          dirLight2.position.set(-5, -2, -5);
+          threeScene.add(dirLight2);
+
+          // GLTF Loader with Meshopt Decoder
+          const loader = new THREE.GLTFLoader();
+          if (typeof MeshoptDecoder !== 'undefined') {
+            loader.setMeshoptDecoder(MeshoptDecoder);
+          }
+
+          loader.load(modelUrl, (gltf) => {
+            currentLoadedMesh = gltf.scene;
+
+            // حساب أبعاد الموديل وتوسيعه في المنتصف بالحجم الواقعي
+            const box = new THREE.Box3().setFromObject(currentLoadedMesh);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 1.6 / (maxDim || 1);
+            currentLoadedMesh.scale.set(scale, scale, scale);
+
+            // سنترة الموديل في نقطة الصفر
+            currentLoadedMesh.position.x = -center.x * scale;
+            currentLoadedMesh.position.y = -center.y * scale;
+            currentLoadedMesh.position.z = -center.z * scale;
+
+            threeScene.add(currentLoadedMesh);
+          }, undefined, (error) => {
+            console.error('Error loading 3D model:', error);
+          });
+
+          // Animation Loop
+          const animate = () => {
+            threeAnimId = requestAnimationFrame(animate);
+            if (threeControls) threeControls.update();
+            if (threeRenderer && threeScene && threeCamera) {
+              threeRenderer.render(threeScene, threeCamera);
+            }
+          };
+          animate();
         },
 
         closeLiveCameraScan() {
@@ -698,8 +765,9 @@
             this.cameraStream.getTracks().forEach(track => track.stop());
             this.cameraStream = null;
           }
-          const viewer = document.getElementById('main-ar-viewer');
-          if (viewer) viewer.src = "";
+          if (threeAnimId) cancelAnimationFrame(threeAnimId);
+          const container = document.getElementById('three-canvas-container');
+          if (container) container.innerHTML = '';
           this.cameraScanOpen = false;
           this.scanDish = null;
           this.isModelSpawned = false;
