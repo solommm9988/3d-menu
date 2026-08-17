@@ -62,7 +62,7 @@
             <i class="fa-solid fa-layer-group"></i> Menu Categories
           </button>
           <button @click="currentTab = 'menu'" :class="currentTab === 'menu' ? 'bg-brand-gold text-black' : 'text-gray-400 hover:bg-white/5'" class="w-full py-3 px-4 rounded-xl flex items-center gap-2">
-            <i class="fa-solid fa-utensils"></i> Dishes & Sizes
+            <i class="fa-solid fa-utensils"></i> Dishes, Sizes & 3D
           </button>
           <button @click="currentTab = 'accounts'" :class="currentTab === 'accounts' ? 'bg-brand-gold text-black' : 'text-gray-400 hover:bg-white/5'" class="w-full py-3 px-4 rounded-xl flex items-center gap-2">
             <i class="fa-solid fa-calculator"></i> Accounts & Expenses
@@ -219,8 +219,8 @@
       <section x-show="currentTab === 'menu'" class="space-y-4">
         <div class="flex justify-between items-center">
           <div>
-            <h2 class="text-lg font-bold text-white">Dishes & Sizes</h2>
-            <p class="text-xs text-gray-400">Create, edit, and organize dishes and variants</p>
+            <h2 class="text-lg font-bold text-white">Dishes, Sizes & 3D AR Models</h2>
+            <p class="text-xs text-gray-400">Create and edit dishes with 2D photo, custom sizes, and 3D GLB scans</p>
           </div>
           <button @click="openCreateDishModal()" class="px-4 py-2 rounded-xl bg-brand-gold text-black font-bold text-xs">+ Add New Dish</button>
         </div>
@@ -231,7 +231,12 @@
               <div class="flex gap-3 items-center">
                 <img :src="dish.image" class="w-16 h-16 rounded-xl object-cover">
                 <div class="flex-1 min-w-0">
-                  <h4 class="font-bold text-white text-sm truncate" x-text="dish.title"></h4>
+                  <div class="flex items-center gap-1.5">
+                    <h4 class="font-bold text-white text-sm truncate" x-text="dish.title"></h4>
+                    <template x-if="dish.model_glb">
+                      <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-brand-gold/20 text-brand-gold border border-brand-gold/40">3D</span>
+                    </template>
+                  </div>
                   <div class="text-brand-gold text-xs font-bold" x-text="dish.price + ' ' + (settings.currency || '')"></div>
                   <span class="text-[10px] text-gray-400 bg-white/5 px-2 py-0.5 rounded-md" x-text="getCategoryName(dish.category)"></span>
                 </div>
@@ -303,7 +308,7 @@
         </div>
       </section>
 
-      <!-- TAB 7: SETTINGS (CUSTOM CURRENCY INPUT) -->
+      <!-- TAB 7: SETTINGS -->
       <section x-show="currentTab === 'settings'" class="space-y-4">
         <div>
           <h2 class="text-lg font-bold text-white">Restaurant Brand & Settings</h2>
@@ -312,7 +317,6 @@
 
         <div class="bg-brand-card p-6 rounded-3xl max-w-xl space-y-4 border border-white/5 shadow-2xl">
           
-          <!-- Logo Box -->
           <div>
             <label class="block text-xs font-bold text-brand-gold mb-1.5">Restaurant Logo</label>
             <div class="border-2 border-dashed border-white/20 hover:border-brand-gold/50 rounded-2xl p-4 text-center relative bg-black/40 transition">
@@ -350,8 +354,8 @@
 
           <div class="grid grid-cols-3 gap-3">
             <div>
-              <label class="block text-xs font-bold text-brand-gold mb-1">Currency (e.g. EGP, USD, SAR, AED)</label>
-              <input type="text" x-model="settings.currency" placeholder="Type Currency Symbol..." class="w-full p-2.5 rounded-xl bg-black/60 border border-brand-gold/40 text-xs text-white font-bold focus:outline-none">
+              <label class="block text-xs font-bold text-brand-gold mb-1">Currency (e.g. EGP, USD, SAR)</label>
+              <input type="text" x-model="settings.currency" placeholder="e.g. EGP" class="w-full p-2.5 rounded-xl bg-black/60 border border-brand-gold/40 text-xs text-white font-bold focus:outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-300 mb-1">Phone</label>
@@ -430,7 +434,7 @@
     </div>
   </div>
 
-  <!-- CREATE / EDIT DISH MODAL -->
+  <!-- CREATE / EDIT DISH MODAL (WITH 3D GLB UPLOADER) -->
   <div x-show="dishModalOpen" class="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4">
     <div @click.away="dishModalOpen = false" class="bg-brand-card w-full max-w-lg p-6 rounded-3xl space-y-4 border border-brand-gold/30 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center pb-2 border-b border-white/10">
@@ -438,10 +442,37 @@
         <button @click="dishModalOpen = false" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="border border-dashed border-white/20 p-3 rounded-xl text-center relative bg-black/40">
-        <input type="file" accept="image/*" @change="handleImageSelect($event)" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer">
-        <div x-show="!imagePreview" class="text-xs text-gray-300">Click to upload or replace dish image</div>
-        <img x-show="imagePreview" :src="imagePreview" class="h-28 w-full object-cover rounded-lg">
+      <!-- 2D Image Upload -->
+      <div>
+        <label class="block text-xs font-bold text-brand-gold mb-1">1. Dish 2D Image (Required)</label>
+        <div class="border border-dashed border-white/20 p-3 rounded-xl text-center relative bg-black/40">
+          <input type="file" accept="image/*" @change="handleImageSelect($event)" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer">
+          <div x-show="!imagePreview" class="text-xs text-gray-300">Click to upload 2D dish image</div>
+          <img x-show="imagePreview" :src="imagePreview" class="h-28 w-full object-cover rounded-lg">
+        </div>
+      </div>
+
+      <!-- 3D Model (.GLB) Upload -->
+      <div>
+        <label class="block text-xs font-bold text-brand-gold mb-1">2. 3D Model File (.glb for AR Scan)</label>
+        <div class="border border-dashed border-brand-gold/30 hover:border-brand-gold p-3 rounded-xl text-center relative bg-black/40 transition">
+          <input type="file" accept=".glb,.gltf" @change="handleGlbSelect($event)" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer">
+          
+          <template x-if="!selectedGlbFile && !dishForm.model_glb">
+            <div class="space-y-1">
+              <i class="fa-solid fa-cube text-xl text-brand-gold"></i>
+              <div class="text-xs text-gray-300">Click to upload 3D .GLB Model</div>
+              <span class="text-[10px] text-gray-500 block">Optional for 3D Camera Scan</span>
+            </div>
+          </template>
+
+          <template x-if="selectedGlbFile || dishForm.model_glb">
+            <div class="flex items-center justify-center gap-2 text-emerald-400 text-xs font-bold">
+              <i class="fa-solid fa-circle-check text-base"></i>
+              <span x-text="selectedGlbFile ? selectedGlbFile.name : '3D Model Attached (Ready)'"></span>
+            </div>
+          </template>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 gap-3">
@@ -485,9 +516,9 @@
         </template>
       </div>
 
-      <button @click="saveDish()" :disabled="uploading" class="w-full py-3.5 rounded-xl bg-brand-gold text-black font-bold text-xs shadow-lg">
+      <button @click="saveDish()" :disabled="uploading" class="w-full py-3.5 rounded-xl bg-brand-gold text-black font-bold text-xs shadow-lg flex items-center justify-center gap-2">
         <span x-show="!uploading" x-text="isEditing ? 'Save Changes' : 'Create Dish'"></span>
-        <span x-show="uploading"><i class="fa-solid fa-spinner fa-spin"></i> Saving...</span>
+        <span x-show="uploading"><i class="fa-solid fa-spinner fa-spin"></i> Uploading Assets & Saving...</span>
       </button>
     </div>
   </div>
@@ -543,9 +574,10 @@
         isEditing: false,
         editingDishId: null,
         selectedFile: null,
+        selectedGlbFile: null,
         imagePreview: null,
         uploading: false,
-        dishForm: { title: '', price: '', description: '', category: 'steaks', variants: [] },
+        dishForm: { title: '', price: '', description: '', category: 'steaks', model_glb: '', variants: [] },
         newCategory: { id: '', name: '' },
         expenseForm: { title: '', category: '', amount: '' },
 
@@ -692,9 +724,11 @@
             price: '', 
             description: '', 
             category: this.categories.length > 1 ? this.categories[1].id : 'steaks', 
+            model_glb: '',
             variants: [] 
           };
           this.selectedFile = null;
+          this.selectedGlbFile = null;
           this.imagePreview = null;
           this.dishModalOpen = true;
         },
@@ -707,10 +741,12 @@
             price: dish.price,
             description: dish.description,
             category: dish.category || (this.categories.length > 1 ? this.categories[1].id : 'steaks'),
+            model_glb: dish.model_glb || '',
             variants: dish.variants ? JSON.parse(JSON.stringify(dish.variants)) : []
           };
           this.imagePreview = dish.image;
           this.selectedFile = null;
+          this.selectedGlbFile = null;
           this.dishModalOpen = true;
         },
 
@@ -730,6 +766,13 @@
           }
         },
 
+        handleGlbSelect(event) {
+          const file = event.target.files[0];
+          if (file) {
+            this.selectedGlbFile = file;
+          }
+        },
+
         async saveDish() {
           if (!this.dishForm.title || !this.dishForm.price) {
             alert("Please enter dish title and price!");
@@ -738,10 +781,12 @@
 
           this.uploading = true;
           let imageUrl = this.imagePreview || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80";
+          let glbUrl = this.dishForm.model_glb || '';
 
+          // 1. Upload 2D Image if chosen
           if (this.selectedFile) {
             const fileExt = this.selectedFile.name.split('.').pop();
-            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const fileName = `img_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
             const { error: upErr } = await supabaseClient.storage.from('menu').upload(fileName, this.selectedFile, {
               cacheControl: '3600',
               upsert: false
@@ -750,6 +795,20 @@
             if (!upErr) {
               const { data: pubData } = supabaseClient.storage.from('menu').getPublicUrl(fileName);
               imageUrl = pubData.publicUrl;
+            }
+          }
+
+          // 2. Upload 3D GLB Model if chosen
+          if (this.selectedGlbFile) {
+            const fileName = `model3d_${Date.now()}_${Math.random().toString(36).substring(7)}.glb`;
+            const { error: glbErr } = await supabaseClient.storage.from('menu').upload(fileName, this.selectedGlbFile, {
+              cacheControl: '3600',
+              upsert: false
+            });
+            
+            if (!glbErr) {
+              const { data: pubGlb } = supabaseClient.storage.from('menu').getPublicUrl(fileName);
+              glbUrl = pubGlb.publicUrl;
             }
           }
 
@@ -763,6 +822,7 @@
             description: this.dishForm.description || '',
             category: this.dishForm.category,
             image: imageUrl,
+            model_glb: glbUrl,
             variants: cleanVariants,
             is_available: true
           };
@@ -782,7 +842,7 @@
           } else {
             this.dishModalOpen = false;
             await this.loadAllData();
-            alert("Dish saved successfully!");
+            alert("Dish saved successfully with 3D model!");
           }
         },
 
