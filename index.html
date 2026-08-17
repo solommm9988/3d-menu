@@ -671,7 +671,7 @@
 
         async startLiveCameraScan(dish) {
           this.scanDish = dish;
-          this.isModelSpawned = false; // Start in void state
+          this.isModelSpawned = false;
           this.cameraScanOpen = true;
 
           try {
@@ -685,13 +685,12 @@
               if (video) video.srcObject = stream;
             });
 
-            // Materialize the 3D model after 1.5 seconds of surface scanning
             setTimeout(() => {
               this.isModelSpawned = true;
             }, 1500);
 
           } catch (err) {
-            console.warn("Camera permission denied, proceeding with 3D animation.");
+            console.warn("Camera access denied or unavailable.");
             setTimeout(() => {
               this.isModelSpawned = true;
             }, 1000);
