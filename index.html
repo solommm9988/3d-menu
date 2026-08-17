@@ -35,8 +35,8 @@
           },
           keyframes: {
             materialize: {
-              '0%': { opacity: '0', transform: 'scale(0.3)' },
-              '100%': { opacity: '1', transform: 'scale(1)' }
+              '0%': { opacity: '0', transform: 'scale(0.3) translateY(30px)' },
+              '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
             },
             scannerBeam: {
               '0%': { top: '0%' },
@@ -45,7 +45,7 @@
             }
           },
           animation: {
-            'materialize': 'materialize 0.5s ease-out forwards',
+            'materialize': 'materialize 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'scan-line': 'scannerBeam 1.2s ease-in-out 3 forwards'
           }
         }
@@ -275,7 +275,7 @@
 
   </div>
 
-  <!-- REAL LIVE CAMERA AR MODAL (THREE.JS CANVAS) -->
+  <!-- REAL LIVE CAMERA AR MODAL -->
   <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black flex flex-col justify-between overflow-hidden">
     
     <!-- Real Device Video Stream -->
@@ -283,37 +283,37 @@
     
     <!-- Camera Overlay Scanner Frame (Disappears after 3 scans) -->
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none z-10"></div>
-    <div x-show="!isModelSpawned" class="absolute inset-x-4 top-16 bottom-28 border border-brand-gold/30 rounded-3xl pointer-events-none z-10">
+    <div x-show="!isModelSpawned" class="absolute inset-x-6 top-20 bottom-32 border border-brand-gold/40 rounded-3xl pointer-events-none z-10">
       <div class="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-brand-gold to-transparent shadow-lg shadow-brand-gold animate-scan-line"></div>
     </div>
 
     <!-- Top Overlay Bar -->
     <div class="relative z-20 w-full max-w-lg mx-auto p-4 flex justify-between items-center">
-      <div class="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-brand-gold/40">
+      <div class="flex items-center gap-2 bg-black/70 backdrop-blur-md px-4 py-2 rounded-2xl border border-brand-gold/40">
         <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
         <span class="text-xs font-bold text-white uppercase tracking-wider">Live Table Camera</span>
       </div>
 
-      <button @click="closeLiveCameraScan()" class="w-10 h-10 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white text-base active:scale-90 transition">
+      <button @click="closeLiveCameraScan()" class="w-10 h-10 rounded-full bg-black/70 border border-white/20 flex items-center justify-center text-white text-base active:scale-90 transition">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
 
-    <!-- 3D Model Canvas Container -->
-    <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center p-2">
+    <!-- Center Scanner Animation & 3D Container -->
+    <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center p-0 overflow-hidden">
       
-      <!-- Surface Detection Scanner Animation -->
-      <div x-show="!isModelSpawned" class="flex flex-col items-center justify-center gap-3">
-        <div class="w-16 h-16 rounded-full border-2 border-brand-gold/80 border-dashed animate-spin flex items-center justify-center">
-          <i class="fa-solid fa-crosshairs text-brand-gold text-xl"></i>
+      <!-- Surface Detection Scanner in Absolute Center -->
+      <div x-show="!isModelSpawned" class="absolute inset-0 flex flex-col items-center justify-center gap-3 z-30 pointer-events-none">
+        <div class="w-20 h-20 rounded-full border-2 border-brand-gold border-dashed animate-spin flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <i class="fa-solid fa-crosshairs text-brand-gold text-2xl"></i>
         </div>
-        <span class="text-[11px] font-bold text-brand-goldLight tracking-widest uppercase bg-black/60 px-4 py-1.5 rounded-full backdrop-blur-md border border-brand-gold/30 animate-pulse">
+        <span class="text-xs font-bold text-brand-goldLight tracking-widest uppercase bg-black/80 px-4 py-1.5 rounded-full backdrop-blur-md border border-brand-gold/50 shadow-xl animate-pulse">
           Scanning Table Surface...
         </span>
       </div>
 
-      <!-- WebGL 3D Canvas -->
-      <div id="three-canvas-container" class="w-full h-full min-h-[50vh] flex items-center justify-center" :class="isModelSpawned ? 'animate-materialize opacity-100' : 'opacity-0'">
+      <!-- WebGL 3D Canvas (Full Size, Centered, No Clipping) -->
+      <div id="three-canvas-container" class="w-full h-full flex items-center justify-center" :class="isModelSpawned ? 'animate-materialize opacity-100' : 'opacity-0'">
       </div>
 
     </div>
@@ -674,7 +674,7 @@
             this.initThreeJSCanvas(dish.model_glb);
           });
 
-          // 3. ظهور الموديل بعد 1.5 ثانية (بعد انتهاء خط المسح)
+          // 3. إظهار الموديل بعد 1.5 ثانية (بعد انتهاء خط المسح)
           setTimeout(() => {
             this.isModelSpawned = true;
           }, 1500);
@@ -683,17 +683,17 @@
         initThreeJSCanvas(modelUrl) {
           const container = document.getElementById('three-canvas-container');
           if (!container) return;
-          container.innerHTML = ''; // تنظيف أي كانفاس سابق
+          container.innerHTML = '';
 
           const width = container.clientWidth || window.innerWidth;
-          const height = container.clientHeight || (window.innerHeight * 0.55);
+          const height = container.clientHeight || (window.innerHeight * 0.65);
 
-          // Scene & Transparent Background
+          // Scene
           threeScene = new THREE.Scene();
 
-          // Camera
-          threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-          threeCamera.position.set(0, 1.2, 3);
+          // Camera setup to prevent clipping on mobile screens
+          threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.05, 500);
+          threeCamera.position.set(0, 1.8, 3.8);
 
           // Renderer with alpha for transparent overlay
           threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -702,22 +702,24 @@
           threeRenderer.outputEncoding = THREE.sRGBEncoding;
           container.appendChild(threeRenderer.domElement);
 
-          // Controls
+          // Orbit Controls with limits
           threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
           threeControls.enableDamping = true;
           threeControls.dampingFactor = 0.05;
           threeControls.autoRotate = true;
-          threeControls.autoRotateSpeed = 2.0;
+          threeControls.autoRotateSpeed = 2.5;
+          threeControls.minDistance = 1.0;
+          threeControls.maxDistance = 8.0;
 
-          // Lights for realistic food rendering
-          const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
+          // Lights
+          const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
           threeScene.add(ambientLight);
 
-          const dirLight1 = new THREE.DirectionalLight(0xfffaed, 2.5);
+          const dirLight1 = new THREE.DirectionalLight(0xfffaed, 2.8);
           dirLight1.position.set(5, 10, 7);
           threeScene.add(dirLight1);
 
-          const dirLight2 = new THREE.DirectionalLight(0xd4af37, 1.2);
+          const dirLight2 = new THREE.DirectionalLight(0xd4af37, 1.5);
           dirLight2.position.set(-5, -2, -5);
           threeScene.add(dirLight2);
 
@@ -730,13 +732,13 @@
           loader.load(modelUrl, (gltf) => {
             currentLoadedMesh = gltf.scene;
 
-            // حساب أبعاد الموديل وتوسيعه في المنتصف بالحجم الواقعي
+            // حساب أبعاد الموديل بدقة وتوسيعه في المنتصف بالحجم الواقعي بدون أي قطع
             const box = new THREE.Box3().setFromObject(currentLoadedMesh);
             const center = box.getCenter(new THREE.Vector3());
             const size = box.getSize(new THREE.Vector3());
 
             const maxDim = Math.max(size.x, size.y, size.z);
-            const scale = 1.6 / (maxDim || 1);
+            const scale = 1.8 / (maxDim || 1);
             currentLoadedMesh.scale.set(scale, scale, scale);
 
             // سنترة الموديل في نقطة الصفر
