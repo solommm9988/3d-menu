@@ -312,7 +312,7 @@
         </span>
       </div>
 
-      <!-- WebGL 3D Canvas (Full Size, Centered, No Clipping) -->
+      <!-- WebGL 3D Canvas (Full Size, Balanced Lighting, Natural Texture) -->
       <div id="three-canvas-container" class="w-full h-full flex items-center justify-center" :class="isModelSpawned ? 'animate-materialize opacity-100' : 'opacity-0'">
       </div>
 
@@ -669,7 +669,7 @@
             console.warn("Camera fallback applied.");
           }
 
-          // 2. تجهيز مسرح Three.js وتحميل الموديل وفك ضغطه
+          // 2. تجهيز مسرح Three.js وتحميل الموديل بإضاءة واقعية
           this.$nextTick(() => {
             this.initThreeJSCanvas(dish.model_glb);
           });
@@ -691,37 +691,43 @@
           // Scene
           threeScene = new THREE.Scene();
 
-          // Camera setup to prevent clipping on mobile screens
+          // Camera setup
           threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.05, 500);
           threeCamera.position.set(0, 1.8, 3.8);
 
-          // Renderer with alpha for transparent overlay
+          // Renderer with Cinematic Tone Mapping to reveal rich realistic texture
           threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
           threeRenderer.setSize(width, height);
           threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
           threeRenderer.outputEncoding = THREE.sRGBEncoding;
+          threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+          threeRenderer.toneMappingExposure = 1.0;
           container.appendChild(threeRenderer.domElement);
 
-          // Orbit Controls with limits
+          // Orbit Controls
           threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
           threeControls.enableDamping = true;
           threeControls.dampingFactor = 0.05;
           threeControls.autoRotate = true;
-          threeControls.autoRotateSpeed = 2.5;
+          threeControls.autoRotateSpeed = 2.0;
           threeControls.minDistance = 1.0;
           threeControls.maxDistance = 8.0;
 
-          // Lights
-          const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
+          // Balanced Natural Lights (Preventing washed-out/overexposed textures)
+          const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
           threeScene.add(ambientLight);
 
-          const dirLight1 = new THREE.DirectionalLight(0xfffaed, 2.8);
-          dirLight1.position.set(5, 10, 7);
-          threeScene.add(dirLight1);
+          const mainKeyLight = new THREE.DirectionalLight(0xfffaed, 1.2);
+          mainKeyLight.position.set(5, 8, 5);
+          threeScene.add(mainKeyLight);
 
-          const dirLight2 = new THREE.DirectionalLight(0xd4af37, 1.5);
-          dirLight2.position.set(-5, -2, -5);
-          threeScene.add(dirLight2);
+          const fillLight = new THREE.DirectionalLight(0xd4af37, 0.6);
+          fillLight.position.set(-5, 4, -4);
+          threeScene.add(fillLight);
+
+          const softBottomLight = new THREE.DirectionalLight(0xffffff, 0.4);
+          softBottomLight.position.set(0, -5, 2);
+          threeScene.add(softBottomLight);
 
           // GLTF Loader with Meshopt Decoder
           const loader = new THREE.GLTFLoader();
@@ -732,7 +738,7 @@
           loader.load(modelUrl, (gltf) => {
             currentLoadedMesh = gltf.scene;
 
-            // حساب أبعاد الموديل بدقة وتوسيعه في المنتصف بالحجم الواقعي بدون أي قطع
+            // حساب أبعاد الموديل بدقة وتوسيعه في المنتصف بالحجم الواقعي
             const box = new THREE.Box3().setFromObject(currentLoadedMesh);
             const center = box.getCenter(new THREE.Vector3());
             const size = box.getSize(new THREE.Vector3());
