@@ -29,23 +29,23 @@
           },
           keyframes: {
             popIn: {
-              '0%': { opacity: '0', transform: 'scale(0.4) translateY(30px)' },
-              '70%': { opacity: '1', transform: 'scale(1.04) translateY(-6px)' },
+              '0%': { opacity: '0', transform: 'scale(0.55) translateY(20px)' },
+              '70%': { opacity: '1', transform: 'scale(1.02) translateY(-4px)' },
               '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
             },
             floatSlow: {
               '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-8px)' }
+              '50%': { transform: 'translateY(-10px)' }
             },
-            featureSlide: {
-              '0%': { opacity: '0', transform: 'translateX(-30px)' },
+            waterfallSlide: {
+              '0%': { opacity: '0', transform: 'translateX(-35px)' },
               '100%': { opacity: '1', transform: 'translateX(0)' }
             }
           },
           animation: {
             'pop-in': 'popIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'float-slow': 'floatSlow 4s ease-in-out infinite',
-            'feature-slide': 'featureSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            'waterfall-slide': 'waterfallSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
           }
         }
       }
@@ -215,16 +215,16 @@
       <template x-for="dish in filteredDishes" :key="dish.id">
         <div class="glass-luxury rounded-2xl p-3 flex gap-3.5 items-center border border-white/15 group">
           
-          <!-- Dish 2D Image -->
-          <div class="relative w-28 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-black/40">
-            <img :src="dish.image" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <!-- Dish Image (Transparent Container for Backgroundless Images) -->
+          <div class="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-transparent flex items-center justify-center">
+            <img :src="dish.image" class="w-full h-full object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] group-hover:scale-105 transition duration-500">
             <template x-if="dish.badge">
-              <span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full text-[9px] font-black gold-btn" x-text="dish.badge"></span>
+              <span class="absolute top-1 left-1 px-2 py-0.5 rounded-full text-[9px] font-black gold-btn shadow" x-text="dish.badge"></span>
             </template>
           </div>
 
           <!-- Dish Info, Scan Button & Add Button -->
-          <div class="flex-1 min-w-0 flex flex-col justify-between h-28 py-0.5">
+          <div class="flex-1 min-w-0 flex flex-col justify-between h-24 py-0.5">
             <div>
               <h3 class="font-bold text-white text-sm truncate" x-text="dish.title"></h3>
               <p class="text-gray-300 text-[11px] line-clamp-2 leading-tight mt-1" x-text="dish.description"></p>
@@ -274,87 +274,80 @@
 
   </div>
 
-  <!-- CLEAN LIVE CAMERA PRODUCT SCANNER (CENTER IMAGE + SIDE WATERFALL HIGHLIGHTS) -->
-  <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black flex flex-col justify-between overflow-hidden">
+  <!-- CLEAN LUXURY AR VISION: INDEPENDENT PRODUCT + LEFT HUD WATERFALL -->
+  <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-transparent flex flex-col justify-between overflow-hidden">
     
     <!-- Real Device Video Stream -->
-    <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0"></video>
+    <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0" :class="cameraStream ? 'opacity-100' : 'opacity-0'"></video>
     
-    <!-- Cinematic Dark Backdrop -->
-    <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90 pointer-events-none z-10"></div>
+    <!-- Soft Vignette Gradient -->
+    <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent pointer-events-none z-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70 pointer-events-none z-10"></div>
 
     <!-- Top Overlay Bar -->
     <div class="relative z-20 w-full max-w-lg mx-auto p-4 flex justify-between items-center">
-      <div class="flex items-center gap-2 bg-black/75 backdrop-blur-md px-4 py-2 rounded-2xl border border-brand-gold/40">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-        <span class="text-xs font-bold text-white uppercase tracking-wider">Live Table Vision</span>
+      <div class="flex items-center gap-2 bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span class="text-[11px] font-bold text-white uppercase tracking-wider">Live Table Vision</span>
       </div>
 
-      <button @click="closeLiveCameraScan()" class="w-10 h-10 rounded-full bg-black/75 border border-white/20 flex items-center justify-center text-white text-base active:scale-90 transition">
+      <button @click="closeLiveCameraScan()" class="w-9 h-9 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-white text-sm active:scale-90 transition">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
 
-    <!-- Center Stage: Floating Dish + Side Waterfall Highlights -->
-    <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col justify-center px-4 overflow-y-auto no-scrollbar">
+    <!-- Center Stage: Independent Center Floating Product + Left HUD Highlights -->
+    <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center px-4 overflow-hidden">
       
-      <!-- Surface Detection Scanner in Exact Center -->
+      <!-- Surface Detection Scanner -->
       <div x-show="!isModelSpawned" class="flex flex-col items-center justify-center gap-3 my-auto">
-        <div class="w-16 h-16 rounded-full border-2 border-brand-gold border-dashed animate-spin flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <i class="fa-solid fa-crosshairs text-brand-gold text-2xl"></i>
+        <div class="w-14 h-14 rounded-full border-2 border-brand-gold border-dashed animate-spin flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <i class="fa-solid fa-crosshairs text-brand-gold text-xl"></i>
         </div>
-        <span class="text-xs font-bold text-brand-goldLight tracking-widest uppercase bg-black/80 px-4 py-1.5 rounded-full backdrop-blur-md border border-brand-gold/50 shadow-xl animate-pulse">
+        <span class="text-[11px] font-bold text-brand-goldLight tracking-wider uppercase bg-black/80 px-4 py-1.5 rounded-full backdrop-blur-md border border-brand-gold/40 shadow-lg animate-pulse">
           Scanning Table Surface...
         </span>
       </div>
 
-      <!-- Materialized Center Dish Showcase & Cascading Side Features -->
-      <div x-show="isModelSpawned && scanDish" class="w-full flex flex-col items-center space-y-4 my-auto">
+      <!-- Live Spawned Content -->
+      <div x-show="isModelSpawned && scanDish" class="w-full h-full relative flex items-center justify-center">
         
-        <!-- Center Floating Dish Image with Golden Aura -->
-        <div class="relative flex items-center justify-center animate-pop-in">
-          <div class="absolute w-60 h-60 rounded-full bg-brand-gold/25 blur-3xl pointer-events-none"></div>
-          <div class="relative w-56 h-56 md:w-64 md:h-64 rounded-3xl overflow-hidden border-2 border-brand-gold/80 shadow-2xl shadow-brand-gold/40 animate-float-slow bg-black/50 p-1">
-            <img :src="scanDish ? scanDish.image : ''" class="w-full h-full object-cover rounded-2xl">
-            <template x-if="scanDish && scanDish.badge">
-              <span class="absolute top-2.5 left-2.5 px-3 py-0.5 rounded-full text-[10px] font-black gold-btn shadow-md" x-text="scanDish.badge"></span>
-            </template>
-          </div>
-        </div>
-
-        <!-- Left-Aligned Sequential Features List (Waterfall Animation) -->
-        <div class="w-full max-w-sm space-y-2 pt-1">
+        <!-- Left-Side HUD Feature List -->
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 z-30 max-w-[55%] sm:max-w-[50%] space-y-2 pointer-events-none">
           
-          <!-- Calories & Prep Badges -->
-          <div class="flex items-center gap-2 animate-feature-slide" style="animation-delay: 100ms;">
+          <!-- Calories Badge Only -->
+          <div class="flex flex-col gap-1.5 animate-waterfall-slide" style="animation-delay: 200ms;">
             <template x-if="scanDish && scanDish.calories">
-              <span class="px-3 py-1 rounded-xl bg-black/80 border border-brand-gold/40 text-[10px] font-bold text-brand-goldLight flex items-center gap-1.5 backdrop-blur-md shadow-md">
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/85 backdrop-blur-md border border-white/15 text-[10px] font-bold text-gray-200 shadow-xl w-max">
                 <i class="fa-solid fa-fire text-amber-400"></i>
                 <span x-text="scanDish.calories + ' KCal'"></span>
-              </span>
-            </template>
-            <template x-if="scanDish && scanDish.prep_time">
-              <span class="px-3 py-1 rounded-xl bg-black/80 border border-brand-gold/40 text-[10px] font-bold text-brand-goldLight flex items-center gap-1.5 backdrop-blur-md shadow-md">
-                <i class="fa-solid fa-clock text-blue-400"></i>
-                <span x-text="scanDish.prep_time + ' Mins Prep'"></span>
-              </span>
+              </div>
             </template>
           </div>
 
-          <!-- Sequential Dish Features (One by One) -->
+          <!-- Sequential Waterfall Features -->
           <template x-if="scanDish && scanDish.features && scanDish.features.length > 0">
-            <div class="space-y-1.5">
+            <div class="space-y-1.5 pt-1">
               <template x-for="(feat, idx) in scanDish.features" :key="idx">
-                <div class="glass-luxury py-2 px-3 rounded-2xl flex items-center gap-2.5 border border-brand-gold/30 shadow-lg animate-feature-slide" :style="'animation-delay: ' + (250 + (idx * 150)) + 'ms'">
-                  <div class="w-5 h-5 rounded-full gold-btn flex items-center justify-center text-[10px] flex-shrink-0">
-                    <i class="fa-solid fa-check text-black"></i>
+                <div class="px-2.5 py-1.5 rounded-xl bg-black/85 backdrop-blur-md border-l-2 border-brand-gold border-y border-r border-white/15 flex items-center gap-2 shadow-2xl animate-waterfall-slide"
+                     :style="'animation-delay: ' + (350 + (idx * 150)) + 'ms'">
+                  <div class="w-4 h-4 rounded-full bg-white/15 flex items-center justify-center text-[8px] flex-shrink-0 text-brand-gold">
+                    <i class="fa-solid fa-check"></i>
                   </div>
-                  <span class="text-xs font-semibold text-gray-100 leading-tight" x-text="feat"></span>
+                  <span class="text-[11px] font-medium text-gray-100 leading-tight drop-shadow" x-text="feat"></span>
                 </div>
               </template>
             </div>
           </template>
 
+        </div>
+
+        <!-- Pure Transparent Floating Dish -->
+        <div class="relative flex items-center justify-center animate-pop-in z-20 pointer-events-none">
+          <div class="relative animate-float-slow flex items-center justify-center">
+            <img :src="scanDish ? scanDish.image : ''" 
+                 class="w-60 h-60 md:w-72 md:h-72 object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] select-none">
+          </div>
         </div>
 
       </div>
@@ -700,12 +693,12 @@
               if (video) video.srcObject = stream;
             });
           } catch (err) {
-            console.warn("Camera fallback applied.");
+            console.warn("Camera fallback applied (showing page background).");
           }
 
           setTimeout(() => {
             this.isModelSpawned = true;
-          }, 1200);
+          }, 900);
         },
 
         closeLiveCameraScan() {
