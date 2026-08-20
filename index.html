@@ -9,12 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   
-  <!-- Three.js + Loaders + Meshopt Decoder for guaranteed 3D Rendering -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/meshoptimizer@0.20.0/meshopt_decoder.js"></script>
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 
@@ -34,19 +28,24 @@
             brand: ['Cinzel', 'serif']
           },
           keyframes: {
-            materialize: {
-              '0%': { opacity: '0', transform: 'scale(0.3) translateY(30px)' },
+            popIn: {
+              '0%': { opacity: '0', transform: 'scale(0.4) translateY(30px)' },
+              '70%': { opacity: '1', transform: 'scale(1.04) translateY(-6px)' },
               '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
             },
-            scannerBeam: {
-              '0%': { top: '0%' },
-              '50%': { top: '90%' },
-              '100%': { top: '0%' }
+            floatSlow: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' }
+            },
+            featureSlide: {
+              '0%': { opacity: '0', transform: 'translateX(-30px)' },
+              '100%': { opacity: '1', transform: 'translateX(0)' }
             }
           },
           animation: {
-            'materialize': 'materialize 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            'scan-line': 'scannerBeam 1.2s ease-in-out 3 forwards'
+            'pop-in': 'popIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'float-slow': 'floatSlow 4s ease-in-out infinite',
+            'feature-slide': 'featureSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards'
           }
         }
       }
@@ -275,36 +274,33 @@
 
   </div>
 
-  <!-- REAL LIVE CAMERA AR MODAL -->
+  <!-- CLEAN LIVE CAMERA PRODUCT SCANNER (CENTER IMAGE + SIDE WATERFALL HIGHLIGHTS) -->
   <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-black flex flex-col justify-between overflow-hidden">
     
     <!-- Real Device Video Stream -->
     <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0"></video>
     
-    <!-- Camera Overlay Scanner Frame (Disappears after 3 scans) -->
-    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none z-10"></div>
-    <div x-show="!isModelSpawned" class="absolute inset-x-6 top-20 bottom-32 border border-brand-gold/40 rounded-3xl pointer-events-none z-10">
-      <div class="absolute inset-x-2 h-0.5 bg-gradient-to-r from-transparent via-brand-gold to-transparent shadow-lg shadow-brand-gold animate-scan-line"></div>
-    </div>
+    <!-- Cinematic Dark Backdrop -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90 pointer-events-none z-10"></div>
 
     <!-- Top Overlay Bar -->
     <div class="relative z-20 w-full max-w-lg mx-auto p-4 flex justify-between items-center">
-      <div class="flex items-center gap-2 bg-black/70 backdrop-blur-md px-4 py-2 rounded-2xl border border-brand-gold/40">
-        <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-        <span class="text-xs font-bold text-white uppercase tracking-wider">Live Table Camera</span>
+      <div class="flex items-center gap-2 bg-black/75 backdrop-blur-md px-4 py-2 rounded-2xl border border-brand-gold/40">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+        <span class="text-xs font-bold text-white uppercase tracking-wider">Live Table Vision</span>
       </div>
 
-      <button @click="closeLiveCameraScan()" class="w-10 h-10 rounded-full bg-black/70 border border-white/20 flex items-center justify-center text-white text-base active:scale-90 transition">
+      <button @click="closeLiveCameraScan()" class="w-10 h-10 rounded-full bg-black/75 border border-white/20 flex items-center justify-center text-white text-base active:scale-90 transition">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
 
-    <!-- Center Scanner Animation & 3D Container -->
-    <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center p-0 overflow-hidden">
+    <!-- Center Stage: Floating Dish + Side Waterfall Highlights -->
+    <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex flex-col justify-center px-4 overflow-y-auto no-scrollbar">
       
-      <!-- Surface Detection Scanner in Absolute Center -->
-      <div x-show="!isModelSpawned" class="absolute inset-0 flex flex-col items-center justify-center gap-3 z-30 pointer-events-none">
-        <div class="w-20 h-20 rounded-full border-2 border-brand-gold border-dashed animate-spin flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <!-- Surface Detection Scanner in Exact Center -->
+      <div x-show="!isModelSpawned" class="flex flex-col items-center justify-center gap-3 my-auto">
+        <div class="w-16 h-16 rounded-full border-2 border-brand-gold border-dashed animate-spin flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <i class="fa-solid fa-crosshairs text-brand-gold text-2xl"></i>
         </div>
         <span class="text-xs font-bold text-brand-goldLight tracking-widest uppercase bg-black/80 px-4 py-1.5 rounded-full backdrop-blur-md border border-brand-gold/50 shadow-xl animate-pulse">
@@ -312,8 +308,55 @@
         </span>
       </div>
 
-      <!-- WebGL 3D Canvas (Full Size, Balanced Lighting, Natural Texture) -->
-      <div id="three-canvas-container" class="w-full h-full flex items-center justify-center" :class="isModelSpawned ? 'animate-materialize opacity-100' : 'opacity-0'">
+      <!-- Materialized Center Dish Showcase & Cascading Side Features -->
+      <div x-show="isModelSpawned && scanDish" class="w-full flex flex-col items-center space-y-4 my-auto">
+        
+        <!-- Center Floating Dish Image with Golden Aura -->
+        <div class="relative flex items-center justify-center animate-pop-in">
+          <div class="absolute w-60 h-60 rounded-full bg-brand-gold/25 blur-3xl pointer-events-none"></div>
+          <div class="relative w-56 h-56 md:w-64 md:h-64 rounded-3xl overflow-hidden border-2 border-brand-gold/80 shadow-2xl shadow-brand-gold/40 animate-float-slow bg-black/50 p-1">
+            <img :src="scanDish ? scanDish.image : ''" class="w-full h-full object-cover rounded-2xl">
+            <template x-if="scanDish && scanDish.badge">
+              <span class="absolute top-2.5 left-2.5 px-3 py-0.5 rounded-full text-[10px] font-black gold-btn shadow-md" x-text="scanDish.badge"></span>
+            </template>
+          </div>
+        </div>
+
+        <!-- Left-Aligned Sequential Features List (Waterfall Animation) -->
+        <div class="w-full max-w-sm space-y-2 pt-1">
+          
+          <!-- Calories & Prep Badges -->
+          <div class="flex items-center gap-2 animate-feature-slide" style="animation-delay: 100ms;">
+            <template x-if="scanDish && scanDish.calories">
+              <span class="px-3 py-1 rounded-xl bg-black/80 border border-brand-gold/40 text-[10px] font-bold text-brand-goldLight flex items-center gap-1.5 backdrop-blur-md shadow-md">
+                <i class="fa-solid fa-fire text-amber-400"></i>
+                <span x-text="scanDish.calories + ' KCal'"></span>
+              </span>
+            </template>
+            <template x-if="scanDish && scanDish.prep_time">
+              <span class="px-3 py-1 rounded-xl bg-black/80 border border-brand-gold/40 text-[10px] font-bold text-brand-goldLight flex items-center gap-1.5 backdrop-blur-md shadow-md">
+                <i class="fa-solid fa-clock text-blue-400"></i>
+                <span x-text="scanDish.prep_time + ' Mins Prep'"></span>
+              </span>
+            </template>
+          </div>
+
+          <!-- Sequential Dish Features (One by One) -->
+          <template x-if="scanDish && scanDish.features && scanDish.features.length > 0">
+            <div class="space-y-1.5">
+              <template x-for="(feat, idx) in scanDish.features" :key="idx">
+                <div class="glass-luxury py-2 px-3 rounded-2xl flex items-center gap-2.5 border border-brand-gold/30 shadow-lg animate-feature-slide" :style="'animation-delay: ' + (250 + (idx * 150)) + 'ms'">
+                  <div class="w-5 h-5 rounded-full gold-btn flex items-center justify-center text-[10px] flex-shrink-0">
+                    <i class="fa-solid fa-check text-black"></i>
+                  </div>
+                  <span class="text-xs font-semibold text-gray-100 leading-tight" x-text="feat"></span>
+                </div>
+              </template>
+            </div>
+          </template>
+
+        </div>
+
       </div>
 
     </div>
@@ -324,7 +367,7 @@
         <div>
           <h4 class="text-xs font-black text-white" x-text="scanDish ? scanDish.title : ''"></h4>
           <span class="text-xs font-bold text-brand-gold" x-text="scanDish ? (scanDish.price + ' ' + (settings.currency || '')) : ''"></span>
-          <p class="text-[9px] text-gray-300">Drag to rotate 360° • Pinch to zoom</p>
+          <p class="text-[9px] text-gray-300">Freshly prepared fine meal</p>
         </div>
         <button @click="openCustomModal(scanDish); closeLiveCameraScan()" class="px-5 py-2.5 rounded-2xl gold-btn text-xs font-black flex items-center gap-1.5 active:scale-95 transition">
           <i class="fa-solid fa-cart-plus"></i>
@@ -536,9 +579,6 @@
     const SUPABASE_KEY = "sb_publishable_ldXj3mZJTKdgqnVcmQ6CVA_KJcIgFCd";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Three.js Global Scene References
-    let threeScene, threeCamera, threeRenderer, threeControls, currentLoadedMesh = null, threeAnimId = null;
-
     function clientApp() {
       return {
         tableNumber: '',
@@ -645,16 +685,10 @@
         },
 
         async startLiveCameraScan(dish) {
-          if (!dish.model_glb) {
-            alert("No 3D Model uploaded for this dish yet! Upload from Dashboard.");
-            return;
-          }
-
           this.scanDish = dish;
           this.isModelSpawned = false;
           this.cameraScanOpen = true;
 
-          // 1. تشغيل الكاميرا الحقيقية
           try {
             const stream = await navigator.mediaDevices.getUserMedia({
               video: { facingMode: { ideal: 'environment' } },
@@ -669,103 +703,9 @@
             console.warn("Camera fallback applied.");
           }
 
-          // 2. تجهيز مسرح Three.js وتحميل الموديل بإضاءة واقعية
-          this.$nextTick(() => {
-            this.initThreeJSCanvas(dish.model_glb);
-          });
-
-          // 3. إظهار الموديل بعد 1.5 ثانية (بعد انتهاء خط المسح)
           setTimeout(() => {
             this.isModelSpawned = true;
-          }, 1500);
-        },
-
-        initThreeJSCanvas(modelUrl) {
-          const container = document.getElementById('three-canvas-container');
-          if (!container) return;
-          container.innerHTML = '';
-
-          const width = container.clientWidth || window.innerWidth;
-          const height = container.clientHeight || (window.innerHeight * 0.65);
-
-          // Scene
-          threeScene = new THREE.Scene();
-
-          // Camera setup
-          threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.05, 500);
-          threeCamera.position.set(0, 1.8, 3.8);
-
-          // Renderer with Cinematic Tone Mapping to reveal rich realistic texture
-          threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-          threeRenderer.setSize(width, height);
-          threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-          threeRenderer.outputEncoding = THREE.sRGBEncoding;
-          threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-          threeRenderer.toneMappingExposure = 1.0;
-          container.appendChild(threeRenderer.domElement);
-
-          // Orbit Controls
-          threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
-          threeControls.enableDamping = true;
-          threeControls.dampingFactor = 0.05;
-          threeControls.autoRotate = true;
-          threeControls.autoRotateSpeed = 2.0;
-          threeControls.minDistance = 1.0;
-          threeControls.maxDistance = 8.0;
-
-          // Balanced Natural Lights (Preventing washed-out/overexposed textures)
-          const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
-          threeScene.add(ambientLight);
-
-          const mainKeyLight = new THREE.DirectionalLight(0xfffaed, 1.2);
-          mainKeyLight.position.set(5, 8, 5);
-          threeScene.add(mainKeyLight);
-
-          const fillLight = new THREE.DirectionalLight(0xd4af37, 0.6);
-          fillLight.position.set(-5, 4, -4);
-          threeScene.add(fillLight);
-
-          const softBottomLight = new THREE.DirectionalLight(0xffffff, 0.4);
-          softBottomLight.position.set(0, -5, 2);
-          threeScene.add(softBottomLight);
-
-          // GLTF Loader with Meshopt Decoder
-          const loader = new THREE.GLTFLoader();
-          if (typeof MeshoptDecoder !== 'undefined') {
-            loader.setMeshoptDecoder(MeshoptDecoder);
-          }
-
-          loader.load(modelUrl, (gltf) => {
-            currentLoadedMesh = gltf.scene;
-
-            // حساب أبعاد الموديل بدقة وتوسيعه في المنتصف بالحجم الواقعي
-            const box = new THREE.Box3().setFromObject(currentLoadedMesh);
-            const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
-
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scale = 1.8 / (maxDim || 1);
-            currentLoadedMesh.scale.set(scale, scale, scale);
-
-            // سنترة الموديل في نقطة الصفر
-            currentLoadedMesh.position.x = -center.x * scale;
-            currentLoadedMesh.position.y = -center.y * scale;
-            currentLoadedMesh.position.z = -center.z * scale;
-
-            threeScene.add(currentLoadedMesh);
-          }, undefined, (error) => {
-            console.error('Error loading 3D model:', error);
-          });
-
-          // Animation Loop
-          const animate = () => {
-            threeAnimId = requestAnimationFrame(animate);
-            if (threeControls) threeControls.update();
-            if (threeRenderer && threeScene && threeCamera) {
-              threeRenderer.render(threeScene, threeCamera);
-            }
-          };
-          animate();
+          }, 1200);
         },
 
         closeLiveCameraScan() {
@@ -773,9 +713,6 @@
             this.cameraStream.getTracks().forEach(track => track.stop());
             this.cameraStream = null;
           }
-          if (threeAnimId) cancelAnimationFrame(threeAnimId);
-          const container = document.getElementById('three-canvas-container');
-          if (container) container.innerHTML = '';
           this.cameraScanOpen = false;
           this.scanDish = null;
           this.isModelSpawned = false;
