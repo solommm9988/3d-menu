@@ -35,17 +35,17 @@
             },
             floatSlow: {
               '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-10px)' }
+              '50%': { transform: 'translateY(-8px)' }
             },
             waterfallSlide: {
-              '0%': { opacity: '0', transform: 'translateX(-35px)' },
+              '0%': { opacity: '0', transform: 'translateX(-30px)' },
               '100%': { opacity: '1', transform: 'translateX(0)' }
             }
           },
           animation: {
             'pop-in': 'popIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             'float-slow': 'floatSlow 4s ease-in-out infinite',
-            'waterfall-slide': 'waterfallSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            'waterfall-slide': 'waterfallSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards'
           }
         }
       }
@@ -215,7 +215,7 @@
       <template x-for="dish in filteredDishes" :key="dish.id">
         <div class="glass-luxury rounded-2xl p-3 flex gap-3.5 items-center border border-white/15 group">
           
-          <!-- Dish Image (Transparent Container for Backgroundless Images) -->
+          <!-- Dish Image -->
           <div class="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-transparent flex items-center justify-center">
             <img :src="dish.image" class="w-full h-full object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] group-hover:scale-105 transition duration-500">
             <template x-if="dish.badge">
@@ -274,67 +274,70 @@
 
   </div>
 
-  <!-- CLEAN LUXURY AR VISION: INDEPENDENT PRODUCT + LEFT HUD WATERFALL -->
-  <div x-show="cameraScanOpen" x-transition.opacity class="fixed inset-0 z-50 bg-transparent flex flex-col justify-between overflow-hidden">
+  <!-- LUXURY 2D CIRCULAR ROTATION SCANNER -->
+  <div x-show="cameraScanOpen" x-transition.opacity 
+       class="fixed inset-0 z-50 bg-[#050608] flex flex-col justify-between overflow-hidden select-none">
     
     <!-- Real Device Video Stream -->
-    <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0" :class="cameraStream ? 'opacity-100' : 'opacity-0'"></video>
+    <video id="ar-camera-feed" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover z-0"></video>
     
-    <!-- Soft Vignette Gradient -->
-    <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent pointer-events-none z-10"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70 pointer-events-none z-10"></div>
+    <!-- Dark Vignette for Depth -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/70 pointer-events-none z-10"></div>
 
-    <!-- Top Overlay Bar -->
-    <div class="relative z-20 w-full max-w-lg mx-auto p-4 flex justify-between items-center">
+    <!-- Top Navigation Bar -->
+    <div class="relative z-30 w-full max-w-lg mx-auto p-4 flex justify-between items-center">
       <div class="flex items-center gap-2 bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         <span class="text-[11px] font-bold text-white uppercase tracking-wider">Live Table Vision</span>
       </div>
 
-      <button @click="closeLiveCameraScan()" class="w-9 h-9 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-white text-sm active:scale-90 transition">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <div class="flex items-center gap-2">
+        <button @click="rotationDeg = 0" class="px-2.5 py-1.5 rounded-full bg-black/80 border border-white/20 text-brand-gold text-[10px] font-bold active:scale-90 transition flex items-center gap-1">
+          <i class="fa-solid fa-arrows-rotate"></i> Reset
+        </button>
+        <button @click="closeLiveCameraScan()" class="w-9 h-9 rounded-full bg-black/80 border border-white/20 flex items-center justify-center text-white text-sm active:scale-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
     </div>
 
-    <!-- Center Stage: Independent Center Floating Product + Left HUD Highlights -->
+    <!-- Center Stage Area -->
     <div class="relative z-20 w-full max-w-lg mx-auto flex-1 flex items-center justify-center px-4 overflow-hidden">
       
-      <!-- Surface Detection Scanner -->
+      <!-- Table Scanning Detector -->
       <div x-show="!isModelSpawned" class="flex flex-col items-center justify-center gap-3 my-auto">
         <div class="w-14 h-14 rounded-full border-2 border-brand-gold border-dashed animate-spin flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <i class="fa-solid fa-crosshairs text-brand-gold text-xl"></i>
         </div>
         <span class="text-[11px] font-bold text-brand-goldLight tracking-wider uppercase bg-black/80 px-4 py-1.5 rounded-full backdrop-blur-md border border-brand-gold/40 shadow-lg animate-pulse">
-          Scanning Table Surface...
+          Locating Table Surface...
         </span>
       </div>
 
-      <!-- Live Spawned Content -->
+      <!-- Spawned Dish with 2D Circular Turn & Non-overlapping Left Column -->
       <div x-show="isModelSpawned && scanDish" class="w-full h-full relative flex items-center justify-center">
         
-        <!-- Left-Side HUD Feature List -->
-        <div class="absolute left-0 top-1/2 -translate-y-1/2 z-30 max-w-[55%] sm:max-w-[50%] space-y-2 pointer-events-none">
+        <!-- Left HUD Side-Column -->
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 z-30 max-w-[36%] sm:max-w-[40%] max-h-60 overflow-y-auto no-scrollbar space-y-1.5 pointer-events-auto pr-1">
           
-          <!-- Calories Badge Only -->
-          <div class="flex flex-col gap-1.5 animate-waterfall-slide" style="animation-delay: 200ms;">
-            <template x-if="scanDish && scanDish.calories">
-              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/85 backdrop-blur-md border border-white/15 text-[10px] font-bold text-gray-200 shadow-xl w-max">
-                <i class="fa-solid fa-fire text-amber-400"></i>
-                <span x-text="scanDish.calories + ' KCal'"></span>
-              </div>
-            </template>
-          </div>
+          <!-- Calories Badge -->
+          <template x-if="scanDish && scanDish.calories">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/90 backdrop-blur-md border border-white/20 text-[10px] font-bold text-gray-200 shadow-xl animate-waterfall-slide">
+              <i class="fa-solid fa-fire text-amber-400 text-[10px]"></i>
+              <span x-text="scanDish.calories + ' KCal'"></span>
+            </div>
+          </template>
 
-          <!-- Sequential Waterfall Features -->
+          <!-- Sequential Dish Features -->
           <template x-if="scanDish && scanDish.features && scanDish.features.length > 0">
-            <div class="space-y-1.5 pt-1">
+            <div class="space-y-1.5">
               <template x-for="(feat, idx) in scanDish.features" :key="idx">
-                <div class="px-2.5 py-1.5 rounded-xl bg-black/85 backdrop-blur-md border-l-2 border-brand-gold border-y border-r border-white/15 flex items-center gap-2 shadow-2xl animate-waterfall-slide"
-                     :style="'animation-delay: ' + (350 + (idx * 150)) + 'ms'">
-                  <div class="w-4 h-4 rounded-full bg-white/15 flex items-center justify-center text-[8px] flex-shrink-0 text-brand-gold">
+                <div class="px-2 py-1.5 rounded-xl bg-black/90 backdrop-blur-md border-l-2 border-brand-gold border-y border-r border-white/10 flex items-center gap-1.5 shadow-2xl animate-waterfall-slide"
+                     :style="'animation-delay: ' + (250 + (idx * 130)) + 'ms'">
+                  <div class="w-3.5 h-3.5 rounded-full bg-white/10 flex items-center justify-center text-[7px] flex-shrink-0 text-brand-gold">
                     <i class="fa-solid fa-check"></i>
                   </div>
-                  <span class="text-[11px] font-medium text-gray-100 leading-tight drop-shadow" x-text="feat"></span>
+                  <span class="text-[10px] font-medium text-gray-100 leading-tight drop-shadow line-clamp-2" x-text="feat"></span>
                 </div>
               </template>
             </div>
@@ -342,11 +345,26 @@
 
         </div>
 
-        <!-- Pure Transparent Floating Dish -->
-        <div class="relative flex items-center justify-center animate-pop-in z-20 pointer-events-none">
-          <div class="relative animate-float-slow flex items-center justify-center">
+        <!-- 2D Circular Rotating Dish (Touch / Drag on Circular Axis) -->
+        <div id="dish-rotate-container"
+             class="relative flex items-center justify-center animate-pop-in z-20 cursor-grab active:cursor-grabbing touch-none pl-12"
+             @mousedown="startDishRotate($event)"
+             @touchstart="startDishRotate($event)">
+          
+          <div class="relative animate-float-slow flex flex-col items-center justify-center">
+            
+            <!-- Circular Dashed Guideline Aura -->
+            <div class="absolute w-60 h-60 md:w-72 md:h-72 rounded-full border border-brand-gold/20 border-dashed pointer-events-none"></div>
+
+            <!-- Product Image Rotating on 2D Axis -->
             <img :src="scanDish ? scanDish.image : ''" 
-                 class="w-60 h-60 md:w-72 md:h-72 object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] select-none">
+                 :style="'transform: rotate(' + rotationDeg + 'deg); transition: ' + (isDragging ? 'none' : 'transform 0.25s ease-out')"
+                 class="w-56 h-56 md:w-68 md:h-68 object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.95)] pointer-events-none select-none">
+            
+            <!-- Circular Rotation Indicator Badge -->
+            <span class="mt-3 text-[9px] uppercase tracking-widest text-brand-goldLight font-bold bg-black/80 px-3 py-1 rounded-full border border-brand-gold/30 backdrop-blur-md flex items-center gap-1.5 shadow-lg pointer-events-none">
+              <i class="fa-solid fa-rotate text-[10px] text-brand-gold"></i> Rotate plate in circle
+            </span>
           </div>
         </div>
 
@@ -355,7 +373,7 @@
     </div>
 
     <!-- Bottom Controls & Order Action -->
-    <div class="relative z-20 w-full max-w-lg mx-auto p-4">
+    <div class="relative z-30 w-full max-w-lg mx-auto p-4">
       <div class="glass-luxury p-3.5 rounded-3xl flex items-center justify-between border border-brand-gold/40">
         <div>
           <h4 class="text-xs font-black text-white" x-text="scanDish ? scanDish.title : ''"></h4>
@@ -615,6 +633,12 @@
         cameraStream: null,
         isModelSpawned: false,
 
+        // 2D Circular Angle States
+        rotationDeg: 0,
+        isDragging: false,
+        startAngle: 0,
+        baseRotation: 0,
+
         async initApp() {
           const params = new URLSearchParams(window.location.search);
           if (params.has('table')) this.tableNumber = params.get('table');
@@ -623,6 +647,50 @@
           await this.loadCategories();
           await this.loadDishes();
           this.listenToUpdates();
+          this.setupRotationEvents();
+        },
+
+        setupRotationEvents() {
+          const getCenterPoint = () => {
+            const el = document.getElementById('dish-rotate-container');
+            if (!el) return { cx: window.innerWidth / 2, cy: window.innerHeight / 2 };
+            const rect = el.getBoundingClientRect();
+            return { cx: rect.left + rect.width / 2, cy: rect.top + rect.height / 2 };
+          };
+
+          const onMove = (e) => {
+            if (!this.isDragging) return;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const { cx, cy } = getCenterPoint();
+
+            const currentAngle = Math.atan2(clientY - cy, clientX - cx) * (180 / Math.PI);
+            const angleDiff = currentAngle - this.startAngle;
+            this.rotationDeg = Math.round(this.baseRotation + angleDiff);
+          };
+
+          const onEnd = () => {
+            this.isDragging = false;
+          };
+
+          window.addEventListener('mousemove', onMove);
+          window.addEventListener('mouseup', onEnd);
+          window.addEventListener('touchmove', onMove, { passive: true });
+          window.addEventListener('touchend', onEnd);
+        },
+
+        startDishRotate(e) {
+          this.isDragging = true;
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+          
+          const el = document.getElementById('dish-rotate-container');
+          const rect = el ? el.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+
+          this.startAngle = Math.atan2(clientY - cy, clientX - cx) * (180 / Math.PI);
+          this.baseRotation = this.rotationDeg;
         },
 
         handleTouchStart(e) {
@@ -680,6 +748,7 @@
         async startLiveCameraScan(dish) {
           this.scanDish = dish;
           this.isModelSpawned = false;
+          this.rotationDeg = 0;
           this.cameraScanOpen = true;
 
           try {
@@ -693,12 +762,12 @@
               if (video) video.srcObject = stream;
             });
           } catch (err) {
-            console.warn("Camera fallback applied (showing page background).");
+            console.warn("Camera stream unavailable, defaulting to dark AR view.");
           }
 
           setTimeout(() => {
             this.isModelSpawned = true;
-          }, 900);
+          }, 800);
         },
 
         closeLiveCameraScan() {
@@ -709,6 +778,7 @@
           this.cameraScanOpen = false;
           this.scanDish = null;
           this.isModelSpawned = false;
+          this.rotationDeg = 0;
         },
 
         openCustomModal(dish) {
